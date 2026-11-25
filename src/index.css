@@ -107,21 +107,3 @@ body {
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
-
-.timeline-scroll {
-  scrollbar-width: thin;
-  scrollbar-color: var(--sage-300) transparent;
-}
-
-.timeline-scroll::-webkit-scrollbar {
-  height: 7px;
-}
-
-.timeline-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.timeline-scroll::-webkit-scrollbar-thumb {
-  background-color: var(--sage-300);
-  border-radius: 9999px;
-}

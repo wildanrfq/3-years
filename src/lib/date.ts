@@ -8,13 +8,6 @@ export interface ElapsedDuration {
   totalDays: number;
 }
 
-export interface MilestoneStatus {
-  days: number;
-  label: string;
-  reached: boolean;
-  dateLabel: string;
-}
-
 const DAY_MS = 86_400_000;
 
 export function getElapsedSince(startIso: string, now: Date): ElapsedDuration {
@@ -126,24 +119,4 @@ export function getNextAnniversaryCountdown(startIso: string, now: Date): {
     seconds,
     targetYearNumber: targetYear - start.getFullYear(),
   };
-}
-
-export function getDayMilestones(startIso: string, totalDays: number): MilestoneStatus[] {
-  const start = new Date(startIso);
-  const targets = [100, 200, 365, 500, 730, 1000, 1095, 1500];
-  const formatter = new Intl.DateTimeFormat('id-ID', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
-
-  return targets.map((days) => {
-    const targetDate = new Date(start.getTime() + days * DAY_MS);
-    return {
-      days,
-      label: `${days} hari`,
-      reached: totalDays >= days,
-      dateLabel: formatter.format(targetDate),
-    };
-  });
 }

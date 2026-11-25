@@ -3,19 +3,19 @@
 @tailwind utilities;
 
 :root {
-  --sage-50: #f4f7f2;
-  --sage-100: #e6ede1;
-  --sage-200: #d0dcc8;
-  --sage-300: #b5c7aa;
-  --sage-400: #9cb38e;
-  --sage-500: #7f9c70;
-  --sage-600: #647f57;
-  --sage-700: #4e6445;
-  --sage-800: #3c4e36;
-  --sage-900: #2b3827;
-  --cream: #fbf8ef;
-  --blush: #f2cfc4;
-  --ink: #2f3b2a;
+  --sage-50: #d5dfd0;
+  --sage-100: #c7d4c0;
+  --sage-200: #b2c3a9;
+  --sage-300: #99b08f;
+  --sage-400: #7f9a74;
+  --sage-500: #66835b;
+  --sage-600: #516b47;
+  --sage-700: #3d5235;
+  --sage-800: #2e3f28;
+  --sage-900: #1f2b1b;
+  --cream: #e3e7dc;
+  --blush: #dfb6aa;
+  --ink: #222e1e;
 }
 
 .dark {
@@ -54,7 +54,7 @@ body {
 }
 
 .glass-sage {
-  background: rgba(244, 247, 242, 0.82);
+  background: rgba(213, 223, 208, 0.88);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 }

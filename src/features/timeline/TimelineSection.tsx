@@ -125,23 +125,20 @@ export default function TimelineSection({
     const activeCard = cardElsRef.current[activeIndex];
     if (!pathWrap || !pathEl || !heartEl) return;
 
-    const totalLength = pathEl.getTotalLength();
     pathEl.style.strokeDasharray = '1';
 
     const setPathAtProgress = (progress: number) => {
       const clamped = Math.min(1, Math.max(0, progress));
       pathEl.style.strokeDashoffset = `${1 - clamped}`;
-      const pt = pathEl.getPointAtLength(clamped * totalLength);
-      heartEl.style.left = `${(pt.x / 1000) * 100}%`;
-      heartEl.style.top = `${(pt.y / 28) * 100}%`;
+      heartEl.style.left = `${clamped * 100}%`;
     };
 
     let targetProgress = 0.25;
     if (activeCard && pathWrap.offsetWidth > 0) {
       const cardCenter = activeCard.offsetLeft + activeCard.offsetWidth / 2;
       targetProgress = Math.min(
-        0.98,
-        Math.max(0.08, (cardCenter - pathWrap.offsetLeft) / pathWrap.offsetWidth)
+        1,
+        Math.max(0, (cardCenter - pathWrap.offsetLeft) / pathWrap.offsetWidth)
       );
     }
 
@@ -309,19 +306,19 @@ export default function TimelineSection({
           }
           className="relative flex w-max items-stretch pb-8 pt-14"
         >
-          {/* Garis jalur SVG horizontal di atas kartu */}
+          {/* Garis jalur SVG horizontal lurus sejajar dengan simpul kartu */}
           <div
             ref={pathWrapRef}
             aria-hidden="true"
-            className="pointer-events-none absolute left-10 right-10 top-5 h-7"
+            className="pointer-events-none absolute left-10 right-10 top-4 h-8"
           >
             <svg
-              viewBox="0 0 1000 28"
+              viewBox="0 0 1000 32"
               preserveAspectRatio="none"
               className="h-full w-full overflow-visible"
             >
               <path
-                d="M 0 14 Q 125 3 250 14 T 500 14 T 750 14 T 1000 14"
+                d="M 0 16 L 1000 16"
                 fill="none"
                 stroke="var(--sage-200)"
                 strokeWidth="3"
@@ -330,7 +327,7 @@ export default function TimelineSection({
               />
               <path
                 ref={pathRef}
-                d="M 0 14 Q 125 3 250 14 T 500 14 T 750 14 T 1000 14"
+                d="M 0 16 L 1000 16"
                 fill="none"
                 stroke="var(--sage-500)"
                 strokeWidth="3.5"
@@ -343,7 +340,7 @@ export default function TimelineSection({
 
             <div
               ref={heartRef}
-              className="absolute z-10 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-sage-400 bg-cream shadow-sage-sm"
+              className="absolute top-1/2 z-20 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-sage-400 bg-cream shadow-sage-sm"
             >
               <svg viewBox="0 0 24 24" className="h-4 w-4">
                 <path
@@ -379,7 +376,7 @@ export default function TimelineSection({
               <li className="relative flex w-[250px] shrink-0 items-stretch sm:w-[280px]">
                 <span
                   aria-hidden="true"
-                  className="pointer-events-none absolute left-1/2 top-[-30px] z-10 h-4 w-4 -translate-x-1/2 rounded-full border-2 border-dashed border-sage-400 bg-sage-50"
+                  className="pointer-events-none absolute left-1/2 top-[-24px] z-10 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-dashed border-sage-400 bg-sage-50"
                 />
                 <motion.button
                   type="button"
@@ -531,11 +528,11 @@ function TimelineCard({
 
   const initialVariant = reducedMotion
     ? { opacity: 0 }
-    : { opacity: 0, x: 24, scale: 0.96 };
+    : { opacity: 0, x: 24 };
 
   const animateVariant = reducedMotion
     ? { opacity: 1 }
-    : { opacity: 1, x: 0, scale: 1 };
+    : { opacity: 1, x: 0 };
 
   const transition = {
     duration: reducedMotion ? 0.3 : 0.95,
@@ -543,85 +540,89 @@ function TimelineCard({
   };
 
   return (
-    <motion.li
+    <li
       ref={setCardRef}
-      initial={initialVariant}
-      animate={animateVariant}
-      transition={transition}
       className="relative flex w-[280px] shrink-0 items-stretch sm:w-[310px]"
     >
-      {/* Titik simpul di jalur horizontal */}
+      {/* Titik simpul sejajar di jalur horizontal */}
       <span
         aria-hidden="true"
-        className={`pointer-events-none absolute left-1/2 top-[-30px] z-10 h-4 w-4 -translate-x-1/2 rounded-full border-2 transition-all duration-700 ease-out ${
+        className={`pointer-events-none absolute left-1/2 top-[-24px] z-10 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 transition-all duration-500 ease-out ${
           isBlurred
-            ? 'scale-90 border-sage-300 bg-sage-200'
-            : 'scale-125 border-cream bg-sage-600 shadow-sage-sm ring-4 ring-sage-300/50'
+            ? 'scale-100 border-sage-300 bg-sage-200 opacity-100'
+            : 'scale-75 border-sage-500 bg-sage-600 opacity-0'
         }`}
       />
 
-      <article
-        data-blurred={isBlurred ? 'true' : 'false'}
-        aria-current={isActive ? 'step' : undefined}
-        className={`relative flex w-full flex-col rounded-[26px] bg-cream p-5 transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          isBlurred
-            ? `${reducedMotion ? '' : 'scale-[0.94] '}select-none border border-sage-200/70 opacity-55 shadow-sage-sm blur-[5px]`
-            : 'scale-100 border-2 border-sage-500 opacity-100 shadow-sage-lg ring-4 ring-sage-300/35 blur-0'
-        }`}
+      <motion.div
+        initial={initialVariant}
+        animate={animateVariant}
+        transition={transition}
+        className="flex w-full"
       >
-        <DoodleSticker
-          kind={stickerKind}
-          reducedMotion={reducedMotion}
-          className="-right-2.5 -top-2.5"
-        />
+        <article
+          data-blurred={isBlurred ? 'true' : 'false'}
+          aria-current={isActive ? 'step' : undefined}
+          className={`relative flex w-full flex-col rounded-[26px] bg-cream p-5 transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            isBlurred
+              ? `${reducedMotion ? '' : 'scale-[0.94] '}select-none border border-sage-200/70 opacity-55 shadow-sage-sm blur-[5px]`
+              : 'scale-100 border-2 border-sage-500 opacity-100 shadow-sage-lg ring-4 ring-sage-300/35 blur-0'
+          }`}
+        >
+          <DoodleSticker
+            kind={stickerKind}
+            reducedMotion={reducedMotion}
+            className="-right-2.5 -top-2.5"
+          />
 
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span
+                className={`inline-flex h-8 w-8 items-center justify-center rounded-xl transition-colors duration-700 ${
+                  isBlurred
+                    ? 'bg-sage-100 text-sage-600'
+                    : 'bg-sage-600 text-[#FBF8EF] shadow-sage-sm'
+                }`}
+              >
+                {item.icon ? ICON_MAP[item.icon] : <Heart className="h-4 w-4" aria-hidden="true" />}
+              </span>
+              <time className="text-xs font-bold uppercase tracking-wide text-sage-600">
+                {item.date}
+              </time>
+            </div>
+
             <span
-              className={`inline-flex h-8 w-8 items-center justify-center rounded-xl transition-colors duration-700 ${
+              className={`rounded-pill px-2.5 py-0.5 text-[11px] font-bold transition-colors duration-700 ${
                 isBlurred
                   ? 'bg-sage-100 text-sage-600'
                   : 'bg-sage-600 text-[#FBF8EF] shadow-sage-sm'
               }`}
             >
-              {item.icon ? ICON_MAP[item.icon] : <Heart className="h-4 w-4" aria-hidden="true" />}
+              #{index + 1}
             </span>
-            <time className="text-xs font-bold uppercase tracking-wide text-sage-600">
-              {item.date}
-            </time>
           </div>
 
-          <span
-            className={`rounded-pill px-2.5 py-0.5 text-[11px] font-bold transition-colors duration-700 ${
-              isBlurred
-                ? 'bg-sage-100 text-sage-600'
-                : 'bg-sage-600 text-[#FBF8EF] shadow-sage-sm'
-            }`}
-          >
-            #{index + 1}
-          </span>
-        </div>
+          <h2 className="mt-2.5 font-display text-xl font-semibold text-sage-900">
+            {item.title}
+          </h2>
+          <p className="mt-1.5 text-sm leading-relaxed text-sage-700">
+            {item.description}
+          </p>
 
-        <h2 className="mt-2.5 font-display text-xl font-semibold text-sage-900">
-          {item.title}
-        </h2>
-        <p className="mt-1.5 text-sm leading-relaxed text-sage-700">
-          {item.description}
-        </p>
-
-        {item.photo && (
-          <div className="mt-auto flex justify-center pt-3.5">
-            <div className="inline-flex max-h-48 max-w-full overflow-hidden rounded-2xl border border-sage-200/80 bg-sage-100">
-              <img
-                src={assetUrl(item.photo)}
-                alt={item.title}
-                className="block max-h-48 w-auto max-w-full object-contain"
-              />
+          {item.photo && (
+            <div className="mt-auto flex justify-center pt-3.5">
+              <div className="inline-flex max-h-48 max-w-full overflow-hidden rounded-2xl border border-sage-200/80 bg-sage-100">
+                <img
+                  src={assetUrl(item.photo)}
+                  alt={item.title}
+                  className="block max-h-48 w-auto max-w-full object-contain"
+                />
+              </div>
             </div>
-          </div>
-        )}
-      </article>
-    </motion.li>
+          )}
+        </article>
+      </motion.div>
+    </li>
   );
 }
 

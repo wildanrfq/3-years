@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
-import { Award, CalendarClock, CheckCircle2, PartyPopper, Sparkles } from 'lucide-react';
+import { CalendarClock, PartyPopper, Sparkles } from 'lucide-react';
 import { content, SectionId } from '../../config/content';
 import {
-  getDayMilestones,
   getElapsedSince,
   getNextAnniversaryCountdown,
   isAnniversaryToday,
@@ -30,7 +29,6 @@ export default function CounterSection({
 
   const elapsed = getElapsedSince(content.startDate, now);
   const nextAnniv = getNextAnniversaryCountdown(content.startDate, now);
-  const milestones = getDayMilestones(content.startDate, elapsed.totalDays);
   const anniversaryToday = isAnniversaryToday(content.startDate, now);
 
   const launchCelebration = useCallback(() => {
@@ -160,60 +158,6 @@ export default function CounterSection({
                 </div>
                 <div className="text-[11px] font-semibold text-sage-600">{item.label}</div>
               </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Lencana pencapaian hari */}
-        <section aria-label="Pencapaian hari bersama">
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-sage-900">
-              <Award className="h-5 w-5 text-sage-600" aria-hidden="true" />
-              <span>{content.counterUi.milestonesHeading}</span>
-            </h2>
-            <span className="text-xs font-bold text-sage-600">
-              {content.counterUi.milestonesProgress
-                .replace('{reached}', String(milestones.filter((m) => m.reached).length))
-                .replace('{total}', String(milestones.length))}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {milestones.map((badge, idx) => (
-              <motion.div
-                key={badge.days}
-                initial={
-                  reducedMotion
-                    ? { opacity: 0 }
-                    : { opacity: 0, scale: badge.reached ? 0.92 : 0.96, y: 10 }
-                }
-                whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{
-                  delay: reducedMotion ? 0 : idx * 0.06,
-                  duration: reducedMotion ? 0.25 : 0.65,
-                  ease: GENTLE_EASE,
-                }}
-                className={`rounded-2xl border p-3.5 transition-colors ${
-                  badge.reached
-                    ? 'border-sage-300 bg-cream shadow-sage-sm'
-                    : 'border-sage-200/60 bg-sage-100/55 opacity-65'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-display text-lg font-semibold tabular-nums text-sage-900">
-                    {badge.days} {content.counterUi.milestoneDaysUnit}
-                  </span>
-                  {badge.reached && (
-                    <CheckCircle2 className="h-4 w-4 text-sage-600" aria-hidden="true" />
-                  )}
-                </div>
-                <p className="mt-1 text-[11px] font-semibold text-sage-600">
-                  {badge.reached
-                    ? `${content.counterUi.milestoneReachedPrefix} ${badge.dateLabel}`
-                    : `${content.counterUi.milestoneUpcomingPrefix} ${badge.dateLabel}`}
-                </p>
-              </motion.div>
             ))}
           </div>
         </section>

@@ -175,11 +175,6 @@ export interface ContentConfig {
     totalDaysLabel: string;
     totalDaysUnit: string;
     nextAnnivHeading: string;
-    milestonesHeading: string;
-    milestonesProgress: string;
-    milestoneReachedPrefix: string;
-    milestoneUpcomingPrefix: string;
-    milestoneDaysUnit: string;
   };
   rewind: RewindSlide[];
   photoCards: PhotoCardItem[];
@@ -410,11 +405,6 @@ export const content: ContentConfig = {
     totalDaysLabel: 'Total hari yang sudah kita lewati bersama', // Total days row label in Waktu Bersama
     totalDaysUnit: 'hari', // Unit after total days number
     nextAnnivHeading: 'Menuju anniversary ke-{year}', // Countdown box heading in Waktu Bersama
-    milestonesHeading: 'Jejak angka kita', // Milestones grid heading in Waktu Bersama
-    milestonesProgress: '{reached} / {total} tercapai', // Milestones counter in Waktu Bersama
-    milestoneReachedPrefix: 'Tercapai', // Prefix on reached milestone badges -> "Tercapai 4 Mar 2024"
-    milestoneUpcomingPrefix: 'Nanti', // Prefix on future milestone badges -> "Nanti ..."
-    milestoneDaysUnit: 'hari', // Unit on milestone badges -> "100 hari"
   },
 
   // ==========================================================================

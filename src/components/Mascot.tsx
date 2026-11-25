@@ -64,20 +64,23 @@ export function Mascot({ mood = 'happy', size = 'md', message, className = '' }:
 
   return (
     <div className={`relative inline-flex flex-col items-center select-none ${className}`}>
-      <AnimatePresence>
-        {message && (
-          <motion.div
+      {message && (
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: GENTLE_EASE }}
+          className="mb-1.5 flex min-h-[38px] max-w-[280px] items-center justify-center rounded-2xl border border-sage-200 bg-cream px-3.5 py-1.5 text-center text-xs font-semibold text-sage-800 shadow-sage-sm"
+        >
+          <motion.span
             key={message}
-            initial={{ opacity: 0, y: 6, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -4, scale: 0.96 }}
-            transition={{ duration: 0.45, ease: GENTLE_EASE }}
-            className="mb-1.5 max-w-[230px] rounded-2xl border border-sage-200 bg-cream px-3 py-1.5 text-center text-xs font-semibold text-sage-800 shadow-sage-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.35, ease: GENTLE_EASE }}
           >
             {message}
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </motion.span>
+        </motion.div>
+      )}
 
       <motion.button
         type="button"

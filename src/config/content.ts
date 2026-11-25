@@ -200,7 +200,6 @@ export interface ContentConfig {
     replaySongLabel: string;
     playLabel: string;
     pauseLabel: string;
-    waitingLyricsLabel: string;
   };
   navigation: {
     backToMenuButton: string;
@@ -574,7 +573,6 @@ export const content: ContentConfig = {
     replaySongLabel: 'Putar lagi', // Button in top Music Bar when song ends (if loop is false)
     playLabel: 'Putar', // Play button inside expanded top Music Bar
     pauseLabel: 'Jeda', // Pause button inside expanded top Music Bar
-    waitingLyricsLabel: 'Siap memutar lirik', // Fallback text in top Music Bar before first lyric timestamp
   },
   navigation: {
     backToMenuButton: 'Kembali ke menu', // Left button in floating Bottom Navigation bar

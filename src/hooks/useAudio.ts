@@ -61,6 +61,7 @@ export function useAudio(loop: boolean): AudioControls {
     };
 
     audio.addEventListener('play', handlePlay);
+    audio.addEventListener('playing', handlePlay);
     audio.addEventListener('pause', handlePause);
     audio.addEventListener('ended', handleEnded);
     audio.addEventListener('volumechange', handleVolumeChange);
@@ -68,6 +69,7 @@ export function useAudio(loop: boolean): AudioControls {
     return () => {
       cancelFade();
       audio.removeEventListener('play', handlePlay);
+      audio.removeEventListener('playing', handlePlay);
       audio.removeEventListener('pause', handlePause);
       audio.removeEventListener('ended', handleEnded);
       audio.removeEventListener('volumechange', handleVolumeChange);

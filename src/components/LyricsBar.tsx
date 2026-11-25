@@ -63,7 +63,10 @@ export function LyricsBar({
       : '';
 
   return (
-    <div className="pt-safe pointer-events-none fixed right-2.5 top-2.5 z-30 flex max-w-[calc(100vw-20px)] flex-col items-end gap-2 sm:right-5 sm:top-4">
+    <div
+      ref={progressRef}
+      className="pt-safe pointer-events-none fixed right-2.5 top-2.5 z-30 flex max-w-[calc(100vw-20px)] flex-col items-end gap-2 sm:right-5 sm:top-4"
+    >
       {collapsed ? (
         <motion.div
           layout
@@ -127,12 +130,10 @@ export function LyricsBar({
                 {hasLyrics && (
                   <div className="truncate text-[11px] font-bold leading-tight">
                     {activeIndex >= 0 ? (
-                      <span ref={progressRef} className="lyric-sweep">
-                        {activeLine}
-                      </span>
-                    ) : (
-                      <span className="text-sage-800">{nextLine || content.musicPlayer.waitingLyricsLabel}</span>
-                    )}
+                      <span className="lyric-sweep">{activeLine}</span>
+                    ) : nextLine ? (
+                      <span className="text-sage-800">{nextLine}</span>
+                    ) : null}
                   </div>
                 )}
               </div>
@@ -201,11 +202,12 @@ export function LyricsBar({
                     className="truncate text-xs font-bold leading-snug"
                   >
                     {activeIndex >= 0 ? (
-                      <span ref={progressRef} className="lyric-sweep">
-                        {activeLine}
-                      </span>
+                      <span className="lyric-sweep">{activeLine}</span>
                     ) : (
-                      <span className="text-sage-700">{content.musicPlayer.waitingLyricsLabel}</span>
+                      <span className="inline-flex items-center gap-1 text-sage-600/70">
+                        <Music2 className="h-3 w-3" aria-hidden="true" />
+                        <span>···</span>
+                      </span>
                     )}
                   </motion.div>
                 </AnimatePresence>

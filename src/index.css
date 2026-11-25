@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --sage-50: #f4f7f2;
+  --sage-100: #e6ede1;
+  --sage-200: #d0dcc8;
+  --sage-300: #b5c7aa;
+  --sage-400: #9cb38e;
+  --sage-500: #7f9c70;
+  --sage-600: #647f57;
+  --sage-700: #4e6445;
+  --sage-800: #3c4e36;
+  --sage-900: #2b3827;
+  --cream: #fbf8ef;
+  --blush: #f2cfc4;
+  --ink: #2f3b2a;
+}
+
+html,
+body {
+  background-color: var(--sage-50);
+  color: var(--ink);
+  font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.paper-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  opacity: 0.035;
+}
+
+.glass-sage {
+  background: rgba(244, 247, 242, 0.8);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.lyric-sweep {
+  background-image: linear-gradient(
+    90deg,
+    var(--ink) 0%,
+    var(--ink) var(--lyric-progress, 0%),
+    rgba(100, 127, 87, 0.48) var(--lyric-progress, 0%),
+    rgba(100, 127, 87, 0.48) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lyric-sweep {
+    background-image: none;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+    color: var(--ink);
+  }
+}
+
+.focus-ring {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sage-600 focus-visible:ring-offset-2 focus-visible:ring-offset-sage-50;
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}

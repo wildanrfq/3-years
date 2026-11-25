@@ -3,7 +3,6 @@ export type SectionId =
   | 'counter'
   | 'rewind'
   | 'photocards'
-  | 'map'
   | 'letter';
 
 export type TimelineIconName = 'sparkles' | 'coffee' | 'heart' | 'map-pin' | 'sun' | 'gift';
@@ -39,7 +38,7 @@ export type RewindSlide =
   | {
       type: 'stat';
       eyebrow: string;
-      statSource: 'places' | 'photocards' | 'custom';
+      statSource: 'photocards' | 'custom';
       customValue?: number;
       unit: string;
       title: string;
@@ -77,15 +76,6 @@ export interface PhotoCardItem {
   backNote: string;
 }
 
-export interface PlaceItem {
-  name: string;
-  lat: number;
-  lng: number;
-  date: string;
-  note: string;
-  photo?: string;
-}
-
 export interface ContentConfig {
   partnerName: string;
   myName: string;
@@ -107,11 +97,6 @@ export interface ContentConfig {
   timeline: TimelineItem[];
   rewind: RewindSlide[];
   photoCards: PhotoCardItem[];
-  places: PlaceItem[];
-  mapTile: {
-    url: string;
-    attribution: string;
-  };
   letter: {
     title: string;
     body: string[];
@@ -127,7 +112,6 @@ export const SECTION_ORDER: SectionId[] = [
   'counter',
   'rewind',
   'photocards',
-  'map',
   'letter',
 ];
 
@@ -138,7 +122,7 @@ export const SECTION_META: Record<
   timeline: {
     title: 'Jejak Kita',
     shortLabel: 'Jejak',
-    subtitle: 'Potongan cerita kecil dari awal sampai hari ini.',
+    subtitle: 'Buka satu per satu potongan cerita dari awal sampai hari ini.',
   },
   counter: {
     title: 'Waktu Bersama',
@@ -154,11 +138,6 @@ export const SECTION_META: Record<
     title: 'Kartu Foto',
     shortLabel: 'Foto',
     subtitle: 'Balik kartunya untuk membaca catatan kecil.',
-  },
-  map: {
-    title: 'Peta Perjalanan',
-    shortLabel: 'Peta',
-    subtitle: 'Tempat-tempat yang pernah kita datangi bersama.',
   },
   letter: {
     title: 'Surat Untukmu',
@@ -252,11 +231,11 @@ export const content: ContentConfig = {
     },
     {
       type: 'stat',
-      eyebrow: 'Jejak jalan-jalan',
-      statSource: 'places',
-      unit: 'titik kenangan',
-      title: 'Tempat yang sudah kita tandai',
-      subtitle: 'Setiap sudut kota punya ceritanya sendiri kalau perginya sama kamu.',
+      eyebrow: 'Koleksi foto kita',
+      statSource: 'photocards',
+      unit: 'kartu kenangan',
+      title: 'Foto yang sudah kita simpan',
+      subtitle: 'Setiap potret punya ceritanya sendiri kalau dilihat lagi bareng kamu.',
     },
     {
       type: 'carousel',
@@ -345,52 +324,6 @@ export const content: ContentConfig = {
       backNote: 'Semoga foto-foto di sini makin penuh sama senyum kamu.',
     },
   ],
-  places: [
-    {
-      name: 'Tugu Jogja',
-      lat: -7.7828,
-      lng: 110.3671,
-      date: 'Desember 2023',
-      note: 'Foto malam pertama di perempatan Tugu waktu kota lagi ramai.',
-      photo: 'photos/place-1.svg',
-    },
-    {
-      name: 'Malioboro',
-      lat: -7.7926,
-      lng: 110.3659,
-      date: 'Februari 2024',
-      note: 'Jalan kaki pelan dari ujung ke ujung sambil cari jajanan hangat.',
-      photo: 'photos/place-2.svg',
-    },
-    {
-      name: 'Taman Sari',
-      lat: -7.8101,
-      lng: 110.3593,
-      date: 'Juni 2024',
-      note: 'Cuacanya terik, tapi kita dapat banyak foto lucu di lorong batu.',
-      photo: 'photos/place-3.svg',
-    },
-    {
-      name: 'Alun-Alun Kidul',
-      lat: -7.8119,
-      lng: 110.3632,
-      date: 'November 2024',
-      note: 'Duduk santai di pinggir lapangan sambil makan jagung bakar.',
-      photo: 'photos/place-4.svg',
-    },
-    {
-      name: 'Bukit Bintang',
-      lat: -7.8458,
-      lng: 110.4796,
-      date: 'Agustus 2025',
-      note: 'Lihat lampu kota dari atas sambil minum teh hangat berdua.',
-      photo: 'photos/place-5.svg',
-    },
-  ],
-  mapTile: {
-    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    attribution: '&copy; OpenStreetMap contributors',
-  },
   letter: {
     title: 'Happy Anniversary',
     body: [

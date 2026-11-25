@@ -1,6 +1,6 @@
-# Panduan Website Anniversary
+# Panduan Website Anniversary (3-years)
 
-Website statis bertema soft sage untuk merayakan hari jadi, siap dijalankan secara lokal maupun dihost di GitHub Pages (`https://wildanrfq.github.io/REPO_NAME/`).
+Website statis bertema soft sage untuk merayakan hari jadi, siap dijalankan secara lokal maupun dihost di GitHub Pages (`https://wildanrfq.github.io/3-years/`).
 
 ## Menjalankan Secara Lokal
 
@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-Lalu buka alamat yang muncul di terminal (bawaan: `http://localhost:5173/anniv3yrs/`).
+Lalu buka alamat yang muncul di terminal (bawaan: `http://localhost:5173/3-years/`).
 
 Untuk menguji hasil build produksi di bawah sub-path GitHub Pages:
 
@@ -23,23 +23,21 @@ npm run preview
 Buka file `vite.config.ts` dan ubah konstanta `REPO_NAME` di baris paling atas agar sama persis dengan nama repository GitHub kamu:
 
 ```ts
-export const REPO_NAME = 'anniv3yrs';
+export const REPO_NAME = '3-years';
 ```
 
 Cukup ubah di satu tempat ini saja. Semua URL aset di aplikasi sudah memakai `import.meta.env.BASE_URL`.
 
 ## 2. Mengedit Data Pribadi (`src/config/content.ts`)
 
-Semua teks, jadwal, foto, lokasi peta, dan surat berada di `src/config/content.ts`:
+Semua teks, jadwal, foto, dan surat berada di `src/config/content.ts`:
 
 - `partnerName` dan `myName`: nama panggilan pasangan dan nama kamu.
 - `siteTitle`: judul halaman browser dan tajuk menu utama.
 - `startDate`: tanggal jadian dalam format ISO dengan offset WIB `+07:00`, misalnya `'2023-11-26T00:00:00+07:00'`.
-- `timeline`: daftar momen perjalanan (`date`, `title`, `description`, `photo`, `icon`).
+- `timeline`: daftar momen perjalanan (`date`, `title`, `description`, `photo`, `icon`). Di halaman Jejak Kita, momen terbuka satu per satu saat tombol berikutnya diketuk agar tidak spoiler.
 - `rewind`: daftar slide cerita kilas balik (`intro`, `countup`, `photo`, `stat`, `carousel`, `ranking`, `song`, `outro`).
 - `photoCards`: daftar foto polaroid beserta catatan di sisi belakang (`photo`, `caption`, `date`, `backNote`).
-- `places`: daftar titik lokasi di peta (`name`, `lat`, `lng`, `date`, `note`, `photo`).
-- `mapTile`: sumber tile peta OpenStreetMap dan teks atribusinya.
 - `letter`: judul, isi paragraf `body`, dan `signature`.
 - `ui.lockLetterUntilAllVisited`: ubah ke `true` jika ingin surat terkunci sampai semua bagian lain dibuka terlebih dahulu (bawaan: `false`).
 
@@ -85,7 +83,8 @@ Repository ini sudah dilengkapi workflow otomatis di `.github/workflows/deploy.y
 
 Langkah pertama kali di GitHub:
 
-1. Push repository ke GitHub pada branch `main`.
+1. Pastikan branch `main` sudah ter-push ke repository `wildanrfq/3-years`.
 2. Buka repository di GitHub, masuk ke menu **Settings > Pages**.
 3. Pada bagian **Build and deployment > Source**, pilih **GitHub Actions**.
-4. Tunggu workflow **Deploy ke GitHub Pages** selesai berjalan di tab **Actions**, lalu buka alamat `https://wildanrfq.github.io/REPO_NAME/`.
+4. Buka tab **Actions** dan pastikan workflow **Deploy ke GitHub Pages** berjalan sampai hijau.
+5. Setelah selesai, website bisa dibuka di `https://wildanrfq.github.io/3-years/`.

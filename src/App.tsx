@@ -15,7 +15,6 @@ const TimelineSection = lazy(() => import('./features/timeline/TimelineSection')
 const CounterSection = lazy(() => import('./features/counter/CounterSection'));
 const RewindSection = lazy(() => import('./features/rewind/RewindSection'));
 const PhotoCardsSection = lazy(() => import('./features/photocards/PhotoCardsSection'));
-const MapSection = lazy(() => import('./features/map/MapSection'));
 const LetterSection = lazy(() => import('./features/letter/LetterSection'));
 
 type Screen = 'gate' | 'intro' | 'hub' | SectionId;
@@ -36,7 +35,10 @@ function readInitialVisited(): SectionId[] {
     const raw = window.sessionStorage.getItem(SESSION_VISITED_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((id): id is SectionId =>
+      ['timeline', 'counter', 'rewind', 'photocards', 'letter'].includes(id)
+    );
   } catch {
     return [];
   }
@@ -183,12 +185,6 @@ export default function App() {
             )}
             {screen === 'photocards' && (
               <PhotoCardsSection
-                onBackToHub={() => setScreen('hub')}
-                onNextSection={handleSelectSection}
-              />
-            )}
-            {screen === 'map' && (
-              <MapSection
                 onBackToHub={() => setScreen('hub')}
                 onNextSection={handleSelectSection}
               />

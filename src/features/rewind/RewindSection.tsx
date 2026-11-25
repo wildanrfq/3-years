@@ -358,9 +358,7 @@ function SlideBody({
 
   if (slide.type === 'stat') {
     const val =
-      slide.statSource === 'places'
-        ? content.places.length
-        : slide.statSource === 'photocards'
+      slide.statSource === 'photocards'
         ? content.photoCards.length
         : slide.customValue ?? 0;
 

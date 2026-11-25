@@ -66,7 +66,7 @@ export function IntroScreen({
         </h1>
 
         <p className="mt-3 text-sm leading-relaxed text-sage-700 sm:text-base">
-          Di dalamnya ada cerita kita, foto, peta tempat yang pernah kita datangi,
+          Di dalamnya ada cerita kita, penghitung waktu, kilas balik, kartu foto,
           sampai surat kecil dari {myName}. Lagunya juga jalan terus di pojok kanan atas sambil kamu baca.
         </p>
 

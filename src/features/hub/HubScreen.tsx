@@ -8,7 +8,6 @@ import {
   Film,
   Lock,
   Mail,
-  MapPin,
 } from 'lucide-react';
 import { SECTION_META, SECTION_ORDER, SectionId } from '../../config/content';
 import { Mascot } from '../../components/Mascot';
@@ -48,11 +47,6 @@ const CARD_META: Record<
   photocards: {
     icon: <Camera className="h-6 w-6" aria-hidden="true" />,
     microcopy: 'Geser dan balik foto buat baca catatan.',
-    accent: 'bg-sage-100 text-sage-700',
-  },
-  map: {
-    icon: <MapPin className="h-6 w-6" aria-hidden="true" />,
-    microcopy: 'Jejak tempat yang pernah kita kunjungi.',
     accent: 'bg-sage-100 text-sage-700',
   },
   letter: {
@@ -117,6 +111,7 @@ export function HubScreen({
               isLocked={isLocked}
               remainingCount={remainingCount}
               reducedMotion={reducedMotion}
+              isWide={sectionId === 'letter'}
               onClick={() => {
                 if (!isLocked) onSelectSection(sectionId);
               }}
@@ -153,6 +148,7 @@ interface HubCardProps {
   isLocked: boolean;
   remainingCount: number;
   reducedMotion: boolean;
+  isWide?: boolean;
   onClick: () => void;
 }
 
@@ -163,6 +159,7 @@ function HubCard({
   isLocked,
   remainingCount,
   reducedMotion,
+  isWide = false,
   onClick,
 }: HubCardProps) {
   const tilt = useTilt<HTMLButtonElement>(7);
@@ -188,12 +185,13 @@ function HubCard({
       whileTap={reducedMotion || isLocked ? undefined : { scale: 0.97 }}
       style={{ transformStyle: 'preserve-3d', transition: 'transform 160ms ease-out' }}
       className={`focus-ring group relative flex min-h-[124px] w-full flex-col justify-between overflow-hidden rounded-[26px] border p-5 text-left transition-colors ${
+        isWide ? 'sm:col-span-2' : ''
+      } ${
         isLocked
           ? 'cursor-not-allowed border-sage-200/70 bg-sage-100/70 opacity-75'
           : 'border-sage-200/90 bg-cream shadow-sage-md hover:border-sage-300'
       }`}
     >
-      {/* Kilau tilt pointer */}
       <span
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 transition-opacity duration-200"

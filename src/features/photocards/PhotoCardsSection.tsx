@@ -19,6 +19,13 @@ interface PhotoCardsSectionProps {
   onNextSection: (next: SectionId) => void;
 }
 
+interface DeckState {
+  order: number[];
+  dir: 1 | -1;
+  exitSide: -1 | 1;
+  movedId: number | null;
+}
+
 const CARD_REST_TILTS = [-2.4, 1.8, -1.6, 2.2, -2.0, 1.5, -1.7, 2.3];
 
 export default function PhotoCardsSection({
@@ -29,7 +36,12 @@ export default function PhotoCardsSection({
   const cards = content.photoCards;
 
   const [mode, setMode] = useState<'stack' | 'grid'>('stack');
-  const [stackOrder, setStackOrder] = useState<number[]>(() => cards.map((_, i) => i));
+  const [deck, setDeck] = useState<DeckState>(() => ({
+    order: cards.map((_, i) => i),
+    dir: 1,
+    exitSide: -1,
+    movedId: null,
+  }));
   const [flippedMap, setFlippedMap] = useState<Record<number, boolean>>({});
   const [gyroEnabled, setGyroEnabled] = useState(false);
   const [gyroTilt, setGyroTilt] = useState({ rx: 0, ry: 0, gx: 50, gy: 50 });
@@ -87,28 +99,42 @@ export default function PhotoCardsSection({
     [requestGyroOnFirstTap]
   );
 
-  const cycleNext = useCallback(() => {
-    void requestGyroOnFirstTap();
-    setStackOrder((prev) => {
-      if (prev.length <= 1) return prev;
-      const [top, ...rest] = prev;
-      setFlippedMap((f) => ({ ...f, [top]: false }));
-      return [...rest, top];
-    });
-  }, [requestGyroOnFirstTap]);
+  const cycleNext = useCallback(
+    (exitSide: -1 | 1 = -1) => {
+      void requestGyroOnFirstTap();
+      setDeck((prev) => {
+        if (prev.order.length <= 1) return prev;
+        const [top, ...rest] = prev.order;
+        setFlippedMap((f) => ({ ...f, [top]: false }));
+        return {
+          order: [...rest, top],
+          dir: 1,
+          exitSide,
+          movedId: top,
+        };
+      });
+    },
+    [requestGyroOnFirstTap]
+  );
 
   const cyclePrev = useCallback(() => {
     void requestGyroOnFirstTap();
-    setStackOrder((prev) => {
-      if (prev.length <= 1) return prev;
-      const last = prev[prev.length - 1];
-      const rest = prev.slice(0, -1);
+    setDeck((prev) => {
+      if (prev.order.length <= 1) return prev;
+      const last = prev.order[prev.order.length - 1];
+      const rest = prev.order.slice(0, -1);
       setFlippedMap((f) => ({ ...f, [last]: false }));
-      return [last, ...rest];
+      return {
+        order: [last, ...rest],
+        dir: -1,
+        exitSide: -1,
+        movedId: last,
+      };
     });
   }, [requestGyroOnFirstTap]);
 
-  const topCardIndex = stackOrder[0] ?? 0;
+  const topCardIndex = deck.order[0] ?? 0;
+  const visibleSlice = deck.order.slice(0, 3);
 
   return (
     <SectionShell
@@ -128,7 +154,7 @@ export default function PhotoCardsSection({
             role="tab"
             aria-selected={mode === 'stack'}
             onClick={() => setMode('stack')}
-            className={`focus-ring inline-flex min-h-[44px] items-center gap-2 rounded-pill px-4 text-xs font-bold transition ${
+            className={`focus-ring inline-flex min-h-[44px] items-center gap-2 rounded-pill px-4 text-xs font-bold transition-all duration-300 ${
               mode === 'stack'
                 ? 'bg-sage-600 text-[#FBF8EF] shadow-sage-sm'
                 : 'text-sage-700 hover:bg-sage-100'
@@ -142,7 +168,7 @@ export default function PhotoCardsSection({
             role="tab"
             aria-selected={mode === 'grid'}
             onClick={() => setMode('grid')}
-            className={`focus-ring inline-flex min-h-[44px] items-center gap-2 rounded-pill px-4 text-xs font-bold transition ${
+            className={`focus-ring inline-flex min-h-[44px] items-center gap-2 rounded-pill px-4 text-xs font-bold transition-all duration-300 ${
               mode === 'grid'
                 ? 'bg-sage-600 text-[#FBF8EF] shadow-sage-sm'
                 : 'text-sage-700 hover:bg-sage-100'
@@ -153,80 +179,108 @@ export default function PhotoCardsSection({
           </button>
         </div>
 
-        {mode === 'stack' ? (
-          <div className="flex w-full flex-col items-center">
-            <div className="relative h-[400px] w-full max-w-[310px] sm:h-[420px]">
-              <AnimatePresence initial={false}>
-                {stackOrder
-                  .slice(0, 3)
-                  .reverse()
-                  .map((cardIdx) => {
-                    const depth = stackOrder.indexOf(cardIdx);
-                    const isTop = depth === 0;
-                    return (
-                      <StackCardWrapper
-                        key={cardIdx}
-                        card={cards[cardIdx]}
-                        cardIdx={cardIdx}
-                        depth={depth}
-                        isTop={isTop}
-                        isFlipped={!!flippedMap[cardIdx]}
-                        gyroEnabled={gyroEnabled}
-                        gyroTilt={gyroTilt}
-                        reducedMotion={reducedMotion}
-                        onTapFlip={() => toggleFlip(cardIdx)}
-                        onSwipeAway={cycleNext}
-                      />
-                    );
-                  })}
-              </AnimatePresence>
-            </div>
-
-            <div className="mt-4 flex items-center gap-3">
-              <SquishyButton
-                variant="secondary"
-                onClick={cyclePrev}
-                aria-label="Kartu sebelumnya"
-                className="px-4 py-2 text-xs"
-              >
-                <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-                <span>{content.photoCardsUi.prevButton}</span>
-              </SquishyButton>
-
-              <span className="min-w-[60px] text-center text-xs font-bold tabular-nums text-sage-700">
-                {topCardIndex + 1} / {cards.length}
-              </span>
-
-              <SquishyButton
-                variant="secondary"
-                onClick={cycleNext}
-                aria-label="Kartu berikutnya"
-                className="px-4 py-2 text-xs"
-              >
-                <span>{content.photoCardsUi.nextButton}</span>
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </SquishyButton>
-            </div>
-          </div>
-        ) : (
-          <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2">
-            {cards.map((card, idx) => (
-              <div key={idx} className="flex justify-center">
-                <div className="h-[370px] w-full max-w-[300px]">
-                  <PolaroidCard3D
-                    card={card}
-                    cardIdx={idx}
-                    isFlipped={!!flippedMap[idx]}
-                    gyroEnabled={gyroEnabled}
-                    gyroTilt={gyroTilt}
-                    reducedMotion={reducedMotion}
-                    onTap={() => toggleFlip(idx)}
-                  />
-                </div>
+        <AnimatePresence mode="wait">
+          {mode === 'stack' ? (
+            <motion.div
+              key="stack-mode"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: reducedMotion ? 0.2 : 0.48, ease: GENTLE_EASE }}
+              className="flex w-full flex-col items-center"
+            >
+              <div className="relative h-[400px] w-full max-w-[310px] sm:h-[420px]">
+                <AnimatePresence initial={false} custom={deck}>
+                  {visibleSlice
+                    .slice()
+                    .reverse()
+                    .map((cardIdx) => {
+                      const depth = visibleSlice.indexOf(cardIdx);
+                      const isTop = depth === 0;
+                      return (
+                        <StackCardWrapper
+                          key={cardIdx}
+                          card={cards[cardIdx]}
+                          cardIdx={cardIdx}
+                          depth={depth}
+                          isTop={isTop}
+                          deck={deck}
+                          isFlipped={!!flippedMap[cardIdx]}
+                          gyroEnabled={gyroEnabled}
+                          gyroTilt={gyroTilt}
+                          reducedMotion={reducedMotion}
+                          onTapFlip={() => toggleFlip(cardIdx)}
+                          onSwipeNext={(side) => cycleNext(side)}
+                          onSwipePrev={cyclePrev}
+                        />
+                      );
+                    })}
+                </AnimatePresence>
               </div>
-            ))}
-          </div>
-        )}
+
+              <div className="mt-4 flex items-center gap-3">
+                <SquishyButton
+                  variant="secondary"
+                  onClick={cyclePrev}
+                  aria-label="Kartu sebelumnya"
+                  className="px-4 py-2 text-xs"
+                >
+                  <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+                  <span>{content.photoCardsUi.prevButton}</span>
+                </SquishyButton>
+
+                <span className="min-w-[60px] text-center text-xs font-bold tabular-nums text-sage-700">
+                  {topCardIndex + 1} / {cards.length}
+                </span>
+
+                <SquishyButton
+                  variant="secondary"
+                  onClick={() => cycleNext(-1)}
+                  aria-label="Kartu berikutnya"
+                  className="px-4 py-2 text-xs"
+                >
+                  <span>{content.photoCardsUi.nextButton}</span>
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </SquishyButton>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="grid-mode"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: reducedMotion ? 0.2 : 0.48, ease: GENTLE_EASE }}
+              className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2"
+            >
+              {cards.map((card, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    delay: reducedMotion ? 0 : idx * 0.05,
+                    duration: reducedMotion ? 0.2 : 0.55,
+                    ease: GENTLE_EASE,
+                  }}
+                  className="flex justify-center"
+                >
+                  <div className="h-[370px] w-full max-w-[300px]">
+                    <PolaroidCard3D
+                      card={card}
+                      cardIdx={idx}
+                      isFlipped={!!flippedMap[idx]}
+                      gyroEnabled={gyroEnabled}
+                      gyroTilt={gyroTilt}
+                      reducedMotion={reducedMotion}
+                      onTap={() => toggleFlip(idx)}
+                    />
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </SectionShell>
   );
@@ -237,12 +291,14 @@ interface StackCardWrapperProps {
   cardIdx: number;
   depth: number;
   isTop: boolean;
+  deck: DeckState;
   isFlipped: boolean;
   gyroEnabled: boolean;
   gyroTilt: { rx: number; ry: number; gx: number; gy: number };
   reducedMotion: boolean;
   onTapFlip: () => void;
-  onSwipeAway: () => void;
+  onSwipeNext: (side: -1 | 1) => void;
+  onSwipePrev: () => void;
 }
 
 function StackCardWrapper({
@@ -250,15 +306,17 @@ function StackCardWrapper({
   cardIdx,
   depth,
   isTop,
+  deck,
   isFlipped,
   gyroEnabled,
   gyroTilt,
   reducedMotion,
   onTapFlip,
-  onSwipeAway,
+  onSwipeNext,
+  onSwipePrev,
 }: StackCardWrapperProps) {
   const x = useMotionValue(0);
-  const rotate = useTransform(x, [-220, 0, 220], [-14, 0, 14]);
+  const dragRotate = useTransform(x, [-220, 0, 220], [-12, 0, 12]);
   const draggedRef = useRef(false);
 
   const handleDragStart = () => {
@@ -266,8 +324,10 @@ function StackCardWrapper({
   };
 
   const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    if (Math.abs(info.offset.x) > 85 || Math.abs(info.velocity.x) > 420) {
-      onSwipeAway();
+    if (info.offset.x < -75 || info.velocity.x < -380) {
+      onSwipeNext(-1);
+    } else if (info.offset.x > 75 || info.velocity.x > 380) {
+      onSwipePrev();
     }
     window.setTimeout(() => {
       draggedRef.current = false;
@@ -275,22 +335,58 @@ function StackCardWrapper({
   };
 
   const restTilt = CARD_REST_TILTS[cardIdx % CARD_REST_TILTS.length];
+  const isReturningToTop = deck.dir === -1 && deck.movedId === cardIdx;
+
+  const initialState = reducedMotion
+    ? { opacity: 0 }
+    : isReturningToTop
+    ? { x: -240, y: -10, rotate: -10, scale: 0.96, opacity: 0 }
+    : { x: 0, y: 30, rotate: 0, scale: 0.88, opacity: 0 };
+
+  const exitVariant = (latestDeck: DeckState) => {
+    if (reducedMotion) {
+      return { opacity: 0, transition: { duration: 0.2 } };
+    }
+    // Kartu teratas meluncur keluar ke samping seperti membalik tumpukan foto.
+    if (latestDeck.dir === 1 && latestDeck.movedId === cardIdx) {
+      return {
+        x: latestDeck.exitSide * 250,
+        y: -14,
+        rotate: latestDeck.exitSide * 11,
+        scale: 0.94,
+        opacity: 0,
+        transition: { duration: 0.64, ease: GENTLE_EASE },
+      };
+    }
+    // Kartu paling belakang meredup pelan di posisinya.
+    return {
+      x: 0,
+      y: 30,
+      scale: 0.88,
+      opacity: 0,
+      transition: { duration: 0.45, ease: GENTLE_EASE },
+    };
+  };
 
   return (
     <motion.div
-      style={{
-        x: isTop ? x : 0,
-        rotate: isTop ? rotate : restTilt * 0.6,
-        zIndex: 10 - depth,
-      }}
-      initial={{ scale: 0.96, opacity: 0 }}
+      custom={deck}
+      variants={{ exit: exitVariant }}
+      initial={initialState}
       animate={{
-        scale: 1 - depth * 0.045,
+        x: 0,
         y: depth * 12,
+        rotate: isTop ? 0 : restTilt * 0.6,
+        scale: 1 - depth * 0.045,
         opacity: 1 - depth * 0.14,
       }}
-      exit={{ opacity: 0, scale: 0.94, transition: { duration: 0.32, ease: GENTLE_EASE } }}
-      transition={{ duration: reducedMotion ? 0.25 : 0.62, ease: GENTLE_EASE }}
+      exit="exit"
+      transition={{ duration: reducedMotion ? 0.25 : 0.68, ease: GENTLE_EASE }}
+      style={{
+        x,
+        rotate: isTop ? dragRotate : undefined,
+        zIndex: 10 - depth,
+      }}
       drag={isTop ? 'x' : false}
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={0.85}
@@ -346,13 +442,13 @@ function PolaroidCard3D({
 
     const px = (e.clientX - rect.left) / rect.width;
     const py = (e.clientY - rect.top) / rect.height;
-    const rx = (0.5 - py) * 14;
-    const ry = (px - 0.5) * 14;
+    const rx = (0.5 - py) * 12;
+    const ry = (px - 0.5) * 12;
 
     el.style.transform = `rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg)`;
     el.style.setProperty('--card-glare-x', `${(px * 100).toFixed(1)}%`);
     el.style.setProperty('--card-glare-y', `${(py * 100).toFixed(1)}%`);
-    el.style.setProperty('--card-glare-o', '0.32');
+    el.style.setProperty('--card-glare-o', '0.28');
   };
 
   const handlePointerLeave = () => {
@@ -378,8 +474,8 @@ function PolaroidCard3D({
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
       style={{
-        perspective: '1100px',
-        transition: 'transform 320ms cubic-bezier(0.22, 1, 0.36, 1)',
+        perspective: '1200px',
+        transition: 'transform 380ms cubic-bezier(0.22, 1, 0.36, 1)',
         ...gyroStyle,
       }}
       className="h-full w-full"
@@ -396,13 +492,16 @@ function PolaroidCard3D({
                 rotateZ: isFlipped ? 0 : restTilt,
               }
         }
-        transition={{ duration: reducedMotion ? 0.2 : 0.72, ease: GENTLE_EASE }}
+        transition={{ duration: reducedMotion ? 0.2 : 0.85, ease: GENTLE_EASE }}
         style={{ transformStyle: 'preserve-3d' }}
         className="focus-ring relative h-full w-full rounded-[26px] text-left"
       >
         {/* Sisi depan polaroid */}
         <div
-          style={{ backfaceVisibility: 'hidden' }}
+          style={{
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden',
+          }}
           className="absolute inset-0 flex flex-col rounded-[26px] border border-sage-200 bg-cream p-3.5 pb-5 shadow-sage-lg"
         >
           {/* Stiker selotip kertas di atas foto */}
@@ -422,7 +521,7 @@ function PolaroidCard3D({
             {/* Kilau cahaya tilt */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 transition-opacity duration-200"
+              className="pointer-events-none absolute inset-0 transition-opacity duration-300"
               style={{
                 opacity: 'var(--card-glare-o, 0)',
                 background:
@@ -443,6 +542,7 @@ function PolaroidCard3D({
         <div
           style={{
             backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden',
             transform: 'rotateY(180deg)',
           }}
           className="absolute inset-0 flex flex-col justify-between rounded-[26px] border border-sage-300 bg-cream p-6 shadow-sage-lg"

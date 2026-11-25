@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import gsap from 'gsap';
 import confetti from 'canvas-confetti';
 import {
+  ArrowLeft,
   ArrowRight,
   Coffee,
   Gift,
@@ -52,6 +53,9 @@ export default function TimelineSection({
   const [revealedCount, setRevealedCount] = useState(() =>
     Math.max(1, Math.min(total, initialRevealedCount))
   );
+  const [activeIndex, setActiveIndex] = useState(() =>
+    Math.max(0, Math.min(total, initialRevealedCount) - 1)
+  );
   const [revealPulse, setRevealPulse] = useState(0);
 
   const trackRef = useRef<HTMLDivElement | null>(null);
@@ -59,13 +63,16 @@ export default function TimelineSection({
   const pathWrapRef = useRef<HTMLDivElement | null>(null);
   const pathRef = useRef<SVGPathElement | null>(null);
   const heartRef = useRef<HTMLDivElement | null>(null);
-  const latestCardRef = useRef<HTMLLIElement | null>(null);
+  const activeCardRef = useRef<HTMLLIElement | null>(null);
   const prevProgressRef = useRef(0);
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
 
   const allRevealed = revealedCount >= total;
   const visibleItems = content.timeline.slice(0, revealedCount);
+  const canGoPrev = activeIndex > 0;
+  const canGoNext = activeIndex < total - 1;
+  const nextWillReveal = activeIndex === revealedCount - 1 && !allRevealed;
 
   useEffect(() => {
     if (allRevealed) {
@@ -83,7 +90,7 @@ export default function TimelineSection({
     const pathWrap = pathWrapRef.current;
     const pathEl = pathRef.current;
     const heartEl = heartRef.current;
-    const latestCard = latestCardRef.current;
+    const activeCard = activeCardRef.current;
     if (!pathWrap || !pathEl || !heartEl) return;
 
     const totalLength = pathEl.getTotalLength();
@@ -98,11 +105,11 @@ export default function TimelineSection({
     };
 
     let targetProgress = 1;
-    if (!allRevealed && latestCard && pathWrap.offsetWidth > 0) {
-      const cardCenter = latestCard.offsetLeft + latestCard.offsetWidth / 2;
+    if (!(allRevealed && activeIndex === total - 1) && activeCard && pathWrap.offsetWidth > 0) {
+      const cardCenter = activeCard.offsetLeft + activeCard.offsetWidth / 2;
       targetProgress = Math.min(
         0.95,
-        Math.max(0.15, (cardCenter - pathWrap.offsetLeft) / pathWrap.offsetWidth)
+        Math.max(0.12, (cardCenter - pathWrap.offsetLeft) / pathWrap.offsetWidth)
       );
     }
 
@@ -126,11 +133,11 @@ export default function TimelineSection({
     }, containerRef);
 
     return () => ctx.revert();
-  }, [revealedCount, allRevealed, reducedMotion]);
+  }, [activeIndex, revealedCount, allRevealed, total, reducedMotion]);
 
   useEffect(() => {
     const track = trackRef.current;
-    const card = latestCardRef.current;
+    const card = activeCardRef.current;
     if (!track || !card) return;
 
     const timer = window.setTimeout(() => {
@@ -164,37 +171,56 @@ export default function TimelineSection({
       window.clearTimeout(timer);
       gsap.killTweensOf(track);
     };
-  }, [revealedCount, reducedMotion]);
+  }, [activeIndex, revealedCount, reducedMotion]);
+
+  const fireGentleConfetti = (e: React.MouseEvent<HTMLButtonElement>, isFinal: boolean) => {
+    if (reducedMotion) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const originX = (rect.left + rect.width / 2) / window.innerWidth;
+    const originY = Math.min(0.85, (rect.top + rect.height / 2) / window.innerHeight);
+
+    confetti({
+      particleCount: isFinal ? 30 : 14,
+      spread: isFinal ? 70 : 48,
+      startVelocity: 18,
+      gravity: 0.72,
+      ticks: 220,
+      origin: { x: originX, y: originY },
+      colors: ['#7F9C70', '#B5C7AA', '#F2CFC4', '#FBF8EF'],
+      scalar: 0.82,
+    });
+  };
 
   const handleRevealNext = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (allRevealed) return;
 
     const nextCount = Math.min(total, revealedCount + 1);
     setRevealedCount(nextCount);
+    setActiveIndex(nextCount - 1);
     onRevealedCountChange?.(nextCount);
     setRevealPulse((k) => k + 1);
+    fireGentleConfetti(e, nextCount === total);
+  };
 
-    if (!reducedMotion) {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const originX = (rect.left + rect.width / 2) / window.innerWidth;
-      const originY = Math.min(0.85, (rect.top + rect.height / 2) / window.innerHeight);
+  const handlePrev = () => {
+    if (!canGoPrev) return;
+    setActiveIndex((idx) => Math.max(0, idx - 1));
+  };
 
-      confetti({
-        particleCount: nextCount === total ? 30 : 14,
-        spread: nextCount === total ? 70 : 48,
-        startVelocity: 18,
-        gravity: 0.72,
-        ticks: 220,
-        origin: { x: originX, y: originY },
-        colors: ['#7F9C70', '#B5C7AA', '#F2CFC4', '#FBF8EF'],
-        scalar: 0.82,
-      });
+  const handleNext = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (activeIndex < revealedCount - 1) {
+      setActiveIndex((idx) => Math.min(revealedCount - 1, idx + 1));
+      return;
+    }
+    if (!allRevealed) {
+      handleRevealNext(e);
     }
   };
 
   const handleRestartTimeline = () => {
     prevProgressRef.current = 0;
     setRevealedCount(1);
+    setActiveIndex(0);
     onRevealedCountChange?.(1);
     setRevealPulse(0);
   };
@@ -237,7 +263,7 @@ export default function TimelineSection({
               </motion.span>
             }
           >
-            Ketuk jejak berikutnya untuk melanjutkan
+            Gunakan Sebelum / Berikut atau ketuk jejak berikutnya
           </HintBubble>
         )}
       </div>
@@ -302,15 +328,15 @@ export default function TimelineSection({
             <ol className="relative flex items-stretch gap-5 sm:gap-6">
               <AnimatePresence initial={false}>
                 {visibleItems.map((item, idx) => {
-                  const isLatest = idx === visibleItems.length - 1;
+                  const isActive = idx === activeIndex;
                   return (
                     <TimelineCard
                       key={`${item.date}-${idx}`}
                       item={item}
                       index={idx}
-                      isLatest={isLatest}
+                      isActive={isActive}
                       reducedMotion={reducedMotion}
-                      cardRef={isLatest ? latestCardRef : undefined}
+                      cardRef={isActive ? activeCardRef : undefined}
                     />
                   );
                 })}
@@ -363,14 +389,46 @@ export default function TimelineSection({
         </div>
       </div>
 
-      {/* Kontrol pembuka jejak berikutnya (non-spoiler) */}
-      <div className="mt-6 flex flex-col items-center gap-4 text-center">
+      {/* Tombol navigasi Sebelum & Berikut */}
+      <div className="mt-5 flex flex-col items-center gap-5 text-center">
+        <div className="flex items-center justify-center gap-3">
+          <SquishyButton
+            variant="secondary"
+            onClick={handlePrev}
+            disabled={!canGoPrev}
+            aria-label="Jejak sebelumnya"
+            className="px-4 py-2 text-xs"
+          >
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            <span>Sebelum</span>
+          </SquishyButton>
+
+          <span
+            aria-live="polite"
+            className="min-w-[60px] text-center text-xs font-bold tabular-nums text-sage-700"
+          >
+            {activeIndex + 1} / {total}
+          </span>
+
+          <SquishyButton
+            variant={nextWillReveal ? 'primary' : 'secondary'}
+            onClick={handleNext}
+            disabled={!canGoNext}
+            aria-label={nextWillReveal ? 'Buka jejak berikutnya' : 'Jejak berikutnya'}
+            className="px-4 py-2 text-xs"
+          >
+            {nextWillReveal && <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />}
+            <span>Berikut</span>
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </SquishyButton>
+        </div>
+
         {!allRevealed ? (
           <motion.div
             initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: reducedMotion ? 0.25 : 0.7, ease: GENTLE_EASE }}
-            className="relative flex flex-col items-center gap-3 rounded-[28px] border border-dashed border-sage-300 bg-cream/85 px-6 py-5 shadow-sage-sm"
+            className="relative inline-flex items-center gap-1.5 rounded-pill border border-dashed border-sage-300 bg-cream/85 px-4 py-2 text-xs font-bold text-sage-700 shadow-sage-sm"
           >
             <AnimatePresence>
               {revealPulse > 0 && !reducedMotion && (
@@ -381,32 +439,13 @@ export default function TimelineSection({
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.95, ease: GENTLE_EASE }}
                   aria-hidden="true"
-                  className="pointer-events-none absolute inset-0 rounded-[28px] border-2 border-sage-400"
+                  className="pointer-events-none absolute inset-0 rounded-pill border-2 border-sage-400"
                 />
               )}
             </AnimatePresence>
 
-            <div className="inline-flex items-center gap-1.5 rounded-pill bg-sage-100 px-3 py-1 text-xs font-bold text-sage-700">
-              <Lock className="h-3.5 w-3.5" aria-hidden="true" />
-              <span>Masih ada {total - revealedCount} jejak tersembunyi</span>
-            </div>
-
-            <SquishyButton onClick={handleRevealNext} className="group">
-              <motion.span
-                key={revealPulse}
-                animate={reducedMotion ? undefined : { scale: [1, 1.12, 1] }}
-                transition={{ duration: 0.65, ease: GENTLE_EASE }}
-              >
-                <Sparkles className="h-4 w-4" aria-hidden="true" />
-              </motion.span>
-              <span>Buka jejak berikutnya</span>
-              <motion.span
-                animate={reducedMotion ? undefined : { x: [0, 3, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-              >
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </motion.span>
-            </SquishyButton>
+            <Lock className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>Masih ada {total - revealedCount} jejak tersembunyi</span>
           </motion.div>
         ) : (
           <motion.div
@@ -438,7 +477,7 @@ export default function TimelineSection({
 interface TimelineCardProps {
   item: TimelineItem;
   index: number;
-  isLatest: boolean;
+  isActive: boolean;
   reducedMotion: boolean;
   cardRef?: React.RefObject<HTMLLIElement>;
 }
@@ -446,11 +485,11 @@ interface TimelineCardProps {
 function TimelineCard({
   item,
   index,
-  isLatest,
+  isActive,
   reducedMotion,
   cardRef,
 }: TimelineCardProps) {
-  const isPrevious = !isLatest;
+  const isBlurred = !isActive;
   const stickerKind = index % 3;
 
   const initialVariant = reducedMotion
@@ -478,16 +517,16 @@ function TimelineCard({
       <span
         aria-hidden="true"
         className={`pointer-events-none absolute left-1/2 top-[-29px] z-10 h-3.5 w-3.5 -translate-x-1/2 rounded-full border-2 transition-colors duration-700 ease-out ${
-          isPrevious
+          isBlurred
             ? 'border-sage-300 bg-sage-200'
             : 'border-sage-500 bg-cream shadow-sage-sm'
         }`}
       />
 
       <article
-        data-blurred={isPrevious ? 'true' : 'false'}
+        data-blurred={isBlurred ? 'true' : 'false'}
         className={`relative flex w-full flex-col rounded-[26px] border bg-cream p-5 transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          isPrevious
+          isBlurred
             ? `${reducedMotion ? '' : 'scale-[0.96] '}select-none border-sage-200/70 opacity-65 shadow-sage-sm blur-[5px]`
             : 'scale-100 border-sage-400 opacity-100 shadow-sage-glow blur-0'
         }`}

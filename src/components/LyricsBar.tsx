@@ -38,10 +38,7 @@ export function LyricsBar({
   onToggleTheme,
 }: LyricsBarProps) {
   const reducedMotion = useReducedMotion();
-  const [collapsed, setCollapsed] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return true;
-    return window.innerWidth < 1024;
-  });
+  const [collapsed, setCollapsed] = useState(true);
   const progressRef = useRef<HTMLDivElement | null>(null);
 
   const { lines, activeIndex, hasLyrics } = useLyrics({

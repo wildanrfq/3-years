@@ -1,6 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
-import { Sparkles } from 'lucide-react';
-import { content, SECTION_META, SectionId } from './config/content';
+import { content, SectionId } from './config/content';
 import { assetUrl } from './lib/assets';
 import { useAudio } from './hooks/useAudio';
 import { useTheme } from './hooks/useTheme';
@@ -8,8 +7,6 @@ import { AmbientEffects } from './components/AmbientEffects';
 import { LyricsBar } from './components/LyricsBar';
 import { BottomNav } from './components/BottomNav';
 import { PageTransition } from './components/PageTransition';
-import { SectionShell } from './components/SectionShell';
-import { Mascot } from './components/Mascot';
 import { PinGate } from './features/gate/PinGate';
 import { IntroScreen } from './features/intro/IntroScreen';
 import { HubScreen } from './features/hub/HubScreen';
@@ -17,6 +14,9 @@ import { HubScreen } from './features/hub/HubScreen';
 const TimelineSection = lazy(() => import('./features/timeline/TimelineSection'));
 const CounterSection = lazy(() => import('./features/counter/CounterSection'));
 const RewindSection = lazy(() => import('./features/rewind/RewindSection'));
+const PhotoCardsSection = lazy(() => import('./features/photocards/PhotoCardsSection'));
+const MapSection = lazy(() => import('./features/map/MapSection'));
+const LetterSection = lazy(() => import('./features/letter/LetterSection'));
 
 type Screen = 'gate' | 'intro' | 'hub' | SectionId;
 
@@ -144,6 +144,7 @@ export default function App() {
             partnerName={content.partnerName}
             myName={content.myName}
             siteTitle={content.siteTitle}
+            theme={theme}
             onStart={() => setScreen('hub')}
           />
         )}
@@ -180,9 +181,20 @@ export default function App() {
                 onNavigateSection={handleSelectSection}
               />
             )}
-            {(screen === 'photocards' || screen === 'map' || screen === 'letter') && (
-              <SectionPreviewShell
-                section={screen}
+            {screen === 'photocards' && (
+              <PhotoCardsSection
+                onBackToHub={() => setScreen('hub')}
+                onNextSection={handleSelectSection}
+              />
+            )}
+            {screen === 'map' && (
+              <MapSection
+                onBackToHub={() => setScreen('hub')}
+                onNextSection={handleSelectSection}
+              />
+            )}
+            {screen === 'letter' && (
+              <LetterSection
                 onBackToHub={() => setScreen('hub')}
                 onNextSection={handleSelectSection}
               />
@@ -204,45 +216,10 @@ export default function App() {
 
 function SectionLoading() {
   return (
-    <div className="flex min-h-dvh items-center justify-center px-4 pt-28">
+    <div className="flex min-h-dvh items-center justify-center px-4 pt-20">
       <div className="rounded-3xl border border-sage-200 bg-cream px-6 py-4 text-sm font-semibold text-sage-700 shadow-sage-sm">
         Memuat halaman...
       </div>
     </div>
-  );
-}
-
-function SectionPreviewShell({
-  section,
-  onBackToHub,
-  onNextSection,
-}: {
-  section: SectionId;
-  onBackToHub: () => void;
-  onNextSection: (next: SectionId) => void;
-}) {
-  const meta = SECTION_META[section];
-  return (
-    <SectionShell
-      section={section}
-      onBackToHub={onBackToHub}
-      onNextSection={onNextSection}
-    >
-      <div className="mx-auto flex max-w-md flex-col items-center rounded-[28px] border border-sage-200 bg-cream p-6 text-center shadow-sage-md">
-        <Mascot
-          mood={section === 'letter' ? 'cheering' : 'curious'}
-          size="md"
-          message="Siap diisi di tahap 3!"
-        />
-        <span className="mt-3 inline-flex items-center gap-1.5 rounded-pill bg-sage-100 px-3 py-1 text-xs font-bold text-sage-700">
-          <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
-          <span>Pratinjau navigasi</span>
-        </span>
-        <p className="mt-3 text-sm leading-relaxed text-sage-700">
-          Halaman <strong className="text-sage-900">{meta.title}</strong> akan kita lengkapi di
-          tahap 3 bersama kartu foto, peta perjalanan, surat mengetik, dan latar 3D.
-        </p>
-      </div>
-    </SectionShell>
   );
 }

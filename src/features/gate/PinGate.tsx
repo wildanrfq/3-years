@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { Delete, HelpCircle, Lock, LockOpen } from 'lucide-react';
@@ -8,6 +8,8 @@ import { ThemeToggle } from '../../components/ThemeToggle';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { ThemeMode } from '../../hooks/useTheme';
 import { verifyPin } from '../../lib/pin';
+
+const AmbientScene = lazy(() => import('../../three/AmbientScene'));
 
 interface PinGateProps {
   partnerName: string;
@@ -148,6 +150,10 @@ export function PinGate({
 
   return (
     <div className="relative flex min-h-dvh w-full items-center justify-center overflow-hidden bg-gradient-to-b from-sage-100 via-sage-50 to-sage-100 px-4 py-8">
+      <Suspense fallback={null}>
+        <AmbientScene theme={theme} variant="gate" />
+      </Suspense>
+
       <div className="pt-safe fixed right-3 top-3 z-40 sm:right-5 sm:top-5">
         <ThemeToggle theme={theme} onToggle={onToggleTheme} showLabel />
       </div>

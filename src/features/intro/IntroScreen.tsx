@@ -1,14 +1,19 @@
+import { lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Mascot } from '../../components/Mascot';
 import { SquishyButton } from '../../components/SquishyButton';
 import { HintBubble } from '../../components/HintBubble';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { ThemeMode } from '../../hooks/useTheme';
+
+const AmbientScene = lazy(() => import('../../three/AmbientScene'));
 
 interface IntroScreenProps {
   partnerName: string;
   myName: string;
   siteTitle: string;
+  theme: ThemeMode;
   onStart: () => void;
 }
 
@@ -16,23 +21,26 @@ export function IntroScreen({
   partnerName,
   myName,
   siteTitle,
+  theme,
   onStart,
 }: IntroScreenProps) {
   const reducedMotion = useReducedMotion();
 
   return (
-    <main className="relative flex min-h-dvh w-full items-center justify-center overflow-hidden px-4 pb-12 pt-36 sm:pt-36">
-      {/* Latar suasana sage lembut sebelum adegan 3D dimuat di tahap 3 */}
+    <main className="relative flex min-h-dvh w-full items-center justify-center overflow-hidden px-4 pb-12 pt-20 sm:pt-14">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-gradient-to-b from-sage-100/70 via-sage-50 to-sage-100/80"
       />
+      <Suspense fallback={null}>
+        <AmbientScene theme={theme} variant="intro" />
+      </Suspense>
       {!reducedMotion && (
         <motion.div
           aria-hidden="true"
-          animate={{ scale: [1, 1.08, 1], opacity: [0.45, 0.7, 0.45] }}
+          animate={{ scale: [1, 1.08, 1], opacity: [0.4, 0.62, 0.4] }}
           transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-          className="pointer-events-none absolute top-28 h-72 w-72 rounded-full bg-sage-200/60 blur-3xl"
+          className="pointer-events-none absolute top-28 h-72 w-72 rounded-full bg-sage-200/50 blur-3xl"
         />
       )}
 
@@ -59,7 +67,7 @@ export function IntroScreen({
 
         <p className="mt-3 text-sm leading-relaxed text-sage-700 sm:text-base">
           Di dalamnya ada cerita kita, foto, peta tempat yang pernah kita datangi,
-          sampai surat kecil dari {myName}. Lagunya juga jalan terus di atas sambil kamu baca.
+          sampai surat kecil dari {myName}. Lagunya juga jalan terus di pojok kanan atas sambil kamu baca.
         </p>
 
         <div className="mt-7 flex w-full flex-col items-center gap-3">

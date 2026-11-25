@@ -77,7 +77,7 @@ export function HubScreen({
   const letterLocked = lockLetterUntilAllVisited && remainingCount > 0;
 
   return (
-    <main className="relative z-10 mx-auto flex min-h-dvh w-full max-w-3xl flex-col px-4 pb-12 pt-36 sm:px-6 sm:pt-36">
+    <main className="relative z-10 mx-auto flex min-h-dvh w-full max-w-3xl flex-col px-4 pb-12 pt-20 sm:px-6 sm:pt-14">
       <header className="flex flex-col items-center text-center">
         <Mascot
           mood="excited"

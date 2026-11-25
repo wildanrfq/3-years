@@ -108,6 +108,10 @@ export interface ContentConfig {
   rewind: RewindSlide[];
   photoCards: PhotoCardItem[];
   places: PlaceItem[];
+  mapTile: {
+    url: string;
+    attribution: string;
+  };
   letter: {
     title: string;
     body: string[];
@@ -383,6 +387,10 @@ export const content: ContentConfig = {
       photo: 'photos/place-5.svg',
     },
   ],
+  mapTile: {
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '&copy; OpenStreetMap contributors',
+  },
   letter: {
     title: 'Happy Anniversary',
     body: [

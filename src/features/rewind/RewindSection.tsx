@@ -168,13 +168,13 @@ export default function RewindSection({
   const bgGradient = SLIDE_BACKGROUNDS[index % SLIDE_BACKGROUNDS.length];
 
   return (
-    <main className="relative z-10 flex min-h-dvh w-full flex-col items-center justify-center px-3 pb-24 pt-36 sm:px-6 sm:pt-36">
+    <main className="relative z-10 flex min-h-dvh w-full flex-col items-center justify-center px-3 pb-24 pt-20 sm:px-6 sm:pt-14">
       <div
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerCancel}
         style={{ perspective: '1100px' }}
-        className={`relative flex aspect-[9/16] h-[min(640px,calc(100dvh-14.5rem))] max-w-full select-none flex-col overflow-hidden rounded-[32px] border border-sage-200/90 bg-gradient-to-b ${bgGradient} shadow-sage-lg touch-pan-x`}
+        className={`relative flex aspect-[9/16] w-[min(380px,calc(100vw-24px),calc((100dvh-11.5rem)*0.5625))] select-none flex-col overflow-hidden rounded-[32px] border border-sage-200/90 bg-gradient-to-b ${bgGradient} shadow-sage-lg touch-pan-x`}
       >
         {/* Gumpalan cahaya latar animasi */}
         {!reducedMotion && (

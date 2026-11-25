@@ -23,7 +23,7 @@ export function SectionShell({
   const meta = SECTION_META[section];
 
   return (
-    <main className="relative z-10 mx-auto flex min-h-dvh w-full max-w-3xl flex-col px-4 pb-28 pt-36 sm:px-6 sm:pt-36">
+    <main className="relative z-10 mx-auto flex min-h-dvh w-full max-w-3xl flex-col px-4 pb-28 pt-20 sm:px-6 sm:pt-14">
       <header className="mb-6 text-center">
         <span className="inline-block rounded-pill bg-sage-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-sage-700">
           Bagian {idx + 1} dari {SECTION_ORDER.length}

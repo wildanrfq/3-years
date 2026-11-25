@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import { Sparkles } from 'lucide-react';
 import { content, SECTION_META, SectionId } from './config/content';
 import { assetUrl } from './lib/assets';
 import { useAudio } from './hooks/useAudio';
+import { useTheme } from './hooks/useTheme';
 import { AmbientEffects } from './components/AmbientEffects';
 import { LyricsBar } from './components/LyricsBar';
 import { BottomNav } from './components/BottomNav';
@@ -12,6 +13,10 @@ import { Mascot } from './components/Mascot';
 import { PinGate } from './features/gate/PinGate';
 import { IntroScreen } from './features/intro/IntroScreen';
 import { HubScreen } from './features/hub/HubScreen';
+
+const TimelineSection = lazy(() => import('./features/timeline/TimelineSection'));
+const CounterSection = lazy(() => import('./features/counter/CounterSection'));
+const RewindSection = lazy(() => import('./features/rewind/RewindSection'));
 
 type Screen = 'gate' | 'intro' | 'hub' | SectionId;
 
@@ -42,6 +47,7 @@ export default function App() {
   const [visitedSections, setVisitedSections] = useState<SectionId[]>(() => readInitialVisited());
 
   const audio = useAudio(content.song.loop);
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     document.title = content.siteTitle;
@@ -99,7 +105,6 @@ export default function App() {
 
   return (
     <div className="relative min-h-dvh w-full bg-sage-50 text-ink">
-      {/* Elemen audio tunggal di root agar lagu tidak pernah terputus antar halaman */}
       <audio
         ref={audio.audioRef}
         src={assetUrl(content.song.audioSrc)}
@@ -115,6 +120,8 @@ export default function App() {
           artist={content.song.artist}
           lrcSrc={content.song.lrcSrc}
           lyricsOffsetMs={content.song.lyricsOffsetMs}
+          theme={theme}
+          onToggleTheme={toggleTheme}
         />
       )}
 
@@ -125,6 +132,8 @@ export default function App() {
             pinLength={content.pin.length}
             pinHash={content.pin.hash}
             pinHint={content.pin.hint}
+            theme={theme}
+            onToggleTheme={toggleTheme}
             onAuthSuccess={handleAuthSuccess}
             onUnlock={handleUnlock}
           />
@@ -152,11 +161,33 @@ export default function App() {
         )}
 
         {isSection && (
-          <SectionPreviewShell
-            section={screen}
-            onBackToHub={() => setScreen('hub')}
-            onNextSection={handleSelectSection}
-          />
+          <Suspense fallback={<SectionLoading />}>
+            {screen === 'timeline' && (
+              <TimelineSection
+                onBackToHub={() => setScreen('hub')}
+                onNextSection={handleSelectSection}
+              />
+            )}
+            {screen === 'counter' && (
+              <CounterSection
+                onBackToHub={() => setScreen('hub')}
+                onNextSection={handleSelectSection}
+              />
+            )}
+            {screen === 'rewind' && (
+              <RewindSection
+                onBackToHub={() => setScreen('hub')}
+                onNavigateSection={handleSelectSection}
+              />
+            )}
+            {(screen === 'photocards' || screen === 'map' || screen === 'letter') && (
+              <SectionPreviewShell
+                section={screen}
+                onBackToHub={() => setScreen('hub')}
+                onNextSection={handleSelectSection}
+              />
+            )}
+          </Suspense>
         )}
       </PageTransition>
 
@@ -167,6 +198,16 @@ export default function App() {
           onNavigateSection={handleSelectSection}
         />
       )}
+    </div>
+  );
+}
+
+function SectionLoading() {
+  return (
+    <div className="flex min-h-dvh items-center justify-center px-4 pt-28">
+      <div className="rounded-3xl border border-sage-200 bg-cream px-6 py-4 text-sm font-semibold text-sage-700 shadow-sage-sm">
+        Memuat halaman...
+      </div>
     </div>
   );
 }
@@ -191,15 +232,15 @@ function SectionPreviewShell({
         <Mascot
           mood={section === 'letter' ? 'cheering' : 'curious'}
           size="md"
-          message="Siap diisi di tahap berikutnya!"
+          message="Siap diisi di tahap 3!"
         />
         <span className="mt-3 inline-flex items-center gap-1.5 rounded-pill bg-sage-100 px-3 py-1 text-xs font-bold text-sage-700">
           <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
           <span>Pratinjau navigasi</span>
         </span>
         <p className="mt-3 text-sm leading-relaxed text-sage-700">
-          Halaman <strong className="text-sage-900">{meta.title}</strong> akan kita isi penuh di fase
-          berikutnya. Sekarang kamu bisa coba pindah antar menu sambil mendengarkan musik di atas.
+          Halaman <strong className="text-sage-900">{meta.title}</strong> akan kita lengkapi di
+          tahap 3 bersama kartu foto, peta perjalanan, surat mengetik, dan latar 3D.
         </p>
       </div>
     </SectionShell>

@@ -2,8 +2,8 @@ import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { Delete, HelpCircle, Lock, LockOpen } from 'lucide-react';
+import { content } from '../../config/content';
 import { Mascot, MascotMood } from '../../components/Mascot';
-import { HintBubble } from '../../components/HintBubble';
 import { ThemeToggle } from '../../components/ThemeToggle';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { GENTLE_EASE } from '../../lib/motion';
@@ -142,11 +142,11 @@ export function PinGate({
 
   const mascotMessage =
     status === 'unlocked'
-      ? 'Yeay, kebuka!'
+      ? content.pinGate.mascotUnlocked
       : status === 'error'
-      ? 'Ups, bukan itu kodenya'
+      ? content.pinGate.mascotError
       : errorCount > 0
-      ? 'Coba lihat petunjuknya ya'
+      ? content.pinGate.mascotRetryHint
       : undefined;
 
   return (
@@ -212,10 +212,10 @@ export function PinGate({
           </motion.div>
 
           <h1 className="mt-3 font-display text-2xl font-semibold text-sage-900">
-            Hai, {partnerName}
+            {content.pinGate.headingPrefix} {partnerName}
           </h1>
           <p className="mt-1 text-sm text-sage-700">
-            Masukkan {pinLength} angka rahasia kita dulu ya.
+            {content.pinGate.subtitle.replace('{length}', String(pinLength))}
           </p>
         </div>
 
@@ -267,7 +267,7 @@ export function PinGate({
               className="overflow-hidden"
             >
               <div className="rounded-2xl border border-sage-200 bg-sage-100/80 px-3.5 py-2 text-xs font-semibold text-sage-800">
-                Petunjuk: {pinHint}
+                {content.pinGate.hintPrefix} {pinHint}
               </div>
             </motion.div>
           )}
@@ -285,7 +285,7 @@ export function PinGate({
                   disabled={digits.length === 0 || status === 'unlocked'}
                   className="focus-ring flex min-h-[54px] items-center justify-center rounded-2xl bg-sage-100/80 text-xs font-bold text-sage-700 transition hover:bg-sage-200/70 active:scale-95 disabled:opacity-40"
                 >
-                  Ulang
+                  {content.pinGate.clearButton}
                 </button>
               );
             }
@@ -321,20 +321,18 @@ export function PinGate({
           })}
         </div>
 
-        <div className="mt-4 flex flex-col items-center gap-2">
-          {!showHint ? (
+        {!showHint && (
+          <div className="mt-4 flex flex-col items-center gap-2">
             <button
               type="button"
               onClick={() => setShowHint(true)}
               className="focus-ring inline-flex min-h-[44px] items-center gap-1.5 rounded-pill px-3 text-xs font-semibold text-sage-600 transition hover:bg-sage-100 hover:text-sage-800"
             >
               <HelpCircle className="h-3.5 w-3.5" aria-hidden="true" />
-              <span>Lupa kodenya? Lihat petunjuk</span>
+              <span>{content.pinGate.forgotPinButton}</span>
             </button>
-          ) : (
-            <HintBubble>Ketuk angka di atas untuk membuka</HintBubble>
-          )}
-        </div>
+          </div>
+        )}
       </motion.section>
     </div>
   );

@@ -19,7 +19,6 @@ import { assetUrl } from '../../lib/assets';
 import { GENTLE_EASE } from '../../lib/motion';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { SectionShell } from '../../components/SectionShell';
-import { HintBubble } from '../../components/HintBubble';
 import { SquishyButton } from '../../components/SquishyButton';
 import { Mascot } from '../../components/Mascot';
 
@@ -263,7 +262,7 @@ export default function TimelineSection({
       <div className="mb-4 flex flex-col items-center gap-3">
         <div className="w-full max-w-xs rounded-2xl border border-sage-200 bg-cream px-4 py-2.5 shadow-sage-sm">
           <div className="flex items-center justify-between text-xs font-bold text-sage-800">
-            <span>Cerita terbuka</span>
+            <span>{content.timelineUi.progressLabel}</span>
             <span className="tabular-nums text-sage-600">
               {revealedCount} / {total}
             </span>
@@ -277,21 +276,6 @@ export default function TimelineSection({
             />
           </div>
         </div>
-
-        {!allRevealed && (
-          <HintBubble
-            icon={
-              <motion.span
-                animate={reducedMotion ? undefined : { x: [0, 3, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-              >
-                <ArrowRight className="h-3.5 w-3.5 text-sage-600" aria-hidden="true" />
-              </motion.span>
-            }
-          >
-            Gunakan Sebelum / Berikut atau ketuk jejak berikutnya
-          </HintBubble>
-        )}
       </div>
 
       {/* Stage timeline horizontal terpusat tanpa scrollbar */}
@@ -418,16 +402,16 @@ export default function TimelineSection({
 
                   <div>
                     <h2 className="font-display text-xl font-semibold text-sage-900">
-                      Jejak berikutnya
+                      {content.timelineUi.nextCardTitle}
                     </h2>
                     <p className="mt-1 text-xs leading-relaxed text-sage-700">
-                      Ketuk untuk membuka cerita selanjutnya.
+                      {content.timelineUi.nextCardSubtitle}
                     </p>
                   </div>
 
                   <span className="inline-flex items-center gap-1.5 rounded-pill bg-sage-600 px-4 py-2 text-xs font-bold text-[#FBF8EF] shadow-sage-sm transition-colors duration-300 group-hover:bg-sage-500">
                     <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
-                    <span>Buka jejak</span>
+                    <span>{content.timelineUi.nextCardButton}</span>
                     <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                   </span>
                 </motion.button>
@@ -448,7 +432,7 @@ export default function TimelineSection({
             className="px-4 py-2 text-xs"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-            <span>Sebelum</span>
+            <span>{content.timelineUi.prevButton}</span>
           </SquishyButton>
 
           <span
@@ -466,7 +450,7 @@ export default function TimelineSection({
             className="px-4 py-2 text-xs"
           >
             {nextWillReveal && <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />}
-            <span>Berikut</span>
+            <span>{content.timelineUi.nextButton}</span>
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </SquishyButton>
         </div>
@@ -493,7 +477,12 @@ export default function TimelineSection({
             </AnimatePresence>
 
             <Lock className="h-3.5 w-3.5" aria-hidden="true" />
-            <span>Masih ada {total - revealedCount} jejak tersembunyi</span>
+            <span>
+              {content.timelineUi.hiddenRemainingText.replace(
+                '{remaining}',
+                String(total - revealedCount)
+              )}
+            </span>
           </motion.div>
         ) : (
           <motion.div
@@ -505,7 +494,7 @@ export default function TimelineSection({
             <Mascot
               mood="cheering"
               size="sm"
-              message="Semua jejak sudah terbuka!"
+              message={content.timelineUi.allOpenedMascot}
             />
             <SquishyButton
               variant="secondary"
@@ -513,7 +502,7 @@ export default function TimelineSection({
               className="px-4 py-2 text-xs"
             >
               <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
-              <span>Ulangi jejak dari awal</span>
+              <span>{content.timelineUi.restartButton}</span>
             </SquishyButton>
           </motion.div>
         )}
@@ -621,12 +610,12 @@ function TimelineCard({
         </p>
 
         {item.photo && (
-          <div className="mt-auto pt-3.5">
-            <div className="overflow-hidden rounded-2xl border border-sage-200/80 bg-sage-100">
+          <div className="mt-auto flex justify-center pt-3.5">
+            <div className="inline-flex max-h-48 max-w-full overflow-hidden rounded-2xl border border-sage-200/80 bg-sage-100">
               <img
                 src={assetUrl(item.photo)}
                 alt={item.title}
-                className="h-44 w-full object-cover"
+                className="block max-h-48 w-auto max-w-full object-contain"
               />
             </div>
           </div>

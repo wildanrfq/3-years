@@ -50,13 +50,14 @@ export default function CounterSection({
     }
   }, [anniversaryToday, launchCelebration]);
 
+  const { unitLabels } = content.counterUi;
   const timeUnits = [
-    { label: 'Tahun', value: elapsed.years },
-    { label: 'Bulan', value: elapsed.months },
-    { label: 'Hari', value: elapsed.days },
-    { label: 'Jam', value: elapsed.hours },
-    { label: 'Menit', value: elapsed.minutes },
-    { label: 'Detik', value: elapsed.seconds },
+    { label: unitLabels.years, value: elapsed.years },
+    { label: unitLabels.months, value: elapsed.months },
+    { label: unitLabels.days, value: elapsed.days },
+    { label: unitLabels.hours, value: elapsed.hours },
+    { label: unitLabels.minutes, value: elapsed.minutes },
+    { label: unitLabels.seconds, value: elapsed.seconds },
   ];
 
   return (
@@ -80,10 +81,13 @@ export default function CounterSection({
               </div>
               <div>
                 <h2 className="font-display text-xl font-semibold text-[#2B3827]">
-                  Selamat hari jadi kita!
+                  {content.counterUi.anniversaryBannerTitle}
                 </h2>
                 <p className="text-xs font-semibold text-[#3C4E36]">
-                  Hari ini tepat {Math.max(1, elapsed.years)} tahun perjalanan kita bersama.
+                  {content.counterUi.anniversaryBannerBody.replace(
+                    '{years}',
+                    String(Math.max(1, elapsed.years))
+                  )}
                 </p>
               </div>
             </div>
@@ -94,7 +98,7 @@ export default function CounterSection({
               className="px-4 py-2 text-xs"
             >
               <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
-              <span>Rayakan lagi</span>
+              <span>{content.counterUi.celebrateAgainButton}</span>
             </SquishyButton>
           </motion.div>
         )}
@@ -117,10 +121,10 @@ export default function CounterSection({
 
           <div className="mt-5 flex flex-col items-center justify-between gap-3 rounded-2xl bg-sage-100/80 px-4 py-3.5 sm:flex-row">
             <span className="text-xs font-semibold text-sage-700">
-              Total hari yang sudah kita lewati bersama
+              {content.counterUi.totalDaysLabel}
             </span>
             <span className="font-display text-2xl font-bold tabular-nums text-sage-900">
-              {elapsed.totalDays.toLocaleString('id-ID')} hari
+              {elapsed.totalDays.toLocaleString('id-ID')} {content.counterUi.totalDaysUnit}
             </span>
           </div>
         </section>
@@ -132,15 +136,20 @@ export default function CounterSection({
         >
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-sage-600">
             <CalendarClock className="h-4 w-4" aria-hidden="true" />
-            <span>Menuju anniversary ke-{nextAnniv.targetYearNumber}</span>
+            <span>
+              {content.counterUi.nextAnnivHeading.replace(
+                '{year}',
+                String(nextAnniv.targetYearNumber)
+              )}
+            </span>
           </div>
 
           <div className="mt-3 grid grid-cols-4 gap-2 text-center">
             {[
-              { label: 'Hari', val: nextAnniv.days },
-              { label: 'Jam', val: nextAnniv.hours },
-              { label: 'Menit', val: nextAnniv.minutes },
-              { label: 'Detik', val: nextAnniv.seconds },
+              { label: unitLabels.days, val: nextAnniv.days },
+              { label: unitLabels.hours, val: nextAnniv.hours },
+              { label: unitLabels.minutes, val: nextAnniv.minutes },
+              { label: unitLabels.seconds, val: nextAnniv.seconds },
             ].map((item) => (
               <div
                 key={item.label}
@@ -160,10 +169,12 @@ export default function CounterSection({
           <div className="mb-3 flex items-center justify-between">
             <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-sage-900">
               <Award className="h-5 w-5 text-sage-600" aria-hidden="true" />
-              <span>Jejak angka kita</span>
+              <span>{content.counterUi.milestonesHeading}</span>
             </h2>
             <span className="text-xs font-bold text-sage-600">
-              {milestones.filter((m) => m.reached).length} / {milestones.length} tercapai
+              {content.counterUi.milestonesProgress
+                .replace('{reached}', String(milestones.filter((m) => m.reached).length))
+                .replace('{total}', String(milestones.length))}
             </span>
           </div>
 
@@ -191,14 +202,16 @@ export default function CounterSection({
               >
                 <div className="flex items-center justify-between">
                   <span className="font-display text-lg font-semibold tabular-nums text-sage-900">
-                    {badge.label}
+                    {badge.days} {content.counterUi.milestoneDaysUnit}
                   </span>
                   {badge.reached && (
                     <CheckCircle2 className="h-4 w-4 text-sage-600" aria-hidden="true" />
                   )}
                 </div>
                 <p className="mt-1 text-[11px] font-semibold text-sage-600">
-                  {badge.reached ? `Tercapai ${badge.dateLabel}` : `Nanti ${badge.dateLabel}`}
+                  {badge.reached
+                    ? `${content.counterUi.milestoneReachedPrefix} ${badge.dateLabel}`
+                    : `${content.counterUi.milestoneUpcomingPrefix} ${badge.dateLabel}`}
                 </p>
               </motion.div>
             ))}

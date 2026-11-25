@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
-import { Heart, MailOpen, RotateCcw, Sparkles } from 'lucide-react';
+import { Heart, RotateCcw, Sparkles } from 'lucide-react';
 import { content, SectionId } from '../../config/content';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { GENTLE_EASE } from '../../lib/motion';
 import { SectionShell } from '../../components/SectionShell';
-import { HintBubble } from '../../components/HintBubble';
 import { SquishyButton } from '../../components/SquishyButton';
 import { Mascot } from '../../components/Mascot';
 
@@ -197,10 +196,6 @@ export default function LetterSection({
               transition={{ duration: reducedMotion ? 0.25 : 0.6, ease: GENTLE_EASE }}
               className="flex flex-col items-center space-y-6 py-8"
             >
-              <HintBubble icon={<MailOpen className="h-3.5 w-3.5 text-sage-600" aria-hidden="true" />}>
-                Buka aku
-              </HintBubble>
-
               {/* Amplop 3D CSS */}
               <motion.button
                 type="button"
@@ -267,10 +262,6 @@ export default function LetterSection({
                   <Heart className="h-5 w-5 fill-[#647F57] text-[#4E6445]" aria-hidden="true" />
                 </motion.div>
               </motion.button>
-
-              <p className="text-xs font-semibold text-sage-700">
-                Ketuk amplop di atas untuk membaca suratmu
-              </p>
             </motion.div>
           )}
 
@@ -362,12 +353,6 @@ export default function LetterSection({
                   })}
                 </div>
 
-                {stage === 'typing' && (
-                  <p className="mt-6 text-center text-xs font-semibold text-sage-600">
-                    Ketuk di mana saja untuk langsung selesai
-                  </p>
-                )}
-
                 {stage === 'done' && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
@@ -406,20 +391,20 @@ export default function LetterSection({
                         size="md"
                         message={
                           hugCount > 0
-                            ? `Peluk hangat terkirim (${hugCount}x)!`
-                            : 'Selamat hari jadi kita berdua!'
+                            ? content.letterUi.mascotHugCount.replace('{count}', String(hugCount))
+                            : content.letterUi.mascotDefault
                         }
                       />
 
                       <div className="flex w-full flex-col items-center justify-center gap-3 sm:flex-row">
                         <SquishyButton variant="blush" onClick={handleSendHug}>
                           <Heart className="h-4 w-4 fill-[#4E6445] text-[#4E6445]" aria-hidden="true" />
-                          <span>Kirim peluk</span>
+                          <span>{content.letterUi.sendHugButton}</span>
                         </SquishyButton>
 
                         <SquishyButton variant="secondary" onClick={handleRestart}>
                           <RotateCcw className="h-4 w-4" aria-hidden="true" />
-                          <span>Ulangi dari awal</span>
+                          <span>{content.letterUi.restartButton}</span>
                         </SquishyButton>
                       </div>
                     </div>

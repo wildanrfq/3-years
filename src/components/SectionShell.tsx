@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { ArrowRight } from 'lucide-react';
-import { SECTION_META, SECTION_ORDER, SectionId } from '../config/content';
+import { content, SECTION_META, SECTION_ORDER, SectionId } from '../config/content';
 import { SquishyButton } from './SquishyButton';
 
 interface SectionShellProps {
@@ -32,7 +32,9 @@ export function SectionShell({
     >
       <header className="mb-6 text-center">
         <span className="inline-block rounded-pill bg-sage-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-sage-700">
-          Bagian {idx + 1} dari {SECTION_ORDER.length}
+          {content.navigation.sectionStepLabel
+            .replace('{current}', String(idx + 1))
+            .replace('{total}', String(SECTION_ORDER.length))}
         </span>
         <h1 className="mt-2 font-display text-3xl font-semibold text-sage-900 sm:text-4xl">
           {meta.title}
@@ -46,12 +48,14 @@ export function SectionShell({
         <div className="mt-10 flex flex-col items-center gap-3 pb-4">
           {nextSection ? (
             <SquishyButton onClick={() => onNextSection(nextSection)} className="w-full max-w-xs">
-              <span>Lanjut ke {SECTION_META[nextSection].title}</span>
+              <span>
+                {content.navigation.continueToPrefix} {SECTION_META[nextSection].title}
+              </span>
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </SquishyButton>
           ) : (
             <SquishyButton onClick={onBackToHub} variant="secondary" className="w-full max-w-xs">
-              <span>Kembali ke menu utama</span>
+              <span>{content.navigation.backToMainMenuButton}</span>
             </SquishyButton>
           )}
         </div>

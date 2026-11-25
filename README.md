@@ -28,18 +28,17 @@ export const REPO_NAME = '3-years';
 
 Cukup ubah di satu tempat ini saja. Semua URL aset di aplikasi sudah memakai `import.meta.env.BASE_URL`.
 
-## 2. Mengedit Data Pribadi (`src/config/content.ts`)
+## 2. Mengedit Semua Teks & Foto (`src/config/content.ts`)
 
-Semua teks, jadwal, foto, dan surat berada di `src/config/content.ts`:
+Semua teks, label tombol, jadwal, foto, dan surat berada di satu file yaitu `src/config/content.ts` (lengkap dengan komentar penjelas untuk masing-masing menu):
 
-- `partnerName` dan `myName`: nama panggilan pasangan dan nama kamu.
-- `siteTitle`: judul halaman browser dan tajuk menu utama.
-- `startDate`: tanggal jadian dalam format ISO dengan offset WIB `+07:00`, misalnya `'2023-11-26T00:00:00+07:00'`.
-- `timeline`: daftar momen perjalanan (`date`, `title`, `description`, `photo`, `icon`). Di halaman Jejak Kita, momen tersusun secara horizontal dan terbuka satu per satu saat tombol atau kartu berikutnya diketuk agar tidak spoiler, sementara jejak sebelumnya akan memudar (blur).
-- `rewind`: daftar slide cerita kilas balik (`intro`, `countup`, `photo`, `stat`, `carousel`, `ranking`, `song`, `outro`).
-- `photoCards`: daftar foto polaroid beserta catatan di sisi belakang (`photo`, `caption`, `date`, `backNote`).
-- `letter`: judul, isi paragraf `body`, dan `signature`.
-- Menu utama (`SECTION_ORDER`) terbuka secara kronologis dari awal (`Jejak Kita`) sampai akhir (`Surat Untukmu`).
+- `partnerName`, `myName`, `siteTitle`, `startDate`: identitas dan tanggal jadian (`+07:00`).
+- `SECTION_META`, `pinGate`, `intro`, `hub`, `navigation`, `musicPlayer`: seluruh teks antarmuka, tombol, dan pesan maskot di tiap layar.
+- `timeline` & `timelineUi`: momen horizontal dan label di menu **Jejak Kita**.
+- `counterUi`: label waktu dan pencapaian di menu **Waktu Bersama**.
+- `rewind`: daftar slide cerita (`intro`, `countup`, `photo`, `stat`, `carousel`, `ranking`, `song`, `outro`) di menu **Kilas Balik**.
+- `photoCards` & `photoCardsUi`: foto polaroid dan catatan di menu **Kartu Foto**.
+- `letter` & `letterUi`: judul, paragraf surat, tanda tangan, dan tombol di menu **Surat Untukmu**.
 
 ## 3. Mengganti PIN Rahasia
 

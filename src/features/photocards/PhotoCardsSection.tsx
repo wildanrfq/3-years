@@ -6,13 +6,12 @@ import {
   useMotionValue,
   useTransform,
 } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Layers, LayoutGrid, RotateCw } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Layers, LayoutGrid } from 'lucide-react';
 import { content, PhotoCardItem, SectionId } from '../../config/content';
 import { assetUrl } from '../../lib/assets';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { GENTLE_EASE } from '../../lib/motion';
 import { SectionShell } from '../../components/SectionShell';
-import { HintBubble } from '../../components/HintBubble';
 import { SquishyButton } from '../../components/SquishyButton';
 
 interface PhotoCardsSectionProps {
@@ -136,7 +135,7 @@ export default function PhotoCardsSection({
             }`}
           >
             <Layers className="h-4 w-4" aria-hidden="true" />
-            <span>Tumpukan</span>
+            <span>{content.photoCardsUi.stackTabLabel}</span>
           </button>
           <button
             type="button"
@@ -150,15 +149,9 @@ export default function PhotoCardsSection({
             }`}
           >
             <LayoutGrid className="h-4 w-4" aria-hidden="true" />
-            <span>Grid</span>
+            <span>{content.photoCardsUi.gridTabLabel}</span>
           </button>
         </div>
-
-        <HintBubble icon={<RotateCw className="h-3.5 w-3.5 text-sage-600" aria-hidden="true" />}>
-          {mode === 'stack'
-            ? 'Tap kartu untuk membalik, geser ke samping untuk ganti'
-            : 'Tap kartu untuk membalik'}
-        </HintBubble>
 
         {mode === 'stack' ? (
           <div className="flex w-full flex-col items-center">
@@ -197,7 +190,7 @@ export default function PhotoCardsSection({
                 className="px-4 py-2 text-xs"
               >
                 <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-                <span>Sebelum</span>
+                <span>{content.photoCardsUi.prevButton}</span>
               </SquishyButton>
 
               <span className="min-w-[60px] text-center text-xs font-bold tabular-nums text-sage-700">
@@ -210,7 +203,7 @@ export default function PhotoCardsSection({
                 aria-label="Kartu berikutnya"
                 className="px-4 py-2 text-xs"
               >
-                <span>Berikut</span>
+                <span>{content.photoCardsUi.nextButton}</span>
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </SquishyButton>
             </div>
@@ -418,13 +411,13 @@ function PolaroidCard3D({
             className="pointer-events-none absolute -top-3 left-1/2 z-20 h-6 w-20 -translate-x-1/2 -rotate-2 rounded-sm border border-sage-300/60 bg-sage-200/80 shadow-sm backdrop-blur-sm"
           />
 
-          <div className="relative flex-1 overflow-hidden rounded-2xl border border-sage-200/80 bg-sage-100">
+          <div className="relative flex flex-1 items-center justify-center overflow-hidden rounded-2xl border border-sage-200/80 bg-sage-100/70">
             <img
               src={assetUrl(card.photo)}
               alt={card.caption}
               loading="lazy"
               draggable={false}
-              className="h-full w-full select-none object-cover"
+              className="h-full w-full select-none object-contain"
             />
             {/* Kilau cahaya tilt */}
             <div
@@ -472,7 +465,7 @@ function PolaroidCard3D({
           </div>
 
           <div className="border-t border-dashed border-sage-200 pt-3 text-center text-xs font-semibold text-sage-600">
-            Tap lagi untuk lihat fotonya
+            {card.date}
           </div>
         </div>
       </motion.button>

@@ -1,12 +1,12 @@
 import { lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
+import { content } from '../../config/content';
 import { Mascot } from '../../components/Mascot';
 import { SquishyButton } from '../../components/SquishyButton';
-import { HintBubble } from '../../components/HintBubble';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
-import { GENTLE_EASE } from '../../lib/motion';
 import { ThemeMode } from '../../hooks/useTheme';
+import { GENTLE_EASE } from '../../lib/motion';
 
 const AmbientScene = lazy(() => import('../../three/AmbientScene'));
 
@@ -54,7 +54,7 @@ export function IntroScreen({
         <Mascot
           mood="happy"
           size="lg"
-          message={`Hai ${partnerName}, akhirnya kebuka juga!`}
+          message={content.intro.mascotGreeting.replace('{partnerName}', partnerName)}
         />
 
         <span className="mt-4 inline-flex items-center gap-1.5 rounded-pill bg-sage-100 px-3.5 py-1 text-xs font-bold text-sage-700">
@@ -63,21 +63,20 @@ export function IntroScreen({
         </span>
 
         <h1 className="mt-3 font-display text-3xl font-semibold leading-tight text-sage-900 sm:text-4xl">
-          Ada tempat kecil yang kubuat buat kamu
+          {content.intro.heading}
         </h1>
 
         <p className="mt-3 text-sm leading-relaxed text-sage-700 sm:text-base">
-          Di dalamnya ada cerita kita, penghitung waktu, kilas balik, kartu foto,
-          sampai surat kecil dari {myName}. Lagunya juga jalan terus di pojok kanan atas sambil kamu baca.
+          {content.intro.description
+            .replace('{myName}', myName)
+            .replace('{partnerName}', partnerName)}
         </p>
 
         <div className="mt-7 flex w-full flex-col items-center gap-3">
           <SquishyButton onClick={onStart} className="w-full max-w-[240px] text-base">
-            <span>Mulai</span>
+            <span>{content.intro.startButton}</span>
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </SquishyButton>
-
-          <HintBubble>Ketuk tombol Mulai untuk lihat menunya</HintBubble>
         </div>
       </motion.section>
     </main>

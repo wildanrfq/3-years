@@ -232,7 +232,7 @@ function SectionLoading() {
   return (
     <div className="flex min-h-dvh items-center justify-center px-4 pt-20">
       <div className="rounded-3xl border border-sage-200 bg-cream px-6 py-4 text-sm font-semibold text-sage-700 shadow-sage-sm">
-        Memuat halaman...
+        {content.navigation.loadingPageText}
       </div>
     </div>
   );

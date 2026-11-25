@@ -10,10 +10,9 @@ import {
   Mail,
   Sparkles,
 } from 'lucide-react';
-import { SECTION_META, SECTION_ORDER, SectionId } from '../../config/content';
+import { content, SECTION_META, SECTION_ORDER, SectionId } from '../../config/content';
 import { getNextPendingSection, isSectionUnlocked } from '../../lib/progression';
 import { Mascot } from '../../components/Mascot';
-import { HintBubble } from '../../components/HintBubble';
 import { useTilt } from '../../hooks/useTilt';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { GENTLE_EASE } from '../../lib/motion';
@@ -27,33 +26,25 @@ interface HubScreenProps {
   onLockSite: () => void;
 }
 
-const CARD_META: Record<
-  SectionId,
-  { icon: ReactNode; microcopy: string; accent: string }
-> = {
+const CARD_STYLE: Record<SectionId, { icon: ReactNode; accent: string }> = {
   timeline: {
     icon: <CalendarHeart className="h-6 w-6" aria-hidden="true" />,
-    microcopy: 'Dari hari pertama sampai sekarang.',
     accent: 'bg-sage-100 text-sage-700',
   },
   counter: {
     icon: <Clock className="h-6 w-6" aria-hidden="true" />,
-    microcopy: 'Detik demi detik yang kita jalani.',
     accent: 'bg-sage-100 text-sage-700',
   },
   rewind: {
     icon: <Film className="h-6 w-6" aria-hidden="true" />,
-    microcopy: 'Cerita kilas balik versi kita.',
     accent: 'bg-blush/55 text-sage-800',
   },
   photocards: {
     icon: <Camera className="h-6 w-6" aria-hidden="true" />,
-    microcopy: 'Geser dan balik foto buat baca catatan.',
     accent: 'bg-sage-100 text-sage-700',
   },
   letter: {
     icon: <Mail className="h-6 w-6" aria-hidden="true" />,
-    microcopy: 'Catatan hangat paling akhir buat kamu.',
     accent: 'bg-blush/65 text-sage-800',
   },
 };
@@ -78,27 +69,19 @@ export function HubScreen({
           size="md"
           message={
             visitedSections.length === 0
-              ? `Mulai dari Jejak Kita dulu ya, ${partnerName}!`
+              ? content.hub.mascotStart.replace('{partnerName}', partnerName)
               : allCompleted
-              ? `Semua ${SECTION_ORDER.length} bagian sudah terbuka!`
-              : `${visitedSections.length} dari ${SECTION_ORDER.length} bagian sudah kamu buka!`
+              ? content.hub.mascotAllDone.replace('{total}', String(SECTION_ORDER.length))
+              : content.hub.mascotProgress
+                  .replace('{opened}', String(visitedSections.length))
+                  .replace('{total}', String(SECTION_ORDER.length))
           }
         />
 
         <h1 className="mt-3 font-display text-3xl font-semibold text-sage-900 sm:text-4xl">
           {siteTitle}
         </h1>
-        <p className="mt-1.5 max-w-md text-sm text-sage-700">
-          Buka setiap kartu secara berurutan dari awal sampai akhir ya.
-        </p>
-
-        {nextPending && (
-          <HintBubble className="mt-3">
-            {visitedSections.length === 0
-              ? 'Mulai dari Jejak Kita dulu yuk'
-              : `Berikutnya: buka ${SECTION_META[nextPending].title}`}
-          </HintBubble>
-        )}
+        <p className="mt-1.5 max-w-md text-sm text-sage-700">{content.hub.subtitle}</p>
       </header>
 
       <section
@@ -136,7 +119,7 @@ export function HubScreen({
           onClick={onReplayIntro}
           className="focus-ring min-h-[44px] rounded-pill px-4 py-2 font-semibold transition hover:bg-sage-100 hover:text-sage-800"
         >
-          Lihat sambutan lagi
+          {content.hub.replayIntroButton}
         </button>
         <span aria-hidden="true">·</span>
         <button
@@ -144,7 +127,7 @@ export function HubScreen({
           onClick={onLockSite}
           className="focus-ring min-h-[44px] rounded-pill px-4 py-2 font-semibold transition hover:bg-sage-100 hover:text-sage-800"
         >
-          Kunci halaman
+          {content.hub.lockSiteButton}
         </button>
       </footer>
     </main>
@@ -176,12 +159,12 @@ function HubCard({
 }: HubCardProps) {
   const tilt = useTilt<HTMLButtonElement>(7);
   const meta = SECTION_META[sectionId];
-  const card = CARD_META[sectionId];
+  const card = CARD_STYLE[sectionId];
 
   const lockedDescription =
     index === 1
-      ? 'Buka semua cerita di Jejak Kita dulu ya sebelum bagian ini.'
-      : `Buka ${prevTitle ?? 'bagian sebelumnya'} dulu ya sebelum bagian ini.`;
+      ? content.hub.lockedTimelineNotice
+      : content.hub.lockedPrevNotice.replace('{prevTitle}', prevTitle ?? '');
 
   return (
     <motion.button
@@ -235,16 +218,18 @@ function HubCard({
         {isVisited && !isLocked ? (
           <span className="inline-flex items-center gap-1 rounded-pill bg-sage-100 px-2.5 py-1 text-[11px] font-bold text-sage-700">
             <Check className="h-3 w-3" aria-hidden="true" />
-            <span>Sudah dibuka</span>
+            <span>{content.hub.badgeOpened}</span>
           </span>
         ) : isNextUp ? (
           <span className="inline-flex items-center gap-1 rounded-pill bg-sage-600 px-2.5 py-1 text-[11px] font-bold text-[#FBF8EF] shadow-sage-sm">
             <Sparkles className="h-3 w-3" aria-hidden="true" />
-            <span>{index === 0 ? 'Mulai di sini' : 'Buka sekarang'}</span>
+            <span>{index === 0 ? content.hub.badgeStartHere : content.hub.badgeOpenNow}</span>
           </span>
         ) : (
           <span className="inline-flex items-center gap-1 rounded-pill bg-sage-200/70 px-2.5 py-1 text-[11px] font-bold text-sage-700">
-            <span>Bagian {index + 1}</span>
+            <span>
+              {content.hub.badgePartPrefix} {index + 1}
+            </span>
           </span>
         )}
       </div>
@@ -254,7 +239,7 @@ function HubCard({
           {index + 1}. {meta.title}
         </h2>
         <p className="mt-0.5 text-xs leading-relaxed text-sage-700">
-          {isLocked ? lockedDescription : card.microcopy}
+          {isLocked ? lockedDescription : content.hub.cardDescriptions[sectionId]}
         </p>
       </div>
     </motion.button>

@@ -10,6 +10,7 @@ import {
   Volume2,
   VolumeX,
 } from 'lucide-react';
+import { content } from '../config/content';
 import { AudioControls } from '../hooks/useAudio';
 import { useLyrics } from '../hooks/useLyrics';
 import { useReducedMotion } from '../hooks/useReducedMotion';
@@ -83,7 +84,7 @@ export function LyricsBar({
                 className="focus-ring inline-flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-pill bg-sage-600 px-3 text-xs font-bold text-[#FBF8EF] shadow-sage-sm hover:bg-sage-500"
               >
                 <Play className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>Putar lagu</span>
+                <span>{content.musicPlayer.playSongLabel}</span>
               </motion.button>
             ) : audio.isEnded ? (
               <button
@@ -92,7 +93,7 @@ export function LyricsBar({
                 className="focus-ring inline-flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-pill bg-sage-600 px-3 text-xs font-bold text-[#FBF8EF] shadow-sage-sm hover:bg-sage-500"
               >
                 <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>Putar lagi</span>
+                <span>{content.musicPlayer.replaySongLabel}</span>
               </button>
             ) : (
               <button
@@ -130,7 +131,7 @@ export function LyricsBar({
                         {activeLine}
                       </span>
                     ) : (
-                      <span className="text-sage-800">{nextLine || 'Siap memutar lirik'}</span>
+                      <span className="text-sage-800">{nextLine || content.musicPlayer.waitingLyricsLabel}</span>
                     )}
                   </div>
                 )}
@@ -204,7 +205,7 @@ export function LyricsBar({
                         {activeLine}
                       </span>
                     ) : (
-                      <span className="text-sage-700">Siap memutar lirik</span>
+                      <span className="text-sage-700">{content.musicPlayer.waitingLyricsLabel}</span>
                     )}
                   </motion.div>
                 </AnimatePresence>
@@ -226,7 +227,7 @@ export function LyricsBar({
                 className="focus-ring inline-flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-pill bg-sage-600 px-3 text-xs font-bold text-[#FBF8EF] shadow-sage-sm hover:bg-sage-500"
               >
                 <Play className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>Putar lagu</span>
+                <span>{content.musicPlayer.playSongLabel}</span>
               </motion.button>
             ) : audio.isEnded ? (
               <button
@@ -235,7 +236,7 @@ export function LyricsBar({
                 className="focus-ring inline-flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-pill bg-sage-600 px-3 text-xs font-bold text-[#FBF8EF] shadow-sage-sm hover:bg-sage-500"
               >
                 <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>Putar lagi</span>
+                <span>{content.musicPlayer.replaySongLabel}</span>
               </button>
             ) : (
               <button
@@ -246,12 +247,12 @@ export function LyricsBar({
                 {audio.isPlaying ? (
                   <>
                     <Pause className="h-3.5 w-3.5" aria-hidden="true" />
-                    <span>Jeda</span>
+                    <span>{content.musicPlayer.pauseLabel}</span>
                   </>
                 ) : (
                   <>
                     <Play className="h-3.5 w-3.5" aria-hidden="true" />
-                    <span>Putar</span>
+                    <span>{content.musicPlayer.playLabel}</span>
                   </>
                 )}
               </button>

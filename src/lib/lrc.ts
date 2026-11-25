@@ -1,6 +1,7 @@
 export interface LrcLine {
   timeSec: number;
   text: string;
+  endTimeSec?: number;
 }
 
 const TIMESTAMP_PATTERN = /\[(\d{1,3}):(\d{2})(?:\.(\d{1,3}))?\]/g;
@@ -19,6 +20,7 @@ export function parseLrc(raw: string, configOffsetMs = 0): LrcLine[] {
 
   const totalOffsetSec = (tagOffsetMs + configOffsetMs) / 1000;
   const parsed: LrcLine[] = [];
+  const endMarkers: number[] = [];
 
   for (const row of rows) {
     const trimmed = row.trim();
@@ -40,7 +42,10 @@ export function parseLrc(raw: string, configOffsetMs = 0): LrcLine[] {
     if (timestamps.length === 0) continue;
 
     const text = trimmed.replace(TIMESTAMP_PATTERN, '').trim();
-    if (!text) continue;
+    if (!text) {
+      endMarkers.push(...timestamps);
+      continue;
+    }
 
     for (const timeSec of timestamps) {
       parsed.push({ timeSec, text });
@@ -48,6 +53,17 @@ export function parseLrc(raw: string, configOffsetMs = 0): LrcLine[] {
   }
 
   parsed.sort((a, b) => a.timeSec - b.timeSec);
+  endMarkers.sort((a, b) => a - b);
+
+  for (let i = 0; i < parsed.length; i += 1) {
+    const lineStart = parsed[i].timeSec;
+    const nextLineStart = i + 1 < parsed.length ? parsed[i + 1].timeSec : Infinity;
+    const marker = endMarkers.find((t) => t > lineStart && t <= nextLineStart);
+    if (marker !== undefined) {
+      parsed[i].endTimeSec = marker;
+    }
+  }
+
   return parsed;
 }
 

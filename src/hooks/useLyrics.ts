@@ -87,7 +87,8 @@ export function useLyrics({
         } else {
           const start = lines[idx].timeSec;
           const fallbackEnd = Number.isFinite(audio.duration) && audio.duration > start ? audio.duration : start + 4;
-          const end = idx + 1 < lines.length ? lines[idx + 1].timeSec : fallbackEnd;
+          const nextStart = idx + 1 < lines.length ? lines[idx + 1].timeSec : fallbackEnd;
+          const end = lines[idx].endTimeSec ?? nextStart;
           const span = Math.max(0.25, end - start);
           const ratio = Math.min(1, Math.max(0, (currentTime - start) / span));
           progressEl.style.setProperty('--lyric-progress', `${(ratio * 100).toFixed(1)}%`);

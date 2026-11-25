@@ -563,7 +563,7 @@ export const content: ContentConfig = {
   // ==========================================================================
   song: {
     title: 'Sorak Sorai', // Song title shown in top-right Music Bar & Kilas Balik Slide 7
-    artist: 'Nadin Amizah', // Artist name shown in top-right Music Bar & Kilas Balik Slide 7
+    artist: 'Nadin Amizah & Syarikat Idola Remaja', // Artist name shown in top-right Music Bar & Kilas Balik Slide 7
     audioSrc: 'audio/sorak-sorai.mp3', // Audio file path inside `public/`
     lrcSrc: 'lyrics/sorak-sorai.lrc', // Synced LRC lyrics file path inside `public/`
     lyricsOffsetMs: 0, // Shift lyrics timing in milliseconds (+ or -) if out of sync

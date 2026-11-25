@@ -16,6 +16,7 @@ import { Mascot } from '../../components/Mascot';
 import { HintBubble } from '../../components/HintBubble';
 import { useTilt } from '../../hooks/useTilt';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { GENTLE_EASE } from '../../lib/motion';
 
 interface HubScreenProps {
   partnerName: string;
@@ -190,17 +191,19 @@ function HubCard({
       onPointerMove={isLocked ? undefined : tilt.onPointerMove}
       onPointerLeave={isLocked ? undefined : tilt.onPointerLeave}
       disabled={isLocked}
-      initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 18 }}
+      initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
-        delay: reducedMotion ? 0 : index * 0.055,
-        type: 'spring',
-        stiffness: 300,
-        damping: 24,
+        delay: reducedMotion ? 0 : index * 0.08,
+        duration: reducedMotion ? 0.25 : 0.68,
+        ease: GENTLE_EASE,
       }}
-      whileTap={reducedMotion || isLocked ? undefined : { scale: 0.97 }}
-      style={{ transformStyle: 'preserve-3d', transition: 'transform 160ms ease-out' }}
-      className={`focus-ring group relative flex min-h-[124px] w-full flex-col justify-between overflow-hidden rounded-[26px] border p-5 text-left transition-colors ${
+      whileTap={reducedMotion || isLocked ? undefined : { scale: 0.985 }}
+      style={{
+        transformStyle: 'preserve-3d',
+        transition: 'transform 340ms cubic-bezier(0.22, 1, 0.36, 1)',
+      }}
+      className={`focus-ring group relative flex min-h-[124px] w-full flex-col justify-between overflow-hidden rounded-[26px] border p-5 text-left transition-all duration-500 ${
         isWide ? 'sm:col-span-2' : ''
       } ${
         isLocked
@@ -222,8 +225,8 @@ function HubCard({
 
       <div className="relative flex w-full items-start justify-between gap-3">
         <motion.div
-          whileHover={reducedMotion || isLocked ? undefined : { rotate: [0, -8, 8, 0], scale: 1.08 }}
-          transition={{ duration: 0.45 }}
+          whileHover={reducedMotion || isLocked ? undefined : { scale: 1.05 }}
+          transition={{ duration: 0.45, ease: GENTLE_EASE }}
           className={`flex h-12 w-12 items-center justify-center rounded-2xl ${card.accent} shadow-sage-sm`}
         >
           {isLocked ? <Lock className="h-5 w-5" aria-hidden="true" /> : card.icon}

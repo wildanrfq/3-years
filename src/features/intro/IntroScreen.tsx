@@ -5,6 +5,7 @@ import { Mascot } from '../../components/Mascot';
 import { SquishyButton } from '../../components/SquishyButton';
 import { HintBubble } from '../../components/HintBubble';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { GENTLE_EASE } from '../../lib/motion';
 import { ThemeMode } from '../../hooks/useTheme';
 
 const AmbientScene = lazy(() => import('../../three/AmbientScene'));
@@ -45,9 +46,9 @@ export function IntroScreen({
       )}
 
       <motion.section
-        initial={{ opacity: 0, y: 18 }}
+        initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+        transition={{ duration: reducedMotion ? 0.3 : 0.78, ease: GENTLE_EASE }}
         className="relative z-10 flex w-full max-w-md flex-col items-center rounded-[32px] border border-sage-200/90 bg-cream/95 px-6 py-8 text-center shadow-sage-lg"
       >
         <Mascot

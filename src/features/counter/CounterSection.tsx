@@ -11,6 +11,7 @@ import {
 } from '../../lib/date';
 import { useNow } from '../../hooks/useNow';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { GENTLE_EASE } from '../../lib/motion';
 import { SectionShell } from '../../components/SectionShell';
 import { SquishyButton } from '../../components/SquishyButton';
 
@@ -68,8 +69,9 @@ export default function CounterSection({
         {/* Banner spesial jika hari ini tepat tanggal anniversary */}
         {anniversaryToday && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.94 }}
+            initial={{ opacity: 0, scale: 0.97 }}
             animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: reducedMotion ? 0.25 : 0.7, ease: GENTLE_EASE }}
             className="flex flex-col items-center justify-between gap-3 rounded-[28px] border border-sage-300 bg-blush/55 p-5 text-center shadow-sage-md sm:flex-row sm:text-left"
           >
             <div className="flex items-center gap-3">
@@ -172,15 +174,14 @@ export default function CounterSection({
                 initial={
                   reducedMotion
                     ? { opacity: 0 }
-                    : { opacity: 0, scale: badge.reached ? 0.8 : 0.94, y: 12 }
+                    : { opacity: 0, scale: badge.reached ? 0.92 : 0.96, y: 10 }
                 }
                 whileInView={{ opacity: 1, scale: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{
-                  delay: reducedMotion ? 0 : idx * 0.045,
-                  type: 'spring',
-                  stiffness: 320,
-                  damping: 22,
+                  delay: reducedMotion ? 0 : idx * 0.06,
+                  duration: reducedMotion ? 0.25 : 0.65,
+                  ease: GENTLE_EASE,
                 }}
                 className={`rounded-2xl border p-3.5 transition-colors ${
                   badge.reached
@@ -236,7 +237,7 @@ function FlipDigitTile({
             initial={
               reducedMotion
                 ? { opacity: 0 }
-                : { rotateX: -72, y: -6, opacity: 0 }
+                : { rotateX: -32, y: -4, opacity: 0 }
             }
             animate={
               reducedMotion
@@ -246,9 +247,9 @@ function FlipDigitTile({
             exit={
               reducedMotion
                 ? { opacity: 0 }
-                : { rotateX: 72, y: 6, opacity: 0 }
+                : { rotateX: 32, y: 4, opacity: 0 }
             }
-            transition={{ type: 'spring', stiffness: 320, damping: 24 }}
+            transition={{ duration: reducedMotion ? 0.15 : 0.42, ease: GENTLE_EASE }}
             className="font-display text-2xl font-bold tabular-nums text-sage-900 sm:text-3xl"
             style={{ transformStyle: 'preserve-3d' }}
           >

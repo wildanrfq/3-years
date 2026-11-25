@@ -10,6 +10,7 @@ import { ArrowLeft, ArrowRight, Layers, LayoutGrid, RotateCw } from 'lucide-reac
 import { content, PhotoCardItem, SectionId } from '../../config/content';
 import { assetUrl } from '../../lib/assets';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { GENTLE_EASE } from '../../lib/motion';
 import { SectionShell } from '../../components/SectionShell';
 import { HintBubble } from '../../components/HintBubble';
 import { SquishyButton } from '../../components/SquishyButton';
@@ -289,14 +290,14 @@ function StackCardWrapper({
         rotate: isTop ? rotate : restTilt * 0.6,
         zIndex: 10 - depth,
       }}
-      initial={{ scale: 0.94, opacity: 0 }}
+      initial={{ scale: 0.96, opacity: 0 }}
       animate={{
         scale: 1 - depth * 0.045,
         y: depth * 12,
         opacity: 1 - depth * 0.14,
       }}
-      exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.18 } }}
-      transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+      exit={{ opacity: 0, scale: 0.94, transition: { duration: 0.32, ease: GENTLE_EASE } }}
+      transition={{ duration: reducedMotion ? 0.25 : 0.62, ease: GENTLE_EASE }}
       drag={isTop ? 'x' : false}
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={0.85}
@@ -385,7 +386,7 @@ function PolaroidCard3D({
       onPointerLeave={handlePointerLeave}
       style={{
         perspective: '1100px',
-        transition: 'transform 160ms ease-out',
+        transition: 'transform 320ms cubic-bezier(0.22, 1, 0.36, 1)',
         ...gyroStyle,
       }}
       className="h-full w-full"
@@ -402,7 +403,7 @@ function PolaroidCard3D({
                 rotateZ: isFlipped ? 0 : restTilt,
               }
         }
-        transition={{ type: 'spring', stiffness: 250, damping: 22 }}
+        transition={{ duration: reducedMotion ? 0.2 : 0.72, ease: GENTLE_EASE }}
         style={{ transformStyle: 'preserve-3d' }}
         className="focus-ring relative h-full w-full rounded-[26px] text-left"
       >

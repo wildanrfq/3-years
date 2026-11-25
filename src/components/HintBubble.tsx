@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { useReducedMotion } from '../hooks/useReducedMotion';
+import { GENTLE_EASE } from '../lib/motion';
 
 interface HintBubbleProps {
   children: ReactNode;
@@ -21,8 +22,8 @@ export function HintBubble({ children, icon, className = '' }: HintBubbleProps) 
       }
       transition={
         reducedMotion
-          ? { duration: 0.2 }
-          : { duration: 2.2, repeat: Infinity, ease: 'easeInOut' }
+          ? { duration: 0.35, ease: GENTLE_EASE }
+          : { duration: 3.2, repeat: Infinity, ease: 'easeInOut' }
       }
       className={`inline-flex items-center gap-2 rounded-pill border border-sage-200 bg-cream/95 px-3.5 py-1.5 text-xs font-semibold text-sage-700 shadow-sage-sm ${className}`}
     >

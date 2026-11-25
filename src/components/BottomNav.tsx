@@ -27,7 +27,7 @@ export function BottomNav({
         <button
           type="button"
           onClick={onBackToHub}
-          className="focus-ring inline-flex min-h-[44px] items-center gap-2 rounded-pill bg-cream px-3.5 py-2 text-xs font-bold text-sage-800 shadow-sage-sm transition hover:bg-sage-100 active:scale-95"
+          className="focus-ring inline-flex min-h-[44px] items-center gap-2 rounded-pill bg-cream px-3.5 py-2 text-xs font-bold text-sage-800 shadow-sage-sm transition-all duration-300 hover:bg-sage-100 active:scale-[0.97]"
         >
           <LayoutGrid className="h-4 w-4 text-sage-600" aria-hidden="true" />
           <span>Kembali ke menu</span>
@@ -38,7 +38,7 @@ export function BottomNav({
             <button
               type="button"
               onClick={() => onNavigateSection(prevSection)}
-              className="focus-ring inline-flex min-h-[44px] items-center gap-1.5 rounded-pill border border-sage-200 bg-cream/90 px-3 py-2 text-xs font-bold text-sage-700 transition hover:bg-sage-100 active:scale-95"
+              className="focus-ring inline-flex min-h-[44px] items-center gap-1.5 rounded-pill border border-sage-200 bg-cream/90 px-3 py-2 text-xs font-bold text-sage-700 transition-all duration-300 hover:bg-sage-100 active:scale-[0.97]"
             >
               <ArrowLeft className="h-4 w-4" aria-hidden="true" />
               <span>{SECTION_META[prevSection].shortLabel}</span>
@@ -50,7 +50,7 @@ export function BottomNav({
               <button
                 type="button"
                 onClick={() => onNavigateSection(nextSection)}
-                className="focus-ring inline-flex min-h-[44px] items-center gap-1.5 rounded-pill bg-sage-600 px-3.5 py-2 text-xs font-bold text-[#FBF8EF] shadow-sage-sm transition hover:bg-sage-500 active:scale-95"
+                className="focus-ring inline-flex min-h-[44px] items-center gap-1.5 rounded-pill bg-sage-600 px-3.5 py-2 text-xs font-bold text-[#FBF8EF] shadow-sage-sm transition-all duration-300 hover:bg-sage-500 active:scale-[0.97]"
               >
                 <span>Lanjut</span>
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -60,7 +60,7 @@ export function BottomNav({
                 type="button"
                 disabled
                 aria-label={`Selesaikan ${SECTION_META[currentSection].title} terlebih dulu sebelum lanjut`}
-                className="inline-flex min-h-[44px] cursor-not-allowed items-center gap-1.5 rounded-pill bg-sage-200/80 px-3.5 py-2 text-xs font-bold text-sage-600"
+                className="inline-flex min-h-[44px] cursor-not-allowed items-center gap-1.5 rounded-pill bg-sage-200/80 px-3.5 py-2 text-xs font-bold text-sage-600 transition-colors duration-300"
               >
                 <Lock className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>Selesaikan dulu</span>
@@ -70,7 +70,7 @@ export function BottomNav({
             <button
               type="button"
               onClick={onBackToHub}
-              className="focus-ring inline-flex min-h-[44px] items-center gap-1.5 rounded-pill bg-sage-600 px-3.5 py-2 text-xs font-bold text-[#FBF8EF] shadow-sage-sm transition hover:bg-sage-500 active:scale-95"
+              className="focus-ring inline-flex min-h-[44px] items-center gap-1.5 rounded-pill bg-sage-600 px-3.5 py-2 text-xs font-bold text-[#FBF8EF] shadow-sage-sm transition-all duration-300 hover:bg-sage-500 active:scale-[0.97]"
             >
               <span>Menu utama</span>
             </button>

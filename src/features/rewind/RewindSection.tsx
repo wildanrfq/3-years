@@ -5,6 +5,7 @@ import { content, RewindSlide, SECTION_ORDER, SectionId } from '../../config/con
 import { assetUrl } from '../../lib/assets';
 import { getElapsedSince } from '../../lib/date';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { GENTLE_EASE } from '../../lib/motion';
 import { HintBubble } from '../../components/HintBubble';
 import { SquishyButton } from '../../components/SquishyButton';
 
@@ -241,19 +242,19 @@ export default function RewindSection({
               initial={
                 reducedMotion
                   ? { opacity: 0 }
-                  : { opacity: 0, rotateY: direction > 0 ? 28 : -28, scale: 0.96 }
+                  : { opacity: 0, rotateY: direction > 0 ? 12 : -12, x: direction > 0 ? 18 : -18, scale: 0.98 }
               }
               animate={
                 reducedMotion
                   ? { opacity: 1 }
-                  : { opacity: 1, rotateY: 0, scale: 1 }
+                  : { opacity: 1, rotateY: 0, x: 0, scale: 1 }
               }
               exit={
                 reducedMotion
                   ? { opacity: 0 }
-                  : { opacity: 0, rotateY: direction > 0 ? -28 : 28, scale: 0.96 }
+                  : { opacity: 0, rotateY: direction > 0 ? -12 : 12, x: direction > 0 ? -18 : 18, scale: 0.98 }
               }
-              transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+              transition={{ duration: reducedMotion ? 0.25 : 0.62, ease: GENTLE_EASE }}
               style={{ transformStyle: 'preserve-3d' }}
               className="flex h-full flex-col items-center justify-center text-center"
             >
@@ -416,9 +417,13 @@ function SlideBody({
           {slide.items.map((item, i) => (
             <motion.li
               key={item}
-              initial={reducedMotion ? { opacity: 0 } : { opacity: 0, x: -16 }}
+              initial={reducedMotion ? { opacity: 0 } : { opacity: 0, x: -12 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: reducedMotion ? 0 : 0.08 * i, duration: 0.35 }}
+              transition={{
+                delay: reducedMotion ? 0 : 0.1 * i,
+                duration: reducedMotion ? 0.25 : 0.58,
+                ease: GENTLE_EASE,
+              }}
               className="flex items-center gap-3 rounded-2xl border border-sage-200 bg-cream/90 px-3.5 py-2.5 shadow-sage-sm"
             >
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sage-600 font-display text-xs font-bold text-[#FBF8EF]">
@@ -492,7 +497,7 @@ function CountUpNumber({
     }
 
     const start = performance.now();
-    const duration = 1100;
+    const duration = 1500;
     let rafId = 0;
 
     const frame = (now: number) => {

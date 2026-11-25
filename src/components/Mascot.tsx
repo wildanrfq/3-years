@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion } from '../hooks/useReducedMotion';
+import { GENTLE_EASE } from '../lib/motion';
 
 export type MascotMood = 'sleepy' | 'sad' | 'happy' | 'excited' | 'curious' | 'cheering';
 
@@ -67,10 +68,10 @@ export function Mascot({ mood = 'happy', size = 'md', message, className = '' }:
         {message && (
           <motion.div
             key={message}
-            initial={{ opacity: 0, y: 6, scale: 0.92 }}
+            initial={{ opacity: 0, y: 6, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -4, scale: 0.94 }}
-            transition={{ duration: 0.25 }}
+            exit={{ opacity: 0, y: -4, scale: 0.96 }}
+            transition={{ duration: 0.45, ease: GENTLE_EASE }}
             className="mb-1.5 max-w-[230px] rounded-2xl border border-sage-200 bg-cream px-3 py-1.5 text-center text-xs font-semibold text-sage-800 shadow-sage-sm"
           >
             {message}
@@ -92,18 +93,18 @@ export function Mascot({ mood = 'happy', size = 'md', message, className = '' }:
         }
         transition={
           hopCount > 0
-            ? { duration: 0.42, ease: 'easeOut' }
-            : { duration: 3.2, repeat: Infinity, ease: 'easeInOut' }
+            ? { duration: 0.6, ease: 'easeInOut' }
+            : { duration: 4.0, repeat: Infinity, ease: 'easeInOut' }
         }
-        whileTap={reducedMotion ? undefined : { scale: 0.92 }}
+        whileTap={reducedMotion ? undefined : { scale: 0.95 }}
       >
         <AnimatePresence>
           {showTapHeart && !reducedMotion && (
             <motion.svg
-              initial={{ opacity: 0, y: 4, scale: 0.5 }}
-              animate={{ opacity: [0, 1, 0], y: -22, scale: 1.15 }}
+              initial={{ opacity: 0, y: 4, scale: 0.65 }}
+              animate={{ opacity: [0, 1, 0], y: -22, scale: 1.1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.7 }}
+              transition={{ duration: 0.95, ease: GENTLE_EASE }}
               viewBox="0 0 24 24"
               className="pointer-events-none absolute -top-2 h-5 w-5 text-sage-600"
               aria-hidden="true"

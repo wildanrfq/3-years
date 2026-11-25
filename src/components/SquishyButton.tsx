@@ -1,6 +1,7 @@
 import { ButtonHTMLAttributes, ReactNode } from 'react';
 import { motion, HTMLMotionProps } from 'framer-motion';
 import { useReducedMotion } from '../hooks/useReducedMotion';
+import { GENTLE_EASE } from '../lib/motion';
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'blush';
 
@@ -39,11 +40,11 @@ export function SquishyButton({
       whileHover={
         reducedMotion || disabled
           ? undefined
-          : { scale: 1.025, rotate: [0, -1, 1, 0], transition: { duration: 0.35 } }
+          : { scale: 1.02 }
       }
-      whileTap={reducedMotion || disabled ? undefined : { scale: 0.94 }}
-      transition={{ type: 'spring', stiffness: 450, damping: 24 }}
-      className={`focus-ring inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 rounded-pill px-6 py-3 font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${VARIANT_CLASSES[variant]} ${className}`}
+      whileTap={reducedMotion || disabled ? undefined : { scale: 0.96 }}
+      transition={{ duration: 0.32, ease: GENTLE_EASE }}
+      className={`focus-ring inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 rounded-pill px-6 py-3 font-semibold transition-colors duration-300 disabled:cursor-not-allowed disabled:opacity-50 ${VARIANT_CLASSES[variant]} ${className}`}
       {...props}
     >
       {children}

@@ -4,6 +4,7 @@ import confetti from 'canvas-confetti';
 import { Heart, MailOpen, RotateCcw, Sparkles } from 'lucide-react';
 import { content, SectionId } from '../../config/content';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { GENTLE_EASE } from '../../lib/motion';
 import { SectionShell } from '../../components/SectionShell';
 import { HintBubble } from '../../components/HintBubble';
 import { SquishyButton } from '../../components/SquishyButton';
@@ -88,7 +89,7 @@ export default function LetterSection({
       setTypedTitleCount(0);
       setTypedBodyCounts(paragraphs.map(() => 0));
       setStage('typing');
-    }, 900);
+    }, 1250);
   };
 
   useEffect(() => {
@@ -190,10 +191,10 @@ export default function LetterSection({
           {(stage === 'envelope' || stage === 'opening') && (
             <motion.div
               key="envelope-stage"
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 1.06, y: -20 }}
-              transition={{ duration: 0.35 }}
+              exit={{ opacity: 0, scale: 1.03, y: -14 }}
+              transition={{ duration: reducedMotion ? 0.25 : 0.6, ease: GENTLE_EASE }}
               className="flex flex-col items-center space-y-6 py-8"
             >
               <HintBubble icon={<MailOpen className="h-3.5 w-3.5 text-sage-600" aria-hidden="true" />}>
@@ -207,11 +208,11 @@ export default function LetterSection({
                 aria-label="Buka amplop surat"
                 animate={
                   stage === 'envelope' && !reducedMotion
-                    ? { y: [0, -8, 0] }
+                    ? { y: [0, -6, 0] }
                     : undefined
                 }
-                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                whileTap={reducedMotion ? undefined : { scale: 0.96 }}
+                transition={{ duration: 4.2, repeat: Infinity, ease: 'easeInOut' }}
+                whileTap={reducedMotion ? undefined : { scale: 0.98 }}
                 style={{ perspective: '1000px' }}
                 className="focus-ring relative h-52 w-72 cursor-pointer rounded-3xl sm:h-56 sm:w-80"
               >
@@ -226,7 +227,7 @@ export default function LetterSection({
                       ? { y: -68, scale: 1.04 }
                       : { y: 12, scale: 0.92 }
                   }
-                  transition={{ delay: 0.25, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ delay: 0.35, duration: 0.85, ease: GENTLE_EASE }}
                   className="absolute inset-x-4 bottom-4 top-5 flex flex-col items-center justify-center rounded-2xl border border-sage-200 bg-cream p-4 shadow-sage-sm"
                 >
                   <span className="font-hand text-2xl font-bold text-sage-900">
@@ -248,7 +249,7 @@ export default function LetterSection({
                 <motion.div
                   initial={{ rotateX: 0 }}
                   animate={stage === 'opening' ? { rotateX: 175 } : { rotateX: 0 }}
-                  transition={{ duration: 0.45, ease: 'easeInOut' }}
+                  transition={{ duration: 0.72, ease: GENTLE_EASE }}
                   style={{
                     transformOrigin: 'top center',
                     transformStyle: 'preserve-3d',
@@ -259,8 +260,8 @@ export default function LetterSection({
 
                 {/* Segel hati blush */}
                 <motion.div
-                  animate={stage === 'opening' ? { scale: 0, opacity: 0 } : { scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.2 }}
+                  animate={stage === 'opening' ? { scale: 0.6, opacity: 0 } : { scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.38, ease: GENTLE_EASE }}
                   className="absolute left-1/2 top-[48%] z-20 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-cream bg-blush shadow-sage-sm"
                 >
                   <Heart className="h-5 w-5 fill-[#647F57] text-[#4E6445]" aria-hidden="true" />
@@ -276,9 +277,9 @@ export default function LetterSection({
           {(stage === 'typing' || stage === 'done') && (
             <motion.article
               key="letter-sheet"
-              initial={{ opacity: 0, scale: 0.94, y: 20 }}
+              initial={{ opacity: 0, scale: 0.97, y: 14 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ type: 'spring', stiffness: 240, damping: 24 }}
+              transition={{ duration: reducedMotion ? 0.25 : 0.72, ease: GENTLE_EASE }}
               onClick={() => {
                 if (stage === 'typing') finishInstantly();
               }}
@@ -323,8 +324,9 @@ export default function LetterSection({
                   </h2>
                   {typedTitleCount >= titleText.length && (
                     <motion.span
-                      initial={{ scale: 0, rotate: -20 }}
-                      animate={{ scale: 1, rotate: 0 }}
+                      initial={{ scale: 0.5, opacity: 0, rotate: -12 }}
+                      animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                      transition={{ duration: 0.55, ease: GENTLE_EASE }}
                       className="text-sage-600"
                     >
                       <Sparkles className="h-6 w-6" aria-hidden="true" />
@@ -368,9 +370,9 @@ export default function LetterSection({
 
                 {stage === 'done' && (
                   <motion.div
-                    initial={{ opacity: 0, y: 12 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.15 }}
+                    transition={{ delay: 0.2, duration: 0.7, ease: GENTLE_EASE }}
                     className="mt-8 border-t border-sage-200 pt-6"
                   >
                     {/* Tanda tangan dengan animasi goresan SVG */}

@@ -13,6 +13,7 @@ import {
 import { AudioControls } from '../hooks/useAudio';
 import { useLyrics } from '../hooks/useLyrics';
 import { useReducedMotion } from '../hooks/useReducedMotion';
+import { GENTLE_EASE } from '../lib/motion';
 import { ThemeMode } from '../hooks/useTheme';
 import { ThemeToggle } from './ThemeToggle';
 
@@ -65,8 +66,9 @@ export function LyricsBar({
       {collapsed ? (
         <motion.div
           layout
-          initial={{ opacity: 0, y: -8, scale: 0.94 }}
+          initial={{ opacity: 0, y: -6, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.48, ease: GENTLE_EASE }}
           className="pointer-events-auto flex max-w-full items-center gap-1.5"
         >
           <ThemeToggle theme={theme} onToggle={onToggleTheme} />
@@ -141,9 +143,9 @@ export function LyricsBar({
         <motion.aside
           layout
           aria-label="Pemutar lagu dan lirik"
-          initial={{ opacity: 0, y: -12, scale: 0.96 }}
+          initial={{ opacity: 0, y: -10, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+          transition={{ duration: 0.52, ease: GENTLE_EASE }}
           className="glass-sage pointer-events-auto w-[min(308px,calc(100vw-20px))] rounded-[26px] border border-sage-200/90 p-3 shadow-sage-lg"
         >
           <div className="flex items-center gap-2">
@@ -191,10 +193,10 @@ export function LyricsBar({
                 <AnimatePresence mode="popLayout" initial={false}>
                   <motion.div
                     key={activeIndex >= 0 ? `${activeIndex}-${activeLine}` : 'waiting'}
-                    initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
+                    initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
-                    transition={{ type: 'spring', stiffness: 360, damping: 28 }}
+                    exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+                    transition={{ duration: 0.45, ease: GENTLE_EASE }}
                     className="truncate text-xs font-bold leading-snug"
                   >
                     {activeIndex >= 0 ? (

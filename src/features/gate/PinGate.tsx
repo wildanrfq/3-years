@@ -6,6 +6,7 @@ import { Mascot, MascotMood } from '../../components/Mascot';
 import { HintBubble } from '../../components/HintBubble';
 import { ThemeToggle } from '../../components/ThemeToggle';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { GENTLE_EASE } from '../../lib/motion';
 import { ThemeMode } from '../../hooks/useTheme';
 import { verifyPin } from '../../lib/pin';
 
@@ -79,7 +80,7 @@ export function PinGate({
         fireHeartBurst();
         window.setTimeout(() => {
           onUnlock();
-        }, reducedMotion ? 240 : 880);
+        }, reducedMotion ? 280 : 1080);
       } else {
         setStatus('error');
         setErrorCount((c) => c + 1);
@@ -172,9 +173,9 @@ export function PinGate({
         {status === 'unlocked' && (
           <motion.div
             aria-hidden="true"
-            initial={{ scale: 0, opacity: 0.85 }}
-            animate={{ scale: 28, opacity: 1 }}
-            transition={{ duration: reducedMotion ? 0.2 : 0.85, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ scale: 0, opacity: 0.65 }}
+            animate={{ scale: 28, opacity: 0.95 }}
+            transition={{ duration: reducedMotion ? 0.25 : 1.15, ease: GENTLE_EASE }}
             className="pointer-events-none fixed left-1/2 top-1/2 z-40 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sage-300/90"
           />
         )}
@@ -182,9 +183,9 @@ export function PinGate({
 
       <motion.section
         aria-label="Gerbang PIN"
-        initial={{ opacity: 0, y: 18 }}
+        initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ type: 'spring', stiffness: 280, damping: 26 }}
+        transition={{ duration: reducedMotion ? 0.25 : 0.72, ease: GENTLE_EASE }}
         className="relative z-10 w-full max-w-[360px] rounded-[32px] border border-sage-200/90 bg-cream/95 p-6 text-center shadow-sage-lg"
       >
         <div className="flex flex-col items-center">
@@ -239,11 +240,11 @@ export function PinGate({
                 key={idx}
                 animate={
                   filled
-                    ? { scale: [0.7, 1.25, 1] }
+                    ? { scale: [0.85, 1.1, 1] }
                     : { scale: 1 }
                 }
-                transition={{ type: 'spring', stiffness: 520, damping: 20 }}
-                className={`h-4 w-4 rounded-full border-2 transition-colors ${
+                transition={{ duration: 0.35, ease: GENTLE_EASE }}
+                className={`h-4 w-4 rounded-full border-2 transition-colors duration-300 ${
                   isError
                     ? 'border-rose-400 bg-blush'
                     : filled
@@ -262,6 +263,7 @@ export function PinGate({
               initial={{ opacity: 0, height: 0, marginTop: 0 }}
               animate={{ opacity: 1, height: 'auto', marginTop: 14 }}
               exit={{ opacity: 0, height: 0, marginTop: 0 }}
+              transition={{ duration: 0.45, ease: GENTLE_EASE }}
               className="overflow-hidden"
             >
               <div className="rounded-2xl border border-sage-200 bg-sage-100/80 px-3.5 py-2 text-xs font-semibold text-sage-800">
@@ -309,8 +311,8 @@ export function PinGate({
                 type="button"
                 onClick={() => handleDigit(key)}
                 disabled={status === 'unlocked'}
-                whileTap={reducedMotion ? undefined : { scale: 0.91 }}
-                transition={{ type: 'spring', stiffness: 500, damping: 24 }}
+                whileTap={reducedMotion ? undefined : { scale: 0.95 }}
+                transition={{ duration: 0.22, ease: GENTLE_EASE }}
                 className="focus-ring flex min-h-[54px] items-center justify-center rounded-2xl border border-sage-200/90 bg-sage-50 font-display text-2xl font-semibold text-sage-900 shadow-sage-sm transition hover:bg-sage-100 active:bg-sage-200/70"
               >
                 {key}

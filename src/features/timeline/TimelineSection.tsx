@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { content, SectionId, TimelineIconName, TimelineItem } from '../../config/content';
 import { assetUrl } from '../../lib/assets';
+import { GENTLE_EASE } from '../../lib/motion';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { SectionShell } from '../../components/SectionShell';
 import { HintBubble } from '../../components/HintBubble';
@@ -72,23 +73,10 @@ export default function TimelineSection({
     }
   }, [allRevealed]);
 
-  const scrollLatestCardIntoCenter = (behavior: ScrollBehavior) => {
-    const track = trackRef.current;
-    const card = latestCardRef.current;
-    if (!track || !card) return;
-
-    let x = 0;
-    let el: HTMLElement | null = card;
-    while (el && el !== track) {
-      x += el.offsetLeft;
-      el = el.offsetParent as HTMLElement | null;
+  const stopAutoScroll = () => {
+    if (trackRef.current) {
+      gsap.killTweensOf(trackRef.current);
     }
-
-    const targetLeft = x - (track.clientWidth - card.offsetWidth) / 2;
-    track.scrollTo({
-      left: Math.max(0, targetLeft),
-      behavior,
-    });
   };
 
   useEffect(() => {
@@ -128,8 +116,8 @@ export default function TimelineSection({
     const ctx = gsap.context(() => {
       gsap.to(proxy, {
         p: targetProgress,
-        duration: 0.7,
-        ease: 'power2.out',
+        duration: 1.15,
+        ease: 'power2.inOut',
         onUpdate: () => {
           setPathAtProgress(proxy.p);
           prevProgressRef.current = proxy.p;
@@ -141,10 +129,41 @@ export default function TimelineSection({
   }, [revealedCount, allRevealed, reducedMotion]);
 
   useEffect(() => {
+    const track = trackRef.current;
+    const card = latestCardRef.current;
+    if (!track || !card) return;
+
     const timer = window.setTimeout(() => {
-      scrollLatestCardIntoCenter(reducedMotion ? 'auto' : 'smooth');
-    }, 90);
-    return () => window.clearTimeout(timer);
+      let x = 0;
+      let el: HTMLElement | null = card;
+      while (el && el !== track) {
+        x += el.offsetLeft;
+        el = el.offsetParent as HTMLElement | null;
+      }
+
+      const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
+      const targetLeft = Math.min(
+        maxScroll,
+        Math.max(0, x - (track.clientWidth - card.offsetWidth) / 2)
+      );
+
+      gsap.killTweensOf(track);
+      if (reducedMotion) {
+        track.scrollLeft = targetLeft;
+        return;
+      }
+
+      gsap.to(track, {
+        scrollLeft: targetLeft,
+        duration: 1.05,
+        ease: 'power2.inOut',
+      });
+    }, 80);
+
+    return () => {
+      window.clearTimeout(timer);
+      gsap.killTweensOf(track);
+    };
   }, [revealedCount, reducedMotion]);
 
   const handleRevealNext = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -161,12 +180,14 @@ export default function TimelineSection({
       const originY = Math.min(0.85, (rect.top + rect.height / 2) / window.innerHeight);
 
       confetti({
-        particleCount: nextCount === total ? 36 : 18,
-        spread: nextCount === total ? 75 : 52,
-        startVelocity: 24,
+        particleCount: nextCount === total ? 30 : 14,
+        spread: nextCount === total ? 70 : 48,
+        startVelocity: 18,
+        gravity: 0.72,
+        ticks: 220,
         origin: { x: originX, y: originY },
         colors: ['#7F9C70', '#B5C7AA', '#F2CFC4', '#FBF8EF'],
-        scalar: 0.85,
+        scalar: 0.82,
       });
     }
   };
@@ -200,7 +221,7 @@ export default function TimelineSection({
               className="h-full rounded-full bg-sage-500"
               initial={false}
               animate={{ width: `${(revealedCount / total) * 100}%` }}
-              transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+              transition={{ duration: reducedMotion ? 0.25 : 0.9, ease: GENTLE_EASE }}
             />
           </div>
         </div>
@@ -210,7 +231,7 @@ export default function TimelineSection({
             icon={
               <motion.span
                 animate={reducedMotion ? undefined : { x: [0, 3, 0] }}
-                transition={{ duration: 1.2, repeat: Infinity }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
               >
                 <ArrowRight className="h-3.5 w-3.5 text-sage-600" aria-hidden="true" />
               </motion.span>
@@ -224,6 +245,9 @@ export default function TimelineSection({
       {/* Track timeline horizontal */}
       <div
         ref={trackRef}
+        onPointerDown={stopAutoScroll}
+        onTouchStart={stopAutoScroll}
+        onWheel={stopAutoScroll}
         className="timeline-scroll relative -mx-4 overflow-x-auto px-4 pb-4 pt-2 sm:-mx-6 sm:px-6"
       >
         <div className="flex w-max min-w-full justify-center px-2 sm:px-4">
@@ -301,15 +325,15 @@ export default function TimelineSection({
                   <motion.button
                     type="button"
                     onClick={handleRevealNext}
-                    whileHover={reducedMotion ? undefined : { y: -3, scale: 1.01 }}
-                    whileTap={reducedMotion ? undefined : { scale: 0.97 }}
-                    initial={reducedMotion ? { opacity: 0 } : { opacity: 0, x: 24 }}
+                    whileHover={reducedMotion ? undefined : { y: -2, scale: 1.01 }}
+                    whileTap={reducedMotion ? undefined : { scale: 0.98 }}
+                    initial={reducedMotion ? { opacity: 0 } : { opacity: 0, x: 18 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ type: 'spring', stiffness: 280, damping: 24 }}
-                    className="focus-ring group flex w-full flex-col items-center justify-center gap-3.5 rounded-[26px] border-2 border-dashed border-sage-300 bg-cream/85 p-6 text-center shadow-sage-sm transition-colors hover:border-sage-400 hover:bg-cream"
+                    transition={{ duration: reducedMotion ? 0.25 : 0.75, ease: GENTLE_EASE }}
+                    className="focus-ring group flex w-full flex-col items-center justify-center gap-3.5 rounded-[26px] border-2 border-dashed border-sage-300 bg-cream/85 p-6 text-center shadow-sage-sm transition-colors duration-500 hover:border-sage-400 hover:bg-cream"
                   >
                     <div className="flex items-center gap-2">
-                      <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-sage-100 text-sage-700 shadow-sage-sm transition-transform group-hover:scale-105">
+                      <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-sage-100 text-sage-700 shadow-sage-sm transition-transform duration-500 group-hover:scale-105">
                         <Lock className="h-4 w-4" aria-hidden="true" />
                       </span>
                       <span className="rounded-pill bg-sage-100 px-2.5 py-1 text-[11px] font-bold text-sage-700">
@@ -326,7 +350,7 @@ export default function TimelineSection({
                       </p>
                     </div>
 
-                    <span className="inline-flex items-center gap-1.5 rounded-pill bg-sage-600 px-4 py-2 text-xs font-bold text-[#FBF8EF] shadow-sage-sm transition group-hover:bg-sage-500">
+                    <span className="inline-flex items-center gap-1.5 rounded-pill bg-sage-600 px-4 py-2 text-xs font-bold text-[#FBF8EF] shadow-sage-sm transition-colors duration-300 group-hover:bg-sage-500">
                       <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
                       <span>Buka jejak</span>
                       <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -343,19 +367,19 @@ export default function TimelineSection({
       <div className="mt-6 flex flex-col items-center gap-4 text-center">
         {!allRevealed ? (
           <motion.div
-            key={`teaser-${revealedCount}`}
-            initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+            initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: reducedMotion ? 0.25 : 0.7, ease: GENTLE_EASE }}
             className="relative flex flex-col items-center gap-3 rounded-[28px] border border-dashed border-sage-300 bg-cream/85 px-6 py-5 shadow-sage-sm"
           >
             <AnimatePresence>
               {revealPulse > 0 && !reducedMotion && (
                 <motion.div
                   key={revealPulse}
-                  initial={{ scale: 0.6, opacity: 0.9 }}
-                  animate={{ scale: 1.55, opacity: 0 }}
+                  initial={{ scale: 0.85, opacity: 0.55 }}
+                  animate={{ scale: 1.35, opacity: 0 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.55, ease: 'easeOut' }}
+                  transition={{ duration: 0.95, ease: GENTLE_EASE }}
                   aria-hidden="true"
                   className="pointer-events-none absolute inset-0 rounded-[28px] border-2 border-sage-400"
                 />
@@ -370,15 +394,15 @@ export default function TimelineSection({
             <SquishyButton onClick={handleRevealNext} className="group">
               <motion.span
                 key={revealPulse}
-                animate={reducedMotion ? undefined : { rotate: [0, -12, 12, 0], scale: [1, 1.2, 1] }}
-                transition={{ duration: 0.45 }}
+                animate={reducedMotion ? undefined : { scale: [1, 1.12, 1] }}
+                transition={{ duration: 0.65, ease: GENTLE_EASE }}
               >
                 <Sparkles className="h-4 w-4" aria-hidden="true" />
               </motion.span>
               <span>Buka jejak berikutnya</span>
               <motion.span
                 animate={reducedMotion ? undefined : { x: [0, 3, 0] }}
-                transition={{ duration: 1.2, repeat: Infinity }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
               >
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </motion.span>
@@ -386,9 +410,9 @@ export default function TimelineSection({
           </motion.div>
         ) : (
           <motion.div
-            initial={{ opacity: 0, scale: 0.94 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: 'spring', stiffness: 280, damping: 22 }}
+            initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 10, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: reducedMotion ? 0.3 : 0.8, ease: GENTLE_EASE }}
             className="flex flex-col items-center gap-3"
           >
             <Mascot
@@ -427,25 +451,20 @@ function TimelineCard({
   cardRef,
 }: TimelineCardProps) {
   const isPrevious = !isLatest;
-  const animKind = index % 3;
   const stickerKind = index % 3;
 
   const initialVariant = reducedMotion
     ? { opacity: 0 }
-    : animKind === 0
-    ? { opacity: 0, scale: 0.85, x: 32 }
-    : animKind === 1
-    ? { opacity: 0, rotate: 4, x: 36, scale: 0.92 }
-    : { opacity: 0, x: 44, y: 8 };
+    : { opacity: 0, x: 24, scale: 0.96 };
 
   const animateVariant = reducedMotion
     ? { opacity: 1 }
-    : { opacity: 1, scale: 1, rotate: 0, x: 0, y: 0 };
+    : { opacity: 1, x: 0, scale: 1 };
 
-  const transition =
-    animKind === 2 && !reducedMotion
-      ? { type: 'spring' as const, stiffness: 260, damping: 18 }
-      : { type: 'spring' as const, stiffness: 280, damping: 22 };
+  const transition = {
+    duration: reducedMotion ? 0.3 : 0.95,
+    ease: GENTLE_EASE,
+  };
 
   return (
     <motion.li
@@ -458,7 +477,7 @@ function TimelineCard({
       {/* Titik simpul di jalur horizontal */}
       <span
         aria-hidden="true"
-        className={`pointer-events-none absolute left-1/2 top-[-29px] z-10 h-3.5 w-3.5 -translate-x-1/2 rounded-full border-2 transition-colors duration-300 ${
+        className={`pointer-events-none absolute left-1/2 top-[-29px] z-10 h-3.5 w-3.5 -translate-x-1/2 rounded-full border-2 transition-colors duration-700 ease-out ${
           isPrevious
             ? 'border-sage-300 bg-sage-200'
             : 'border-sage-500 bg-cream shadow-sage-sm'
@@ -467,7 +486,7 @@ function TimelineCard({
 
       <article
         data-blurred={isPrevious ? 'true' : 'false'}
-        className={`relative flex w-full flex-col rounded-[26px] border bg-cream p-5 transition-all duration-500 ease-out ${
+        className={`relative flex w-full flex-col rounded-[26px] border bg-cream p-5 transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] ${
           isPrevious
             ? `${reducedMotion ? '' : 'scale-[0.96] '}select-none border-sage-200/70 opacity-65 shadow-sage-sm blur-[5px]`
             : 'scale-100 border-sage-400 opacity-100 shadow-sage-glow blur-0'
@@ -529,8 +548,8 @@ function DoodleSticker({
   return (
     <motion.div
       aria-hidden="true"
-      animate={reducedMotion ? undefined : { rotate: [-6, 6, -6] }}
-      transition={{ duration: 3.4 + kind * 0.5, repeat: Infinity, ease: 'easeInOut' }}
+      animate={reducedMotion ? undefined : { rotate: [-4, 4, -4] }}
+      transition={{ duration: 5.2 + kind * 0.7, repeat: Infinity, ease: 'easeInOut' }}
       className={`pointer-events-none absolute z-10 flex h-9 w-9 items-center justify-center rounded-full border border-sage-200 bg-cream shadow-sage-sm ${className}`}
     >
       {kind === 0 && (

@@ -1,0 +1,554 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight, Disc3, Pause, Sparkles, X } from 'lucide-react';
+import { content, RewindSlide, SectionId } from '../../config/content';
+import { assetUrl } from '../../lib/assets';
+import { getElapsedSince } from '../../lib/date';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { HintBubble } from '../../components/HintBubble';
+import { SquishyButton } from '../../components/SquishyButton';
+
+interface RewindSectionProps {
+  onBackToHub: () => void;
+  onNavigateSection: (next: SectionId) => void;
+}
+
+const SLIDE_DURATION_MS = 6000;
+
+const SLIDE_BACKGROUNDS = [
+  'from-sage-100 via-sage-50 to-sage-200',
+  'from-sage-200/80 via-sage-100 to-blush/35',
+  'from-sage-100 via-cream to-sage-200/85',
+  'from-sage-200/75 via-sage-50 to-sage-300/60',
+  'from-blush/35 via-sage-100 to-sage-200/80',
+  'from-sage-100 via-sage-200/70 to-sage-50',
+  'from-sage-200/85 via-cream to-blush/40',
+  'from-sage-100 via-blush/30 to-sage-200',
+];
+
+export default function RewindSection({
+  onBackToHub,
+  onNavigateSection,
+}: RewindSectionProps) {
+  const reducedMotion = useReducedMotion();
+  const slides = content.rewind;
+
+  const [index, setIndex] = useState(0);
+  const [direction, setDirection] = useState(1);
+  const [progress, setProgress] = useState(0);
+  const [isHeldPaused, setIsHeldPaused] = useState(false);
+  const [manualPaused, setManualPaused] = useState(false);
+  const [showGestureHint, setShowGestureHint] = useState(true);
+
+  const progressRef = useRef(0);
+  const holdTimerRef = useRef<number | null>(null);
+  const didHoldRef = useRef(false);
+  const pointerStartRef = useRef<{ x: number; y: number; time: number } | null>(null);
+
+  const isPaused = isHeldPaused || manualPaused || reducedMotion;
+  const currentSlide = slides[index];
+  const totalDays = useMemo(() => getElapsedSince(content.startDate, new Date()).totalDays, []);
+
+  const goNext = useCallback(() => {
+    setShowGestureHint(false);
+    setDirection(1);
+    setIndex((prev) => (prev < slides.length - 1 ? prev + 1 : prev));
+    progressRef.current = 0;
+    setProgress(0);
+  }, [slides.length]);
+
+  const goPrev = useCallback(() => {
+    setShowGestureHint(false);
+    setDirection(-1);
+    setIndex((prev) => (prev > 0 ? prev - 1 : 0));
+    progressRef.current = 0;
+    setProgress(0);
+  }, []);
+
+  useEffect(() => {
+    progressRef.current = 0;
+    setProgress(0);
+  }, [index]);
+
+  useEffect(() => {
+    if (isPaused || index >= slides.length - 1) return;
+
+    let lastTs = performance.now();
+    let rafId = 0;
+
+    const tick = (now: number) => {
+      const dt = now - lastTs;
+      lastTs = now;
+      const nextProgress = Math.min(1, progressRef.current + dt / SLIDE_DURATION_MS);
+      progressRef.current = nextProgress;
+      setProgress(nextProgress);
+
+      if (nextProgress >= 1) {
+        goNext();
+        return;
+      }
+      rafId = requestAnimationFrame(tick);
+    };
+
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [goNext, index, isPaused, slides.length]);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') {
+        goNext();
+      } else if (e.key === 'ArrowLeft') {
+        goPrev();
+      } else if (e.key === ' ') {
+        e.preventDefault();
+        setManualPaused((p) => !p);
+      } else if (e.key === 'Escape') {
+        onBackToHub();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [goNext, goPrev, onBackToHub]);
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if ((e.target as HTMLElement).closest('button')) return;
+    didHoldRef.current = false;
+    pointerStartRef.current = { x: e.clientX, y: e.clientY, time: performance.now() };
+    holdTimerRef.current = window.setTimeout(() => {
+      didHoldRef.current = true;
+      setIsHeldPaused(true);
+      setShowGestureHint(false);
+    }, 170);
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (holdTimerRef.current !== null) {
+      window.clearTimeout(holdTimerRef.current);
+      holdTimerRef.current = null;
+    }
+
+    const start = pointerStartRef.current;
+    pointerStartRef.current = null;
+
+    if (isHeldPaused) {
+      setIsHeldPaused(false);
+    }
+
+    if (!start || (e.target as HTMLElement).closest('button')) return;
+
+    const dy = e.clientY - start.y;
+    const dx = Math.abs(e.clientX - start.x);
+
+    if (dy > 68 && dy > dx * 1.2) {
+      onBackToHub();
+      return;
+    }
+
+    if (didHoldRef.current) return;
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const relX = (e.clientX - rect.left) / rect.width;
+    if (relX < 0.34) {
+      goPrev();
+    } else {
+      goNext();
+    }
+  };
+
+  const handlePointerCancel = () => {
+    if (holdTimerRef.current !== null) {
+      window.clearTimeout(holdTimerRef.current);
+      holdTimerRef.current = null;
+    }
+    pointerStartRef.current = null;
+    setIsHeldPaused(false);
+  };
+
+  const bgGradient = SLIDE_BACKGROUNDS[index % SLIDE_BACKGROUNDS.length];
+
+  return (
+    <main className="relative z-10 flex min-h-dvh w-full flex-col items-center justify-center px-3 pb-24 pt-36 sm:px-6 sm:pt-36">
+      <div
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerCancel}
+        style={{ perspective: '1100px' }}
+        className={`relative flex aspect-[9/16] h-[min(640px,calc(100dvh-14.5rem))] max-w-full select-none flex-col overflow-hidden rounded-[32px] border border-sage-200/90 bg-gradient-to-b ${bgGradient} shadow-sage-lg touch-pan-x`}
+      >
+        {/* Gumpalan cahaya latar animasi */}
+        {!reducedMotion && (
+          <>
+            <motion.div
+              aria-hidden="true"
+              animate={{ x: [0, 20, -10, 0], y: [0, -16, 12, 0] }}
+              transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
+              className="pointer-events-none absolute -right-14 top-16 h-48 w-48 rounded-full bg-blush/35 blur-2xl"
+            />
+            <motion.div
+              aria-hidden="true"
+              animate={{ x: [0, -16, 12, 0], y: [0, 14, -14, 0] }}
+              transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut' }}
+              className="pointer-events-none absolute -left-16 bottom-16 h-52 w-52 rounded-full bg-sage-300/45 blur-2xl"
+            />
+          </>
+        )}
+
+        {/* Bar progres segmen dan tombol kontrol atas */}
+        <div className="relative z-20 px-4 pt-4">
+          <div className="flex gap-1.5" role="progressbar" aria-valuenow={index + 1} aria-valuemax={slides.length}>
+            {slides.map((_, idx) => {
+              const fill = idx < index ? 1 : idx === index ? progress : 0;
+              return (
+                <div
+                  key={idx}
+                  className="h-1 flex-1 overflow-hidden rounded-full bg-sage-900/15"
+                >
+                  <div
+                    className="h-full rounded-full bg-sage-700 transition-none"
+                    style={{ width: `${Math.round(fill * 100)}%` }}
+                  />
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-2.5 flex items-center justify-between">
+            <span className="inline-flex items-center gap-1.5 rounded-pill bg-cream/85 px-2.5 py-1 text-[11px] font-bold text-sage-800 shadow-sage-sm">
+              {(isHeldPaused || manualPaused) && <Pause className="h-3 w-3" aria-hidden="true" />}
+              <span>
+                {index + 1} / {slides.length}
+              </span>
+            </span>
+
+            <button
+              type="button"
+              onClick={onBackToHub}
+              aria-label="Tutup Rewind"
+              className="focus-ring flex h-11 w-11 items-center justify-center rounded-full bg-cream/85 text-sage-800 shadow-sage-sm transition hover:bg-cream"
+            >
+              <X className="h-4 w-4" aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+
+        {/* Konten slide dengan transisi rotateY */}
+        <div className="relative z-10 flex flex-1 flex-col justify-center px-6 pb-8 pt-2">
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={index}
+              custom={direction}
+              initial={
+                reducedMotion
+                  ? { opacity: 0 }
+                  : { opacity: 0, rotateY: direction > 0 ? 28 : -28, scale: 0.96 }
+              }
+              animate={
+                reducedMotion
+                  ? { opacity: 1 }
+                  : { opacity: 1, rotateY: 0, scale: 1 }
+              }
+              exit={
+                reducedMotion
+                  ? { opacity: 0 }
+                  : { opacity: 0, rotateY: direction > 0 ? -28 : 28, scale: 0.96 }
+              }
+              transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+              style={{ transformStyle: 'preserve-3d' }}
+              className="flex h-full flex-col items-center justify-center text-center"
+            >
+              <SlideBody
+                slide={currentSlide}
+                totalDays={totalDays}
+                paused={isPaused}
+                reducedMotion={reducedMotion}
+                onGoToLetter={() => onNavigateSection('letter')}
+              />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Petunjuk sentuhan pertama */}
+        <AnimatePresence>
+          {showGestureHint && (
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 6 }}
+              className="pointer-events-none absolute inset-x-0 bottom-3 z-20 flex justify-center px-4"
+            >
+              <HintBubble>Ketuk kanan atau kiri, tahan untuk jeda</HintBubble>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </main>
+  );
+}
+
+function SlideBody({
+  slide,
+  totalDays,
+  paused,
+  reducedMotion,
+  onGoToLetter,
+}: {
+  slide: RewindSlide;
+  totalDays: number;
+  paused: boolean;
+  reducedMotion: boolean;
+  onGoToLetter: () => void;
+}) {
+  if (slide.type === 'intro') {
+    return (
+      <div className="space-y-4">
+        <span className="inline-flex items-center gap-1.5 rounded-pill bg-cream/90 px-3.5 py-1 text-xs font-bold text-sage-700 shadow-sage-sm">
+          <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+          <span>{slide.eyebrow}</span>
+        </span>
+        <h2 className="font-display text-3xl font-semibold leading-tight text-sage-900">
+          {slide.title}
+        </h2>
+        <p className="text-sm leading-relaxed text-sage-800">{slide.subtitle}</p>
+      </div>
+    );
+  }
+
+  if (slide.type === 'countup') {
+    return (
+      <div className="space-y-3">
+        <span className="text-xs font-bold uppercase tracking-wider text-sage-700">
+          {slide.eyebrow}
+        </span>
+        <div className="font-display text-6xl font-bold tabular-nums text-sage-900">
+          <CountUpNumber target={totalDays} reducedMotion={reducedMotion} />
+        </div>
+        <p className="text-base font-bold text-sage-800">{slide.label}</p>
+        <p className="text-xs leading-relaxed text-sage-700">{slide.subtitle}</p>
+      </div>
+    );
+  }
+
+  if (slide.type === 'photo') {
+    return (
+      <div className="flex w-full flex-col items-center space-y-4">
+        <span className="text-xs font-bold uppercase tracking-wider text-sage-700">
+          {slide.eyebrow}
+        </span>
+        <div className="w-full overflow-hidden rounded-3xl border-4 border-cream bg-sage-100 shadow-sage-md">
+          <motion.img
+            src={assetUrl(slide.photo)}
+            alt={slide.caption}
+            animate={
+              reducedMotion || paused
+                ? { scale: 1 }
+                : { scale: [1, 1.1], x: [0, -6] }
+            }
+            transition={{ duration: 6, ease: 'linear' }}
+            className="h-60 w-full object-cover"
+          />
+        </div>
+        <div>
+          <p className="font-display text-lg font-semibold text-sage-900">{slide.caption}</p>
+          <p className="mt-0.5 text-xs font-semibold text-sage-700">{slide.date}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (slide.type === 'stat') {
+    const val =
+      slide.statSource === 'places'
+        ? content.places.length
+        : slide.statSource === 'photocards'
+        ? content.photoCards.length
+        : slide.customValue ?? 0;
+
+    return (
+      <div className="space-y-3">
+        <span className="text-xs font-bold uppercase tracking-wider text-sage-700">
+          {slide.eyebrow}
+        </span>
+        <div className="font-display text-6xl font-bold tabular-nums text-sage-900">
+          <CountUpNumber target={val} reducedMotion={reducedMotion} />
+        </div>
+        <div className="text-sm font-bold uppercase tracking-wider text-sage-700">
+          {slide.unit}
+        </div>
+        <h2 className="pt-1 font-display text-2xl font-semibold text-sage-900">{slide.title}</h2>
+        <p className="text-xs leading-relaxed text-sage-700">{slide.subtitle}</p>
+      </div>
+    );
+  }
+
+  if (slide.type === 'carousel') {
+    return (
+      <div className="flex w-full flex-col items-center space-y-5">
+        <div>
+          <span className="text-xs font-bold uppercase tracking-wider text-sage-700">
+            {slide.eyebrow}
+          </span>
+          <h2 className="mt-1 font-display text-2xl font-semibold text-sage-900">
+            {slide.title}
+          </h2>
+        </div>
+
+        <Carousel3D photos={slide.photos} paused={paused} reducedMotion={reducedMotion} />
+      </div>
+    );
+  }
+
+  if (slide.type === 'ranking') {
+    return (
+      <div className="w-full space-y-4 text-left">
+        <div className="text-center">
+          <span className="text-xs font-bold uppercase tracking-wider text-sage-700">
+            {slide.eyebrow}
+          </span>
+          <h2 className="mt-1 font-display text-2xl font-semibold text-sage-900">
+            {slide.title}
+          </h2>
+        </div>
+
+        <ol className="space-y-2">
+          {slide.items.map((item, i) => (
+            <motion.li
+              key={item}
+              initial={reducedMotion ? { opacity: 0 } : { opacity: 0, x: -16 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: reducedMotion ? 0 : 0.08 * i, duration: 0.35 }}
+              className="flex items-center gap-3 rounded-2xl border border-sage-200 bg-cream/90 px-3.5 py-2.5 shadow-sage-sm"
+            >
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sage-600 font-display text-xs font-bold text-[#FBF8EF]">
+                {i + 1}
+              </span>
+              <span className="text-xs font-bold leading-snug text-sage-900">{item}</span>
+            </motion.li>
+          ))}
+        </ol>
+      </div>
+    );
+  }
+
+  if (slide.type === 'song') {
+    return (
+      <div className="flex flex-col items-center space-y-4">
+        <span className="text-xs font-bold uppercase tracking-wider text-sage-700">
+          {slide.eyebrow}
+        </span>
+
+        <motion.div
+          animate={reducedMotion || paused ? undefined : { rotate: 360 }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+          className="relative flex h-40 w-40 items-center justify-center rounded-full border-4 border-sage-300 bg-[#2B3827] shadow-sage-lg"
+        >
+          <div className="h-28 w-28 rounded-full border border-sage-500/50" />
+          <div className="absolute flex h-16 w-16 items-center justify-center rounded-full bg-blush ring-4 ring-[#E6EDE1]">
+            <Disc3 className="h-6 w-6 text-[#2B3827]" aria-hidden="true" />
+          </div>
+        </motion.div>
+
+        <div>
+          <h2 className="font-display text-2xl font-semibold text-sage-900">
+            {content.song.title}
+          </h2>
+          <p className="text-sm font-bold text-sage-700">{content.song.artist}</p>
+        </div>
+        <p className="max-w-[260px] text-xs leading-relaxed text-sage-700">{slide.subtitle}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col items-center space-y-4">
+      <span className="text-xs font-bold uppercase tracking-wider text-sage-700">
+        {slide.eyebrow}
+      </span>
+      <h2 className="font-display text-3xl font-semibold text-sage-900">{slide.title}</h2>
+      <p className="max-w-[260px] text-sm leading-relaxed text-sage-800">{slide.subtitle}</p>
+      <SquishyButton onClick={onGoToLetter} className="mt-2">
+        <span>{slide.ctaLabel}</span>
+        <ArrowRight className="h-4 w-4" aria-hidden="true" />
+      </SquishyButton>
+    </div>
+  );
+}
+
+function CountUpNumber({
+  target,
+  reducedMotion,
+}: {
+  target: number;
+  reducedMotion: boolean;
+}) {
+  const [val, setVal] = useState(reducedMotion ? target : 0);
+
+  useEffect(() => {
+    if (reducedMotion) {
+      setVal(target);
+      return;
+    }
+
+    const start = performance.now();
+    const duration = 1100;
+    let rafId = 0;
+
+    const frame = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setVal(Math.round(target * eased));
+      if (t < 1) {
+        rafId = requestAnimationFrame(frame);
+      }
+    };
+
+    rafId = requestAnimationFrame(frame);
+    return () => cancelAnimationFrame(rafId);
+  }, [reducedMotion, target]);
+
+  return <span>{val.toLocaleString('id-ID')}</span>;
+}
+
+function Carousel3D({
+  photos,
+  paused,
+  reducedMotion,
+}: {
+  photos: string[];
+  paused: boolean;
+  reducedMotion: boolean;
+}) {
+  const count = photos.length;
+  const stepAngle = 360 / Math.max(1, count);
+
+  return (
+    <div
+      className="relative flex h-56 w-full items-center justify-center"
+      style={{ perspective: '850px' }}
+    >
+      <motion.div
+        animate={reducedMotion || paused ? undefined : { rotateY: 360 }}
+        transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
+        className="relative h-36 w-28"
+        style={{ transformStyle: 'preserve-3d' }}
+      >
+        {photos.map((photo, idx) => (
+          <div
+            key={`${photo}-${idx}`}
+            className="absolute inset-0 overflow-hidden rounded-2xl border-2 border-cream bg-sage-100 shadow-sage-md"
+            style={{
+              transform: `rotateY(${idx * stepAngle}deg) translateZ(105px)`,
+            }}
+          >
+            <img
+              src={assetUrl(photo)}
+              alt={`Foto galeri ${idx + 1}`}
+              loading="lazy"
+              className="h-full w-full object-cover"
+            />
+          </div>
+        ))}
+      </motion.div>
+    </div>
+  );
+}

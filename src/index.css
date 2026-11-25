@@ -18,12 +18,29 @@
   --ink: #2f3b2a;
 }
 
+.dark {
+  --sage-50: #151c14;
+  --sage-100: #1e281c;
+  --sage-200: #2d3b2b;
+  --sage-300: #3f523c;
+  --sage-400: #6b8461;
+  --sage-500: #89a67b;
+  --sage-600: #78986b;
+  --sage-700: #b7c8ae;
+  --sage-800: #d7e3d0;
+  --sage-900: #eef4eb;
+  --cream: #202a1e;
+  --blush: #dba89b;
+  --ink: #eaf0e6;
+}
+
 html,
 body {
   background-color: var(--sage-50);
   color: var(--ink);
   font-family: 'Nunito', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
+  transition: background-color 240ms ease, color 240ms ease;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -32,10 +49,18 @@ body {
   opacity: 0.035;
 }
 
+.dark .paper-grain {
+  opacity: 0.045;
+}
+
 .glass-sage {
-  background: rgba(244, 247, 242, 0.8);
+  background: rgba(244, 247, 242, 0.82);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
+}
+
+.dark .glass-sage {
+  background: rgba(24, 33, 23, 0.84);
 }
 
 .lyric-sweep {
@@ -51,8 +76,19 @@ body {
   color: transparent;
 }
 
+.dark .lyric-sweep {
+  background-image: linear-gradient(
+    90deg,
+    var(--ink) 0%,
+    var(--ink) var(--lyric-progress, 0%),
+    rgba(183, 200, 174, 0.42) var(--lyric-progress, 0%),
+    rgba(183, 200, 174, 0.42) 100%
+  );
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .lyric-sweep {
+  .lyric-sweep,
+  .dark .lyric-sweep {
     background-image: none;
     -webkit-background-clip: border-box;
     background-clip: border-box;

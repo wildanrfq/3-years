@@ -13,13 +13,13 @@ interface SquishyButtonProps
 
 const VARIANT_CLASSES: Record<Variant, string> = {
   primary:
-    'bg-sage-600 text-cream hover:bg-sage-700 shadow-sage-md border border-sage-700/20',
+    'bg-sage-600 text-[#FBF8EF] hover:bg-sage-500 shadow-sage-md border border-sage-700/20',
   secondary:
     'bg-cream text-sage-800 hover:bg-sage-100 shadow-sage-sm border border-sage-200',
   ghost:
     'bg-transparent text-sage-700 hover:bg-sage-100/80 border border-transparent',
   blush:
-    'bg-blush text-sage-900 hover:brightness-95 shadow-sage-sm border border-sage-300/40',
+    'bg-blush text-[#2B3827] hover:brightness-95 shadow-sage-sm border border-sage-300/40',
 };
 
 export function SquishyButton({

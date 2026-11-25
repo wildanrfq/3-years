@@ -47,7 +47,7 @@ export function BottomNav({
             <button
               type="button"
               onClick={() => onNavigateSection(nextSection)}
-              className="focus-ring inline-flex min-h-[44px] items-center gap-1.5 rounded-pill bg-sage-600 px-3.5 py-2 text-xs font-bold text-cream shadow-sage-sm transition hover:bg-sage-700 active:scale-95"
+              className="focus-ring inline-flex min-h-[44px] items-center gap-1.5 rounded-pill bg-sage-600 px-3.5 py-2 text-xs font-bold text-[#FBF8EF] shadow-sage-sm transition hover:bg-sage-500 active:scale-95"
             >
               <span>Lanjut</span>
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -56,7 +56,7 @@ export function BottomNav({
             <button
               type="button"
               onClick={onBackToHub}
-              className="focus-ring inline-flex min-h-[44px] items-center gap-1.5 rounded-pill bg-sage-600 px-3.5 py-2 text-xs font-bold text-cream shadow-sage-sm transition hover:bg-sage-700 active:scale-95"
+              className="focus-ring inline-flex min-h-[44px] items-center gap-1.5 rounded-pill bg-sage-600 px-3.5 py-2 text-xs font-bold text-[#FBF8EF] shadow-sage-sm transition hover:bg-sage-500 active:scale-95"
             >
               <span>Menu utama</span>
             </button>

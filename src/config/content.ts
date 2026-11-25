@@ -169,8 +169,8 @@ export const content: ContentConfig = {
   startDate: '2023-11-26T00:00:00+07:00',
   siteTitle: 'Tiga Tahun Kita',
   pin: {
-    // PIN demo bawaan adalah 261123. Ganti hash lewat: npm run hash-pin PIN_KAMU
-    hash: '370da0d3a076e62ba7d8bc72216970d2bac1d83838cf2e8994f750484d070e58',
+    // Ganti hash PIN lewat perintah: npm run hash-pin PIN_KAMU
+    hash: 'f809a4d73691e167f42514529fa6a0336c0c1bc256dc7d305858155efd214dc4',
     length: 6,
     hint: 'Tanggal jadian kita (format DDMMYY)',
   },

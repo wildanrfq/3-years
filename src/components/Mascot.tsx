@@ -125,8 +125,8 @@ export function Mascot({ mood = 'happy', size = 'md', message, className = '' }:
           fill="none"
           aria-hidden="true"
         >
-          <ellipse cx="44" cy="86" rx="26" ry="5.5" fill="#D0DCC8" opacity="0.65" />
-          <ellipse cx="98" cy="86" rx="24" ry="5.5" fill="#D0DCC8" opacity="0.65" />
+          <ellipse cx="44" cy="86" rx="26" ry="5.5" fill="var(--sage-200)" opacity="0.65" />
+          <ellipse cx="98" cy="86" rx="24" ry="5.5" fill="var(--sage-200)" opacity="0.65" />
 
           {/* Karakter daun */}
           <g>

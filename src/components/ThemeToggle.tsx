@@ -1,0 +1,57 @@
+import { motion, AnimatePresence } from 'framer-motion';
+import { Moon, Sun } from 'lucide-react';
+import { ThemeMode } from '../hooks/useTheme';
+import { useReducedMotion } from '../hooks/useReducedMotion';
+
+interface ThemeToggleProps {
+  theme: ThemeMode;
+  onToggle: () => void;
+  showLabel?: boolean;
+  className?: string;
+}
+
+export function ThemeToggle({
+  theme,
+  onToggle,
+  showLabel = false,
+  className = '',
+}: ThemeToggleProps) {
+  const reducedMotion = useReducedMotion();
+  const isDark = theme === 'dark';
+
+  return (
+    <motion.button
+      type="button"
+      onClick={onToggle}
+      whileTap={reducedMotion ? undefined : { scale: 0.92 }}
+      aria-label={isDark ? 'Ganti ke mode terang' : 'Ganti ke mode gelap'}
+      title={isDark ? 'Mode terang' : 'Mode gelap'}
+      className={`focus-ring inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 rounded-full border border-sage-200/90 bg-cream/90 text-sage-700 shadow-sage-sm transition hover:bg-sage-100 ${
+        showLabel ? 'px-3.5' : 'w-11'
+      } ${className}`}
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.span
+          key={theme}
+          initial={reducedMotion ? { opacity: 0 } : { opacity: 0, rotate: -45, scale: 0.7 }}
+          animate={reducedMotion ? { opacity: 1 } : { opacity: 1, rotate: 0, scale: 1 }}
+          exit={reducedMotion ? { opacity: 0 } : { opacity: 0, rotate: 45, scale: 0.7 }}
+          transition={{ duration: 0.18 }}
+          className="flex items-center justify-center"
+        >
+          {isDark ? (
+            <Sun className="h-4 w-4 text-blush" aria-hidden="true" />
+          ) : (
+            <Moon className="h-4 w-4 text-sage-700" aria-hidden="true" />
+          )}
+        </motion.span>
+      </AnimatePresence>
+
+      {showLabel && (
+        <span className="text-xs font-bold text-sage-800">
+          {isDark ? 'Terang' : 'Gelap'}
+        </span>
+      )}
+    </motion.button>
+  );
+}

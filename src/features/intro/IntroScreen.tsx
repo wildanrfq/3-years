@@ -21,7 +21,7 @@ export function IntroScreen({
   const reducedMotion = useReducedMotion();
 
   return (
-    <main className="relative flex min-h-dvh w-full items-center justify-center overflow-hidden px-4 pb-12 pt-28 sm:pt-32">
+    <main className="relative flex min-h-dvh w-full items-center justify-center overflow-hidden px-4 pb-12 pt-36 sm:pt-36">
       {/* Latar suasana sage lembut sebelum adegan 3D dimuat di tahap 3 */}
       <div
         aria-hidden="true"

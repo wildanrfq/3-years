@@ -4,7 +4,9 @@ import confetti from 'canvas-confetti';
 import { Delete, HelpCircle, Lock, LockOpen } from 'lucide-react';
 import { Mascot, MascotMood } from '../../components/Mascot';
 import { HintBubble } from '../../components/HintBubble';
+import { ThemeToggle } from '../../components/ThemeToggle';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { ThemeMode } from '../../hooks/useTheme';
 import { verifyPin } from '../../lib/pin';
 
 interface PinGateProps {
@@ -12,6 +14,8 @@ interface PinGateProps {
   pinLength: number;
   pinHash: string;
   pinHint: string;
+  theme: ThemeMode;
+  onToggleTheme: () => void;
   onAuthSuccess: () => void;
   onUnlock: () => void;
 }
@@ -28,6 +32,8 @@ export function PinGate({
   pinLength,
   pinHash,
   pinHint,
+  theme,
+  onToggleTheme,
   onAuthSuccess,
   onUnlock,
 }: PinGateProps) {
@@ -142,6 +148,9 @@ export function PinGate({
 
   return (
     <div className="relative flex min-h-dvh w-full items-center justify-center overflow-hidden bg-gradient-to-b from-sage-100 via-sage-50 to-sage-100 px-4 py-8">
+      <div className="pt-safe fixed right-3 top-3 z-40 sm:right-5 sm:top-5">
+        <ThemeToggle theme={theme} onToggle={onToggleTheme} showLabel />
+      </div>
       {/* Lingkaran cahaya lembut */}
       <div
         aria-hidden="true"

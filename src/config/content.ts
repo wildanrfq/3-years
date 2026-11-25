@@ -102,9 +102,6 @@ export interface ContentConfig {
     body: string[];
     signature: string;
   };
-  ui: {
-    lockLetterUntilAllVisited: boolean;
-  };
 }
 
 export const SECTION_ORDER: SectionId[] = [
@@ -268,10 +265,10 @@ export const content: ContentConfig = {
     },
     {
       type: 'outro',
-      eyebrow: 'Satu langkah lagi',
-      title: 'Masih ada surat kecil untukmu',
-      subtitle: 'Terima kasih sudah sampai di halaman ini.',
-      ctaLabel: 'Lanjut ke surat',
+      eyebrow: 'Bagian berikutnya',
+      title: 'Masih ada kartu foto kita',
+      subtitle: 'Balik setiap kartunya untuk membaca catatan kecil sebelum surat terakhir.',
+      ctaLabel: 'Lanjut ke Kartu Foto',
     },
   ],
   photoCards: [
@@ -333,8 +330,5 @@ export const content: ContentConfig = {
       'Semoga di tahun-tahun berikutnya, kita tetap jadi tim yang saling menguatkan dan selalu punya alasan buat merayakan hal sederhana.',
     ],
     signature: 'Dari Wildan',
-  },
-  ui: {
-    lockLetterUntilAllVisited: false,
   },
 };

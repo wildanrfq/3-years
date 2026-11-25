@@ -1,14 +1,16 @@
-import { ArrowLeft, ArrowRight, LayoutGrid } from 'lucide-react';
+import { ArrowLeft, ArrowRight, LayoutGrid, Lock } from 'lucide-react';
 import { SECTION_META, SECTION_ORDER, SectionId } from '../config/content';
 
 interface BottomNavProps {
   currentSection: SectionId;
+  canGoNext: boolean;
   onBackToHub: () => void;
   onNavigateSection: (section: SectionId) => void;
 }
 
 export function BottomNav({
   currentSection,
+  canGoNext,
   onBackToHub,
   onNavigateSection,
 }: BottomNavProps) {
@@ -44,14 +46,26 @@ export function BottomNav({
           )}
 
           {nextSection ? (
-            <button
-              type="button"
-              onClick={() => onNavigateSection(nextSection)}
-              className="focus-ring inline-flex min-h-[44px] items-center gap-1.5 rounded-pill bg-sage-600 px-3.5 py-2 text-xs font-bold text-[#FBF8EF] shadow-sage-sm transition hover:bg-sage-500 active:scale-95"
-            >
-              <span>Lanjut</span>
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </button>
+            canGoNext ? (
+              <button
+                type="button"
+                onClick={() => onNavigateSection(nextSection)}
+                className="focus-ring inline-flex min-h-[44px] items-center gap-1.5 rounded-pill bg-sage-600 px-3.5 py-2 text-xs font-bold text-[#FBF8EF] shadow-sage-sm transition hover:bg-sage-500 active:scale-95"
+              >
+                <span>Lanjut</span>
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </button>
+            ) : (
+              <button
+                type="button"
+                disabled
+                aria-label={`Selesaikan ${SECTION_META[currentSection].title} terlebih dulu sebelum lanjut`}
+                className="inline-flex min-h-[44px] cursor-not-allowed items-center gap-1.5 rounded-pill bg-sage-200/80 px-3.5 py-2 text-xs font-bold text-sage-600"
+              >
+                <Lock className="h-3.5 w-3.5" aria-hidden="true" />
+                <span>Selesaikan dulu</span>
+              </button>
+            )
           ) : (
             <button
               type="button"

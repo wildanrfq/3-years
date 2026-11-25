@@ -9,6 +9,7 @@ interface SectionShellProps {
   onNextSection: (next: SectionId) => void;
   onBackToHub: () => void;
   hideFooterCta?: boolean;
+  wide?: boolean;
 }
 
 export function SectionShell({
@@ -17,13 +18,18 @@ export function SectionShell({
   onNextSection,
   onBackToHub,
   hideFooterCta = false,
+  wide = false,
 }: SectionShellProps) {
   const idx = SECTION_ORDER.indexOf(section);
   const nextSection = idx >= 0 && idx < SECTION_ORDER.length - 1 ? SECTION_ORDER[idx + 1] : null;
   const meta = SECTION_META[section];
 
   return (
-    <main className="relative z-10 mx-auto flex min-h-dvh w-full max-w-3xl flex-col px-4 pb-28 pt-20 sm:px-6 sm:pt-14">
+    <main
+      className={`relative z-10 mx-auto flex min-h-dvh w-full ${
+        wide ? 'max-w-5xl' : 'max-w-3xl'
+      } flex-col px-4 pb-28 pt-20 sm:px-6 sm:pt-14`}
+    >
       <header className="mb-6 text-center">
         <span className="inline-block rounded-pill bg-sage-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-sage-700">
           Bagian {idx + 1} dari {SECTION_ORDER.length}

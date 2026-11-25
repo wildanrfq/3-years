@@ -35,11 +35,11 @@ Semua teks, jadwal, foto, dan surat berada di `src/config/content.ts`:
 - `partnerName` dan `myName`: nama panggilan pasangan dan nama kamu.
 - `siteTitle`: judul halaman browser dan tajuk menu utama.
 - `startDate`: tanggal jadian dalam format ISO dengan offset WIB `+07:00`, misalnya `'2023-11-26T00:00:00+07:00'`.
-- `timeline`: daftar momen perjalanan (`date`, `title`, `description`, `photo`, `icon`). Di halaman Jejak Kita, momen terbuka satu per satu saat tombol berikutnya diketuk agar tidak spoiler.
+- `timeline`: daftar momen perjalanan (`date`, `title`, `description`, `photo`, `icon`). Di halaman Jejak Kita, momen tersusun secara horizontal dan terbuka satu per satu saat tombol atau kartu berikutnya diketuk agar tidak spoiler, sementara jejak sebelumnya akan memudar (blur).
 - `rewind`: daftar slide cerita kilas balik (`intro`, `countup`, `photo`, `stat`, `carousel`, `ranking`, `song`, `outro`).
 - `photoCards`: daftar foto polaroid beserta catatan di sisi belakang (`photo`, `caption`, `date`, `backNote`).
 - `letter`: judul, isi paragraf `body`, dan `signature`.
-- `ui.lockLetterUntilAllVisited`: ubah ke `true` jika ingin surat terkunci sampai semua bagian lain dibuka terlebih dahulu (bawaan: `false`).
+- Menu utama (`SECTION_ORDER`) terbuka secara kronologis dari awal (`Jejak Kita`) sampai akhir (`Surat Untukmu`).
 
 ## 3. Mengganti PIN Rahasia
 

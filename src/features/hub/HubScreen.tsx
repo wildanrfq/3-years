@@ -8,8 +8,10 @@ import {
   Film,
   Lock,
   Mail,
+  Sparkles,
 } from 'lucide-react';
 import { SECTION_META, SECTION_ORDER, SectionId } from '../../config/content';
+import { getNextPendingSection, isSectionUnlocked } from '../../lib/progression';
 import { Mascot } from '../../components/Mascot';
 import { HintBubble } from '../../components/HintBubble';
 import { useTilt } from '../../hooks/useTilt';
@@ -19,7 +21,6 @@ interface HubScreenProps {
   partnerName: string;
   siteTitle: string;
   visitedSections: SectionId[];
-  lockLetterUntilAllVisited: boolean;
   onSelectSection: (section: SectionId) => void;
   onReplayIntro: () => void;
   onLockSite: () => void;
@@ -60,25 +61,25 @@ export function HubScreen({
   partnerName,
   siteTitle,
   visitedSections,
-  lockLetterUntilAllVisited,
   onSelectSection,
   onReplayIntro,
   onLockSite,
 }: HubScreenProps) {
   const reducedMotion = useReducedMotion();
-  const nonLetterSections = SECTION_ORDER.filter((id) => id !== 'letter');
-  const remainingCount = nonLetterSections.filter((id) => !visitedSections.includes(id)).length;
-  const letterLocked = lockLetterUntilAllVisited && remainingCount > 0;
+  const nextPending = getNextPendingSection(visitedSections);
+  const allCompleted = nextPending === null;
 
   return (
     <main className="relative z-10 mx-auto flex min-h-dvh w-full max-w-3xl flex-col px-4 pb-12 pt-20 sm:px-6 sm:pt-14">
       <header className="flex flex-col items-center text-center">
         <Mascot
-          mood="excited"
+          mood={allCompleted ? 'cheering' : 'excited'}
           size="md"
           message={
             visitedSections.length === 0
-              ? `Pilih kartu mana dulu, ${partnerName}?`
+              ? `Mulai dari Jejak Kita dulu ya, ${partnerName}!`
+              : allCompleted
+              ? `Semua ${SECTION_ORDER.length} bagian sudah terbuka!`
               : `${visitedSections.length} dari ${SECTION_ORDER.length} bagian sudah kamu buka!`
           }
         />
@@ -87,11 +88,15 @@ export function HubScreen({
           {siteTitle}
         </h1>
         <p className="mt-1.5 max-w-md text-sm text-sage-700">
-          Ketuk salah satu kartu di bawah ini ya. Kamu bisa buka berurutan atau pilih bebas.
+          Buka setiap kartu secara berurutan dari awal sampai akhir ya.
         </p>
 
-        {visitedSections.length === 0 && (
-          <HintBubble className="mt-3">Mulai dari Jejak Kita yuk</HintBubble>
+        {nextPending && (
+          <HintBubble className="mt-3">
+            {visitedSections.length === 0
+              ? 'Mulai dari Jejak Kita dulu yuk'
+              : `Berikutnya: buka ${SECTION_META[nextPending].title}`}
+          </HintBubble>
         )}
       </header>
 
@@ -100,8 +105,11 @@ export function HubScreen({
         className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2"
       >
         {SECTION_ORDER.map((sectionId, idx) => {
-          const isLocked = sectionId === 'letter' && letterLocked;
           const isVisited = visitedSections.includes(sectionId);
+          const isLocked = !isSectionUnlocked(sectionId, visitedSections);
+          const isNextUp = sectionId === nextPending;
+          const prevTitle = idx > 0 ? SECTION_META[SECTION_ORDER[idx - 1]].title : null;
+
           return (
             <HubCard
               key={sectionId}
@@ -109,7 +117,8 @@ export function HubScreen({
               index={idx}
               isVisited={isVisited}
               isLocked={isLocked}
-              remainingCount={remainingCount}
+              isNextUp={isNextUp}
+              prevTitle={prevTitle}
               reducedMotion={reducedMotion}
               isWide={sectionId === 'letter'}
               onClick={() => {
@@ -146,7 +155,8 @@ interface HubCardProps {
   index: number;
   isVisited: boolean;
   isLocked: boolean;
-  remainingCount: number;
+  isNextUp: boolean;
+  prevTitle: string | null;
   reducedMotion: boolean;
   isWide?: boolean;
   onClick: () => void;
@@ -157,7 +167,8 @@ function HubCard({
   index,
   isVisited,
   isLocked,
-  remainingCount,
+  isNextUp,
+  prevTitle,
   reducedMotion,
   isWide = false,
   onClick,
@@ -166,13 +177,18 @@ function HubCard({
   const meta = SECTION_META[sectionId];
   const card = CARD_META[sectionId];
 
+  const lockedDescription =
+    index === 1
+      ? 'Buka semua cerita di Jejak Kita dulu ya sebelum bagian ini.'
+      : `Buka ${prevTitle ?? 'bagian sebelumnya'} dulu ya sebelum bagian ini.`;
+
   return (
     <motion.button
       ref={tilt.ref}
       type="button"
       onClick={onClick}
-      onPointerMove={tilt.onPointerMove}
-      onPointerLeave={tilt.onPointerLeave}
+      onPointerMove={isLocked ? undefined : tilt.onPointerMove}
+      onPointerLeave={isLocked ? undefined : tilt.onPointerLeave}
       disabled={isLocked}
       initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
@@ -188,7 +204,9 @@ function HubCard({
         isWide ? 'sm:col-span-2' : ''
       } ${
         isLocked
-          ? 'cursor-not-allowed border-sage-200/70 bg-sage-100/70 opacity-75'
+          ? 'cursor-not-allowed border-sage-200/70 bg-sage-100/70 opacity-70'
+          : isNextUp
+          ? 'border-sage-400 bg-cream shadow-sage-glow hover:border-sage-500'
           : 'border-sage-200/90 bg-cream shadow-sage-md hover:border-sage-300'
       }`}
     >
@@ -196,7 +214,7 @@ function HubCard({
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 transition-opacity duration-200"
         style={{
-          opacity: 'var(--glare-opacity, 0)',
+          opacity: isLocked ? 0 : 'var(--glare-opacity, 0)',
           background:
             'radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(235,242,231,0.38), transparent 60%)',
         }}
@@ -204,29 +222,36 @@ function HubCard({
 
       <div className="relative flex w-full items-start justify-between gap-3">
         <motion.div
-          whileHover={reducedMotion ? undefined : { rotate: [0, -8, 8, 0], scale: 1.08 }}
+          whileHover={reducedMotion || isLocked ? undefined : { rotate: [0, -8, 8, 0], scale: 1.08 }}
           transition={{ duration: 0.45 }}
           className={`flex h-12 w-12 items-center justify-center rounded-2xl ${card.accent} shadow-sage-sm`}
         >
           {isLocked ? <Lock className="h-5 w-5" aria-hidden="true" /> : card.icon}
         </motion.div>
 
-        {isVisited && !isLocked && (
+        {isVisited && !isLocked ? (
           <span className="inline-flex items-center gap-1 rounded-pill bg-sage-100 px-2.5 py-1 text-[11px] font-bold text-sage-700">
             <Check className="h-3 w-3" aria-hidden="true" />
             <span>Sudah dibuka</span>
+          </span>
+        ) : isNextUp ? (
+          <span className="inline-flex items-center gap-1 rounded-pill bg-sage-600 px-2.5 py-1 text-[11px] font-bold text-[#FBF8EF] shadow-sage-sm">
+            <Sparkles className="h-3 w-3" aria-hidden="true" />
+            <span>{index === 0 ? 'Mulai di sini' : 'Buka sekarang'}</span>
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1 rounded-pill bg-sage-200/70 px-2.5 py-1 text-[11px] font-bold text-sage-700">
+            <span>Bagian {index + 1}</span>
           </span>
         )}
       </div>
 
       <div className="relative mt-4">
         <h2 className="font-display text-xl font-semibold text-sage-900">
-          {meta.title}
+          {index + 1}. {meta.title}
         </h2>
         <p className="mt-0.5 text-xs leading-relaxed text-sage-700">
-          {isLocked
-            ? `Buka ${remainingCount} bagian lainnya dulu ya sebelum baca suratnya.`
-            : card.microcopy}
+          {isLocked ? lockedDescription : card.microcopy}
         </p>
       </div>
     </motion.button>

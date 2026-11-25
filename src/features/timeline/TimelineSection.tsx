@@ -1,15 +1,15 @@
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import confetti from 'canvas-confetti';
 import {
-  ArrowDown,
+  ArrowRight,
   Coffee,
   Gift,
   Heart,
   Lock,
   MapPin,
+  RotateCcw,
   Sparkles,
   Sun,
 } from 'lucide-react';
@@ -21,9 +21,10 @@ import { HintBubble } from '../../components/HintBubble';
 import { SquishyButton } from '../../components/SquishyButton';
 import { Mascot } from '../../components/Mascot';
 
-gsap.registerPlugin(ScrollTrigger);
-
 interface TimelineSectionProps {
+  initialRevealedCount?: number;
+  onRevealedCountChange?: (count: number) => void;
+  onComplete?: () => void;
   onBackToHub: () => void;
   onNextSection: (next: SectionId) => void;
 }
@@ -38,95 +39,112 @@ const ICON_MAP: Record<TimelineIconName, ReactNode> = {
 };
 
 export default function TimelineSection({
+  initialRevealedCount = 1,
+  onRevealedCountChange,
+  onComplete,
   onBackToHub,
   onNextSection,
 }: TimelineSectionProps) {
   const reducedMotion = useReducedMotion();
   const total = content.timeline.length;
 
-  const [revealedCount, setRevealedCount] = useState(1);
+  const [revealedCount, setRevealedCount] = useState(() =>
+    Math.max(1, Math.min(total, initialRevealedCount))
+  );
   const [revealPulse, setRevealPulse] = useState(0);
 
+  const trackRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const pathWrapRef = useRef<HTMLDivElement | null>(null);
   const pathRef = useRef<SVGPathElement | null>(null);
   const heartRef = useRef<HTMLDivElement | null>(null);
   const latestCardRef = useRef<HTMLLIElement | null>(null);
   const prevProgressRef = useRef(0);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   const allRevealed = revealedCount >= total;
   const visibleItems = content.timeline.slice(0, revealedCount);
 
   useEffect(() => {
-    const container = containerRef.current;
+    if (allRevealed) {
+      onCompleteRef.current?.();
+    }
+  }, [allRevealed]);
+
+  const scrollLatestCardIntoCenter = (behavior: ScrollBehavior) => {
+    const track = trackRef.current;
+    const card = latestCardRef.current;
+    if (!track || !card) return;
+
+    let x = 0;
+    let el: HTMLElement | null = card;
+    while (el && el !== track) {
+      x += el.offsetLeft;
+      el = el.offsetParent as HTMLElement | null;
+    }
+
+    const targetLeft = x - (track.clientWidth - card.offsetWidth) / 2;
+    track.scrollTo({
+      left: Math.max(0, targetLeft),
+      behavior,
+    });
+  };
+
+  useEffect(() => {
+    const pathWrap = pathWrapRef.current;
     const pathEl = pathRef.current;
     const heartEl = heartRef.current;
-    if (!container || !pathEl || !heartEl) return;
+    const latestCard = latestCardRef.current;
+    if (!pathWrap || !pathEl || !heartEl) return;
 
     const totalLength = pathEl.getTotalLength();
-    pathEl.style.strokeDasharray = `${totalLength}`;
+    pathEl.style.strokeDasharray = '1';
 
     const setPathAtProgress = (progress: number) => {
       const clamped = Math.min(1, Math.max(0, progress));
-      pathEl.style.strokeDashoffset = `${totalLength * (1 - clamped)}`;
+      pathEl.style.strokeDashoffset = `${1 - clamped}`;
       const pt = pathEl.getPointAtLength(clamped * totalLength);
-      heartEl.style.left = `${(pt.x / 48) * 100}%`;
-      heartEl.style.top = `${(pt.y / 1000) * 100}%`;
+      heartEl.style.left = `${(pt.x / 1000) * 100}%`;
+      heartEl.style.top = `${(pt.y / 28) * 100}%`;
     };
 
+    let targetProgress = 1;
+    if (!allRevealed && latestCard && pathWrap.offsetWidth > 0) {
+      const cardCenter = latestCard.offsetLeft + latestCard.offsetWidth / 2;
+      targetProgress = Math.min(
+        0.95,
+        Math.max(0.15, (cardCenter - pathWrap.offsetLeft) / pathWrap.offsetWidth)
+      );
+    }
+
     if (reducedMotion) {
-      setPathAtProgress(1);
+      setPathAtProgress(targetProgress);
+      prevProgressRef.current = targetProgress;
       return;
     }
 
     const proxy = { p: prevProgressRef.current };
     const ctx = gsap.context(() => {
       gsap.to(proxy, {
-        p: 1,
-        duration: revealedCount === 1 ? 0.65 : 0.85,
+        p: targetProgress,
+        duration: 0.7,
         ease: 'power2.out',
         onUpdate: () => {
           setPathAtProgress(proxy.p);
           prevProgressRef.current = proxy.p;
         },
-        onComplete: () => {
-          ScrollTrigger.refresh();
-        },
-      });
-
-      if (revealedCount > 1) {
-        ScrollTrigger.create({
-          trigger: container,
-          start: 'top 65%',
-          end: 'bottom 80%',
-          scrub: 0.45,
-          onUpdate: (self) => {
-            const p = Math.max(0.2, self.progress);
-            setPathAtProgress(p);
-            prevProgressRef.current = p;
-          },
-        });
-      }
-
-      const photos = container.querySelectorAll<HTMLElement>('.timeline-photo');
-      photos.forEach((photo) => {
-        gsap.fromTo(
-          photo,
-          { yPercent: -5 },
-          {
-            yPercent: 5,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: photo,
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: true,
-            },
-          }
-        );
       });
     }, containerRef);
 
     return () => ctx.revert();
+  }, [revealedCount, allRevealed, reducedMotion]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      scrollLatestCardIntoCenter(reducedMotion ? 'auto' : 'smooth');
+    }, 90);
+    return () => window.clearTimeout(timer);
   }, [revealedCount, reducedMotion]);
 
   const handleRevealNext = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -134,6 +152,7 @@ export default function TimelineSection({
 
     const nextCount = Math.min(total, revealedCount + 1);
     setRevealedCount(nextCount);
+    onRevealedCountChange?.(nextCount);
     setRevealPulse((k) => k + 1);
 
     if (!reducedMotion) {
@@ -150,13 +169,13 @@ export default function TimelineSection({
         scalar: 0.85,
       });
     }
+  };
 
-    window.setTimeout(() => {
-      latestCardRef.current?.scrollIntoView({
-        behavior: reducedMotion ? 'auto' : 'smooth',
-        block: 'center',
-      });
-    }, 120);
+  const handleRestartTimeline = () => {
+    prevProgressRef.current = 0;
+    setRevealedCount(1);
+    onRevealedCountChange?.(1);
+    setRevealPulse(0);
   };
 
   return (
@@ -165,9 +184,10 @@ export default function TimelineSection({
       onBackToHub={onBackToHub}
       onNextSection={onNextSection}
       hideFooterCta={!allRevealed}
+      wide
     >
       {/* Indikator progres tanpa spoiler */}
-      <div className="mb-6 flex flex-col items-center gap-3">
+      <div className="mb-5 flex flex-col items-center gap-3">
         <div className="w-full max-w-xs rounded-2xl border border-sage-200 bg-cream px-4 py-2.5 shadow-sage-sm">
           <div className="flex items-center justify-between text-xs font-bold text-sage-800">
             <span>Cerita terbuka</span>
@@ -189,84 +209,138 @@ export default function TimelineSection({
           <HintBubble
             icon={
               <motion.span
-                animate={reducedMotion ? undefined : { y: [0, 3, 0] }}
+                animate={reducedMotion ? undefined : { x: [0, 3, 0] }}
                 transition={{ duration: 1.2, repeat: Infinity }}
               >
-                <ArrowDown className="h-3.5 w-3.5 text-sage-600" aria-hidden="true" />
+                <ArrowRight className="h-3.5 w-3.5 text-sage-600" aria-hidden="true" />
               </motion.span>
             }
           >
-            Ketuk tombol di bawah untuk buka jejak berikutnya
+            Ketuk jejak berikutnya untuk melanjutkan
           </HintBubble>
         )}
       </div>
 
-      <div ref={containerRef} className="relative mx-auto max-w-3xl py-2">
-        {/* Garis jalur SVG vertikal yang mengikuti kartu terbuka */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute bottom-4 left-2 top-4 w-12 md:left-1/2 md:-translate-x-1/2"
-        >
-          <svg
-            viewBox="0 0 48 1000"
-            preserveAspectRatio="none"
-            className="h-full w-full overflow-visible"
-          >
-            <path
-              d="M 24 0 Q 40 125 24 250 T 24 500 T 24 750 T 24 1000"
-              fill="none"
-              stroke="var(--sage-200)"
-              strokeWidth="3"
-              vectorEffect="non-scaling-stroke"
-              strokeDasharray="6 7"
-            />
-            <path
-              ref={pathRef}
-              d="M 24 0 Q 40 125 24 250 T 24 500 T 24 750 T 24 1000"
-              fill="none"
-              stroke="var(--sage-500)"
-              strokeWidth="3.5"
-              strokeLinecap="round"
-              vectorEffect="non-scaling-stroke"
-            />
-          </svg>
+      {/* Track timeline horizontal */}
+      <div
+        ref={trackRef}
+        className="timeline-scroll relative -mx-4 overflow-x-auto px-4 pb-4 pt-2 sm:-mx-6 sm:px-6"
+      >
+        <div className="flex w-max min-w-full justify-center px-2 sm:px-4">
+          <div ref={containerRef} className="relative flex items-stretch gap-5 pb-4 pt-12 sm:gap-6">
+            {/* Garis jalur SVG horizontal di atas kartu */}
+            <div
+              ref={pathWrapRef}
+              aria-hidden="true"
+              className="pointer-events-none absolute left-10 right-10 top-3 h-7"
+            >
+              <svg
+                viewBox="0 0 1000 28"
+                preserveAspectRatio="none"
+                className="h-full w-full overflow-visible"
+              >
+                <path
+                  d="M 0 14 Q 125 3 250 14 T 500 14 T 750 14 T 1000 14"
+                  fill="none"
+                  stroke="var(--sage-200)"
+                  strokeWidth="3"
+                  vectorEffect="non-scaling-stroke"
+                  strokeDasharray="6 7"
+                />
+                <path
+                  ref={pathRef}
+                  d="M 0 14 Q 125 3 250 14 T 500 14 T 750 14 T 1000 14"
+                  fill="none"
+                  stroke="var(--sage-500)"
+                  strokeWidth="3.5"
+                  strokeLinecap="round"
+                  pathLength={1}
+                  strokeDasharray="1"
+                  vectorEffect="non-scaling-stroke"
+                />
+              </svg>
 
-          <div
-            ref={heartRef}
-            className="absolute z-10 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-sage-400 bg-cream shadow-sage-sm"
-          >
-            <svg viewBox="0 0 24 24" className="h-4 w-4">
-              <path
-                d="M12 21s-7-4.6-7-10.2A4.3 4.3 0 0 1 9.3 6.5c1.2 0 2.2.6 2.7 1.5.5-.9 1.5-1.5 2.7-1.5A4.3 4.3 0 0 1 19 10.8C19 16.4 12 21 12 21z"
-                fill="#F2CFC4"
-                stroke="#647F57"
-                strokeWidth="1.6"
-              />
-            </svg>
+              <div
+                ref={heartRef}
+                className="absolute z-10 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-sage-400 bg-cream shadow-sage-sm"
+              >
+                <svg viewBox="0 0 24 24" className="h-4 w-4">
+                  <path
+                    d="M12 21s-7-4.6-7-10.2A4.3 4.3 0 0 1 9.3 6.5c1.2 0 2.2.6 2.7 1.5.5-.9 1.5-1.5 2.7-1.5A4.3 4.3 0 0 1 19 10.8C19 16.4 12 21 12 21z"
+                    fill="#F2CFC4"
+                    stroke="#647F57"
+                    strokeWidth="1.6"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            <ol className="relative flex items-stretch gap-5 sm:gap-6">
+              <AnimatePresence initial={false}>
+                {visibleItems.map((item, idx) => {
+                  const isLatest = idx === visibleItems.length - 1;
+                  return (
+                    <TimelineCard
+                      key={`${item.date}-${idx}`}
+                      item={item}
+                      index={idx}
+                      isLatest={isLatest}
+                      reducedMotion={reducedMotion}
+                      cardRef={isLatest ? latestCardRef : undefined}
+                    />
+                  );
+                })}
+              </AnimatePresence>
+
+              {!allRevealed && (
+                <li className="relative flex w-[250px] shrink-0 items-stretch sm:w-[280px]">
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute left-1/2 top-[-29px] z-10 h-3.5 w-3.5 -translate-x-1/2 rounded-full border-2 border-dashed border-sage-400 bg-sage-50"
+                  />
+                  <motion.button
+                    type="button"
+                    onClick={handleRevealNext}
+                    whileHover={reducedMotion ? undefined : { y: -3, scale: 1.01 }}
+                    whileTap={reducedMotion ? undefined : { scale: 0.97 }}
+                    initial={reducedMotion ? { opacity: 0 } : { opacity: 0, x: 24 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+                    className="focus-ring group flex w-full flex-col items-center justify-center gap-3.5 rounded-[26px] border-2 border-dashed border-sage-300 bg-cream/85 p-6 text-center shadow-sage-sm transition-colors hover:border-sage-400 hover:bg-cream"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-sage-100 text-sage-700 shadow-sage-sm transition-transform group-hover:scale-105">
+                        <Lock className="h-4 w-4" aria-hidden="true" />
+                      </span>
+                      <span className="rounded-pill bg-sage-100 px-2.5 py-1 text-[11px] font-bold text-sage-700">
+                        #{revealedCount + 1}
+                      </span>
+                    </div>
+
+                    <div>
+                      <h2 className="font-display text-xl font-semibold text-sage-900">
+                        Jejak berikutnya
+                      </h2>
+                      <p className="mt-1 text-xs leading-relaxed text-sage-700">
+                        Ketuk untuk membuka cerita selanjutnya.
+                      </p>
+                    </div>
+
+                    <span className="inline-flex items-center gap-1.5 rounded-pill bg-sage-600 px-4 py-2 text-xs font-bold text-[#FBF8EF] shadow-sage-sm transition group-hover:bg-sage-500">
+                      <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+                      <span>Buka jejak</span>
+                      <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                    </span>
+                  </motion.button>
+                </li>
+              )}
+            </ol>
           </div>
         </div>
-
-        <ol className="relative space-y-8 md:space-y-12">
-          <AnimatePresence initial={false}>
-            {visibleItems.map((item, idx) => {
-              const isLatest = idx === visibleItems.length - 1;
-              return (
-                <TimelineCard
-                  key={`${item.date}-${idx}`}
-                  item={item}
-                  index={idx}
-                  isLatest={isLatest}
-                  reducedMotion={reducedMotion}
-                  cardRef={isLatest ? latestCardRef : undefined}
-                />
-              );
-            })}
-          </AnimatePresence>
-        </ol>
       </div>
 
-      {/* Tombol pembuka jejak berikutnya (non-spoiler) */}
-      <div className="mt-10 flex flex-col items-center gap-4 text-center">
+      {/* Kontrol pembuka jejak berikutnya (non-spoiler) */}
+      <div className="mt-6 flex flex-col items-center gap-4 text-center">
         {!allRevealed ? (
           <motion.div
             key={`teaser-${revealedCount}`}
@@ -303,10 +377,10 @@ export default function TimelineSection({
               </motion.span>
               <span>Buka jejak berikutnya</span>
               <motion.span
-                animate={reducedMotion ? undefined : { y: [0, 3, 0] }}
+                animate={reducedMotion ? undefined : { x: [0, 3, 0] }}
                 transition={{ duration: 1.2, repeat: Infinity }}
               >
-                <ArrowDown className="h-4 w-4" aria-hidden="true" />
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </motion.span>
             </SquishyButton>
           </motion.div>
@@ -315,13 +389,21 @@ export default function TimelineSection({
             initial={{ opacity: 0, scale: 0.94 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: 'spring', stiffness: 280, damping: 22 }}
-            className="flex flex-col items-center gap-2"
+            className="flex flex-col items-center gap-3"
           >
             <Mascot
               mood="cheering"
               size="sm"
               message="Semua jejak sudah terbuka!"
             />
+            <SquishyButton
+              variant="secondary"
+              onClick={handleRestartTimeline}
+              className="px-4 py-2 text-xs"
+            >
+              <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
+              <span>Ulangi jejak dari awal</span>
+            </SquishyButton>
           </motion.div>
         )}
       </div>
@@ -344,17 +426,17 @@ function TimelineCard({
   reducedMotion,
   cardRef,
 }: TimelineCardProps) {
-  const isLeftOnDesktop = index % 2 === 0;
+  const isPrevious = !isLatest;
   const animKind = index % 3;
   const stickerKind = index % 3;
 
   const initialVariant = reducedMotion
     ? { opacity: 0 }
     : animKind === 0
-    ? { opacity: 0, scale: 0.8, y: 24 }
+    ? { opacity: 0, scale: 0.85, x: 32 }
     : animKind === 1
-    ? { opacity: 0, rotate: isLeftOnDesktop ? -5 : 5, y: 24, scale: 0.92 }
-    : { opacity: 0, x: isLeftOnDesktop ? -38 : 38, y: 12 };
+    ? { opacity: 0, rotate: 4, x: 36, scale: 0.92 }
+    : { opacity: 0, x: 44, y: 8 };
 
   const animateVariant = reducedMotion
     ? { opacity: 1 }
@@ -362,61 +444,76 @@ function TimelineCard({
 
   const transition =
     animKind === 2 && !reducedMotion
-      ? { type: 'spring' as const, stiffness: 260, damping: 16 }
+      ? { type: 'spring' as const, stiffness: 260, damping: 18 }
       : { type: 'spring' as const, stiffness: 280, damping: 22 };
 
   return (
-    <li ref={cardRef} className="relative pl-14 md:grid md:grid-cols-2 md:gap-12 md:pl-0">
-      <div className={isLeftOnDesktop ? 'md:col-start-1' : 'md:col-start-2'}>
-        <motion.article
-          initial={initialVariant}
-          animate={animateVariant}
-          transition={transition}
-          className={`relative rounded-[26px] border bg-cream p-5 shadow-sage-md transition-shadow ${
-            isLatest ? 'border-sage-400 shadow-sage-glow' : 'border-sage-200/90'
-          }`}
-        >
-          <DoodleSticker
-            kind={stickerKind}
-            reducedMotion={reducedMotion}
-            className={isLeftOnDesktop ? '-right-2.5 -top-2.5' : '-left-2.5 -top-2.5'}
-          />
+    <motion.li
+      ref={cardRef}
+      initial={initialVariant}
+      animate={animateVariant}
+      transition={transition}
+      className="relative flex w-[280px] shrink-0 items-stretch sm:w-[310px]"
+    >
+      {/* Titik simpul di jalur horizontal */}
+      <span
+        aria-hidden="true"
+        className={`pointer-events-none absolute left-1/2 top-[-29px] z-10 h-3.5 w-3.5 -translate-x-1/2 rounded-full border-2 transition-colors duration-300 ${
+          isPrevious
+            ? 'border-sage-300 bg-sage-200'
+            : 'border-sage-500 bg-cream shadow-sage-sm'
+        }`}
+      />
 
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-sage-100 text-sage-700">
-                {item.icon ? ICON_MAP[item.icon] : <Heart className="h-4 w-4" aria-hidden="true" />}
-              </span>
-              <time className="text-xs font-bold uppercase tracking-wide text-sage-600">
-                {item.date}
-              </time>
-            </div>
+      <article
+        data-blurred={isPrevious ? 'true' : 'false'}
+        className={`relative flex w-full flex-col rounded-[26px] border bg-cream p-5 transition-all duration-500 ease-out ${
+          isPrevious
+            ? `${reducedMotion ? '' : 'scale-[0.96] '}select-none border-sage-200/70 opacity-65 shadow-sage-sm blur-[5px]`
+            : 'scale-100 border-sage-400 opacity-100 shadow-sage-glow blur-0'
+        }`}
+      >
+        <DoodleSticker
+          kind={stickerKind}
+          reducedMotion={reducedMotion}
+          className="-right-2.5 -top-2.5"
+        />
 
-            <span className="rounded-pill bg-sage-100 px-2.5 py-0.5 text-[11px] font-bold text-sage-700">
-              #{index + 1}
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-sage-100 text-sage-700">
+              {item.icon ? ICON_MAP[item.icon] : <Heart className="h-4 w-4" aria-hidden="true" />}
             </span>
+            <time className="text-xs font-bold uppercase tracking-wide text-sage-600">
+              {item.date}
+            </time>
           </div>
 
-          <h2 className="mt-2.5 font-display text-xl font-semibold text-sage-900">
-            {item.title}
-          </h2>
-          <p className="mt-1.5 text-sm leading-relaxed text-sage-700">
-            {item.description}
-          </p>
+          <span className="rounded-pill bg-sage-100 px-2.5 py-0.5 text-[11px] font-bold text-sage-700">
+            #{index + 1}
+          </span>
+        </div>
 
-          {item.photo && (
-            <div className="mt-3.5 overflow-hidden rounded-2xl border border-sage-200/80 bg-sage-100">
+        <h2 className="mt-2.5 font-display text-xl font-semibold text-sage-900">
+          {item.title}
+        </h2>
+        <p className="mt-1.5 text-sm leading-relaxed text-sage-700">
+          {item.description}
+        </p>
+
+        {item.photo && (
+          <div className="mt-auto pt-3.5">
+            <div className="overflow-hidden rounded-2xl border border-sage-200/80 bg-sage-100">
               <img
                 src={assetUrl(item.photo)}
                 alt={item.title}
-                loading="lazy"
-                className="timeline-photo h-44 w-full object-cover"
+                className="h-44 w-full object-cover"
               />
             </div>
-          )}
-        </motion.article>
-      </div>
-    </li>
+          </div>
+        )}
+      </article>
+    </motion.li>
   );
 }
 

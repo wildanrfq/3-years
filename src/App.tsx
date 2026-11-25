@@ -1,6 +1,7 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
-import { content, SectionId } from './config/content';
+import { content, SECTION_ORDER, SectionId } from './config/content';
 import { assetUrl } from './lib/assets';
+import { isSectionUnlocked, sanitizeVisitedSections } from './lib/progression';
 import { useAudio } from './hooks/useAudio';
 import { useTheme } from './hooks/useTheme';
 import { AmbientEffects } from './components/AmbientEffects';
@@ -35,10 +36,7 @@ function readInitialVisited(): SectionId[] {
     const raw = window.sessionStorage.getItem(SESSION_VISITED_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter((id): id is SectionId =>
-      ['timeline', 'counter', 'rewind', 'photocards', 'letter'].includes(id)
-    );
+    return sanitizeVisitedSections(parsed);
   } catch {
     return [];
   }
@@ -47,6 +45,9 @@ function readInitialVisited(): SectionId[] {
 export default function App() {
   const [screen, setScreen] = useState<Screen>(() => (readInitialUnlocked() ? 'hub' : 'gate'));
   const [visitedSections, setVisitedSections] = useState<SectionId[]>(() => readInitialVisited());
+  const [timelineRevealedCount, setTimelineRevealedCount] = useState<number>(() =>
+    readInitialVisited().includes('timeline') ? content.timeline.length : 1
+  );
 
   const audio = useAudio(content.song.loop);
   const { theme, toggleTheme } = useTheme();
@@ -83,11 +84,17 @@ export default function App() {
 
   const handleSelectSection = useCallback(
     (section: SectionId) => {
-      markVisited(section);
+      if (!isSectionUnlocked(section, visitedSections)) {
+        return;
+      }
+      // Jejak Kita selesai ditandai setelah semua kartu terbuka.
+      if (section !== 'timeline') {
+        markVisited(section);
+      }
       setScreen(section);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
-    [markVisited]
+    [markVisited, visitedSections]
   );
 
   const handleLockSite = useCallback(() => {
@@ -104,6 +111,14 @@ export default function App() {
 
   const isSection =
     screen !== 'gate' && screen !== 'intro' && screen !== 'hub';
+  const currentSectionIdx = isSection ? SECTION_ORDER.indexOf(screen) : -1;
+  const nextSection =
+    currentSectionIdx >= 0 && currentSectionIdx < SECTION_ORDER.length - 1
+      ? SECTION_ORDER[currentSectionIdx + 1]
+      : null;
+  const canGoNext = nextSection
+    ? isSectionUnlocked(nextSection, visitedSections)
+    : true;
 
   return (
     <div className="relative min-h-dvh w-full bg-sage-50 text-ink">
@@ -156,7 +171,6 @@ export default function App() {
             partnerName={content.partnerName}
             siteTitle={content.siteTitle}
             visitedSections={visitedSections}
-            lockLetterUntilAllVisited={content.ui.lockLetterUntilAllVisited}
             onSelectSection={handleSelectSection}
             onReplayIntro={() => setScreen('intro')}
             onLockSite={handleLockSite}
@@ -167,6 +181,9 @@ export default function App() {
           <Suspense fallback={<SectionLoading />}>
             {screen === 'timeline' && (
               <TimelineSection
+                initialRevealedCount={timelineRevealedCount}
+                onRevealedCountChange={setTimelineRevealedCount}
+                onComplete={() => markVisited('timeline')}
                 onBackToHub={() => setScreen('hub')}
                 onNextSection={handleSelectSection}
               />
@@ -202,6 +219,7 @@ export default function App() {
       {isSection && (
         <BottomNav
           currentSection={screen}
+          canGoNext={canGoNext}
           onBackToHub={() => setScreen('hub')}
           onNavigateSection={handleSelectSection}
         />

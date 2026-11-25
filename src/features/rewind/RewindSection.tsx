@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Disc3, Pause, Sparkles, X } from 'lucide-react';
-import { content, RewindSlide, SectionId } from '../../config/content';
+import { content, RewindSlide, SECTION_ORDER, SectionId } from '../../config/content';
 import { assetUrl } from '../../lib/assets';
 import { getElapsedSince } from '../../lib/date';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
@@ -262,7 +262,11 @@ export default function RewindSection({
                 totalDays={totalDays}
                 paused={isPaused}
                 reducedMotion={reducedMotion}
-                onGoToLetter={() => onNavigateSection('letter')}
+                onGoToNext={() => {
+                  const nextIdx = SECTION_ORDER.indexOf('rewind') + 1;
+                  const next = SECTION_ORDER[nextIdx] ?? 'photocards';
+                  onNavigateSection(next);
+                }}
               />
             </motion.div>
           </AnimatePresence>
@@ -291,13 +295,13 @@ function SlideBody({
   totalDays,
   paused,
   reducedMotion,
-  onGoToLetter,
+  onGoToNext,
 }: {
   slide: RewindSlide;
   totalDays: number;
   paused: boolean;
   reducedMotion: boolean;
-  onGoToLetter: () => void;
+  onGoToNext: () => void;
 }) {
   if (slide.type === 'intro') {
     return (
@@ -464,7 +468,7 @@ function SlideBody({
       </span>
       <h2 className="font-display text-3xl font-semibold text-sage-900">{slide.title}</h2>
       <p className="max-w-[260px] text-sm leading-relaxed text-sage-800">{slide.subtitle}</p>
-      <SquishyButton onClick={onGoToLetter} className="mt-2">
+      <SquishyButton onClick={onGoToNext} className="mt-2">
         <span>{slide.ctaLabel}</span>
         <ArrowRight className="h-4 w-4" aria-hidden="true" />
       </SquishyButton>

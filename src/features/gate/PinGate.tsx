@@ -5,6 +5,7 @@ import { Delete, HelpCircle, Lock, LockOpen } from 'lucide-react';
 import { content } from '../../config/content';
 import { Mascot, MascotMood } from '../../components/Mascot';
 import { ThemeToggle } from '../../components/ThemeToggle';
+import { GreenFlower } from '../../components/GreenFlower';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { GENTLE_EASE } from '../../lib/motion';
 import { ThemeMode } from '../../hooks/useTheme';
@@ -188,6 +189,14 @@ export function PinGate({
         transition={{ duration: reducedMotion ? 0.25 : 0.72, ease: GENTLE_EASE }}
         className="relative z-10 w-full max-w-[360px] rounded-[32px] border border-sage-200/90 bg-cream/95 p-6 text-center shadow-sage-lg"
       >
+        <GreenFlower
+          variant="bloom"
+          className="pointer-events-none absolute -left-4 -top-4 h-12 w-12 -rotate-12 opacity-90"
+        />
+        <GreenFlower
+          variant="sprig"
+          className="pointer-events-none absolute -bottom-3 -right-3 h-12 w-12 rotate-6 opacity-85"
+        />
         <div className="flex flex-col items-center">
           <Mascot mood={mood} size="md" message={mascotMessage} />
 

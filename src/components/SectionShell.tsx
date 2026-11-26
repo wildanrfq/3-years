@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { content, SECTION_META, SECTION_ORDER, SectionId } from '../config/content';
 import { SquishyButton } from './SquishyButton';
+import { GreenFlower } from './GreenFlower';
 
 interface SectionShellProps {
   section: SectionId;
@@ -31,11 +32,15 @@ export function SectionShell({
       } flex-col px-4 pb-28 pt-20 sm:px-6 sm:pt-14`}
     >
       <header className="mb-6 text-center">
-        <span className="inline-block rounded-pill bg-sage-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-sage-700">
-          {content.navigation.sectionStepLabel
-            .replace('{current}', String(idx + 1))
-            .replace('{total}', String(SECTION_ORDER.length))}
-        </span>
+        <div className="inline-flex items-center gap-2">
+          <GreenFlower variant="rosette" className="h-4 w-4 opacity-75" />
+          <span className="inline-block rounded-pill bg-sage-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-sage-700">
+            {content.navigation.sectionStepLabel
+              .replace('{current}', String(idx + 1))
+              .replace('{total}', String(SECTION_ORDER.length))}
+          </span>
+          <GreenFlower variant="rosette" className="h-4 w-4 opacity-75" />
+        </div>
         <h1 className="mt-2 font-display text-3xl font-semibold text-sage-900 sm:text-4xl">
           {meta.title}
         </h1>

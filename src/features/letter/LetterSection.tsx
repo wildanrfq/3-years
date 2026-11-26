@@ -8,6 +8,7 @@ import { GENTLE_EASE } from '../../lib/motion';
 import { SectionShell } from '../../components/SectionShell';
 import { SquishyButton } from '../../components/SquishyButton';
 import { Mascot } from '../../components/Mascot';
+import { GreenFlower } from '../../components/GreenFlower';
 
 interface LetterSectionProps {
   onBackToHub: () => void;
@@ -278,6 +279,10 @@ export default function LetterSection({
                 stage === 'typing' ? 'cursor-pointer' : ''
               }`}
             >
+              <GreenFlower
+                variant="sprig"
+                className="pointer-events-none absolute -right-2 -top-2 h-20 w-20 opacity-35 sm:h-24 sm:w-24"
+              />
               {/* Kelopak jatuh halus di tahap akhir */}
               {stage === 'done' && !reducedMotion && (
                 <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
@@ -380,9 +385,12 @@ export default function LetterSection({
                           transition={{ duration: 1.2, ease: 'easeInOut' }}
                         />
                       </svg>
-                      <p className="font-hand text-3xl font-bold text-sage-900">
-                        {content.letter.signature}
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <GreenFlower variant="rosette" className="h-6 w-6 opacity-80" />
+                        <p className="font-hand text-3xl font-bold text-sage-900">
+                          {content.letter.signature}
+                        </p>
+                      </div>
                     </div>
 
                     <div className="mt-6 flex flex-col items-center gap-4">

@@ -4,6 +4,7 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 import { content } from '../../config/content';
 import { Mascot } from '../../components/Mascot';
 import { SquishyButton } from '../../components/SquishyButton';
+import { GreenFlower } from '../../components/GreenFlower';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { ThemeMode } from '../../hooks/useTheme';
 import { GENTLE_EASE } from '../../lib/motion';
@@ -51,6 +52,14 @@ export function IntroScreen({
         transition={{ duration: reducedMotion ? 0.3 : 0.78, ease: GENTLE_EASE }}
         className="relative z-10 flex w-full max-w-md flex-col items-center rounded-[32px] border border-sage-200/90 bg-cream/95 px-6 py-8 text-center shadow-sage-lg"
       >
+        <GreenFlower
+          variant="sprig"
+          className="pointer-events-none absolute -left-3 -top-3 h-14 w-14 -rotate-12 opacity-85"
+        />
+        <GreenFlower
+          variant="rosette"
+          className="pointer-events-none absolute -bottom-3 -right-3 h-11 w-11 opacity-85"
+        />
         <Mascot
           mood="happy"
           size="lg"

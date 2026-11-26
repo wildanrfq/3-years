@@ -13,6 +13,7 @@ import {
 import { content, SECTION_META, SECTION_ORDER, SectionId } from '../../config/content';
 import { getNextPendingSection, isSectionUnlocked } from '../../lib/progression';
 import { Mascot } from '../../components/Mascot';
+import { GreenFlower } from '../../components/GreenFlower';
 import { useTilt } from '../../hooks/useTilt';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { GENTLE_EASE } from '../../lib/motion';
@@ -82,6 +83,14 @@ export function HubScreen({
           {siteTitle}
         </h1>
         <p className="mt-1.5 max-w-md text-sm text-sage-700">{content.hub.subtitle}</p>
+
+        <div className="mt-3 flex items-center gap-2" aria-hidden="true">
+          <span className="h-px w-8 bg-sage-300/70" />
+          <GreenFlower variant="rosette" className="h-4 w-4 opacity-75" />
+          <GreenFlower variant="bloom" className="h-5 w-5 opacity-90" />
+          <GreenFlower variant="rosette" className="h-4 w-4 opacity-75" />
+          <span className="h-px w-8 bg-sage-300/70" />
+        </div>
       </header>
 
       <section

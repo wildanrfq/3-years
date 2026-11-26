@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion } from '../hooks/useReducedMotion';
+import { GreenFlower } from './GreenFlower';
 
 interface Particle {
   id: number;
@@ -17,12 +18,12 @@ interface TrailPoint {
   t: number;
 }
 
-const FLOATING_LEAVES = [
-  { left: '8%', top: '16%', delay: 0, duration: 11, scale: 0.9 },
-  { left: '82%', top: '22%', delay: 2.1, duration: 13, scale: 1.05 },
-  { left: '14%', top: '68%', delay: 1.2, duration: 12, scale: 0.8 },
-  { left: '88%', top: '72%', delay: 3.4, duration: 10, scale: 0.95 },
-  { left: '52%', top: '12%', delay: 4.5, duration: 14, scale: 0.75 },
+const FLOATING_BOTANICALS = [
+  { kind: 'leaf' as const, left: '8%', top: '16%', delay: 0, duration: 12, scale: 0.9 },
+  { kind: 'flower' as const, left: '84%', top: '24%', delay: 2.1, duration: 14, scale: 1.0 },
+  { kind: 'flower' as const, left: '14%', top: '68%', delay: 1.2, duration: 13, scale: 0.88 },
+  { kind: 'leaf' as const, left: '88%', top: '72%', delay: 3.4, duration: 11, scale: 0.95 },
+  { kind: 'flower' as const, left: '54%', top: '11%', delay: 4.5, duration: 15, scale: 0.78 },
 ];
 
 const RIBBON_LIFETIME_MS = 380;
@@ -135,42 +136,71 @@ export function AmbientEffects() {
     <>
       <div className="paper-grain pointer-events-none fixed inset-0 z-40" aria-hidden="true" />
 
-      {!reducedMotion && (
-        <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden="true">
-          {FLOATING_LEAVES.map((leaf, index) => (
-            <motion.svg
+      {/* Ornamen bunga hijau lembut di sudut layar (tidak berlebihan) */}
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden="true">
+        <motion.div
+          animate={reducedMotion ? undefined : { rotate: [-3, 3, -3], scale: [1, 1.03, 1] }}
+          transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute -bottom-12 -left-10 opacity-30 sm:-bottom-14 sm:-left-12 sm:opacity-35"
+        >
+          <GreenFlower variant="bloom" className="h-44 w-44 sm:h-60 sm:w-60" />
+        </motion.div>
+
+        <motion.div
+          animate={reducedMotion ? undefined : { rotate: [2, -3, 2], y: [0, 6, 0] }}
+          transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute -left-6 top-16 opacity-25 sm:left-2 sm:top-20 sm:opacity-30"
+        >
+          <GreenFlower variant="sprig" className="h-28 w-28 sm:h-40 sm:w-40" />
+        </motion.div>
+
+        <motion.div
+          animate={reducedMotion ? undefined : { rotate: [0, 6, 0] }}
+          transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute -bottom-8 -right-8 opacity-25 sm:opacity-30"
+        >
+          <GreenFlower variant="rosette" className="h-36 w-36 sm:h-48 sm:w-48" />
+        </motion.div>
+
+        {!reducedMotion &&
+          FLOATING_BOTANICALS.map((item, index) => (
+            <motion.div
               key={index}
-              viewBox="0 0 32 32"
-              className="absolute h-7 w-7 text-sage-300/60"
-              style={{ left: leaf.left, top: leaf.top, scale: leaf.scale }}
+              className="absolute"
+              style={{ left: item.left, top: item.top, scale: item.scale }}
               animate={{
-                y: [0, -18, 6, 0],
-                x: [0, 10, -8, 0],
-                rotate: [0, 14, -10, 0],
+                y: [0, -16, 6, 0],
+                x: [0, 9, -7, 0],
+                rotate: [0, 12, -8, 0],
               }}
               transition={{
-                duration: leaf.duration,
-                delay: leaf.delay,
+                duration: item.duration,
+                delay: item.delay,
                 repeat: Infinity,
                 ease: 'easeInOut',
               }}
             >
-              <path
-                d="M7 23 C8 12 16 7 25 7 C25 16 20 24 7 23 Z"
-                fill="currentColor"
-              />
-              <path
-                d="M9 22 Q16 15 23 9"
-                stroke="#FBF8EF"
-                strokeWidth="1.4"
-                strokeLinecap="round"
-                fill="none"
-                opacity="0.7"
-              />
-            </motion.svg>
+              {item.kind === 'flower' ? (
+                <GreenFlower variant="rosette" className="h-7 w-7 opacity-45" />
+              ) : (
+                <svg viewBox="0 0 32 32" className="h-7 w-7 text-sage-300/60">
+                  <path
+                    d="M7 23 C8 12 16 7 25 7 C25 16 20 24 7 23 Z"
+                    fill="currentColor"
+                  />
+                  <path
+                    d="M9 22 Q16 15 23 9"
+                    stroke="#FBF8EF"
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                    fill="none"
+                    opacity="0.7"
+                  />
+                </svg>
+              )}
+            </motion.div>
           ))}
-        </div>
-      )}
+      </div>
 
       {/* Pita tipis lembut mengikuti gerakan kursor */}
       {!reducedMotion && (

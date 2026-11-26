@@ -7,6 +7,7 @@ import { getElapsedSince } from '../../lib/date';
 import { GENTLE_EASE } from '../../lib/motion';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { SquishyButton } from '../../components/SquishyButton';
+import { GreenFlower } from '../../components/GreenFlower';
 
 interface RewindSectionProps {
   onBackToHub: () => void;
@@ -172,6 +173,10 @@ export default function RewindSection({
         style={{ perspective: '1100px' }}
         className={`relative flex h-[min(600px,calc(100dvh-11.5rem))] min-h-[390px] w-[min(390px,calc(100vw-24px))] select-none flex-col overflow-hidden rounded-[32px] border border-sage-200/90 bg-gradient-to-b ${bgGradient} shadow-sage-lg touch-pan-x`}
       >
+        <GreenFlower
+          variant="rosette"
+          className="pointer-events-none absolute -bottom-5 -left-5 h-24 w-24 opacity-20"
+        />
         {/* Gumpalan cahaya latar animasi */}
         {!reducedMotion && (
           <>

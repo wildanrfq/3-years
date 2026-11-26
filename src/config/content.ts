@@ -233,29 +233,29 @@ export const SECTION_META: Record<
   { title: string; shortLabel: string; subtitle: string }
 > = {
   timeline: {
-    title: 'Jejak Kita', // Shown in: Main Menu Card #1 & Jejak Kita header
-    shortLabel: 'Jejak', // Shown in: Bottom Navigation back button
-    subtitle: 'Potongan cerita kecil dari awal sampai hari ini.', // Shown in: Jejak Kita header
+    title: 'timeline', // Shown in: Main Menu Card #1 & timeline header
+    shortLabel: 'timeline', // Shown in: Bottom Navigation back button
+    subtitle: 'a few little moments from our story, from then to now.', // Shown in: timeline header
   },
   counter: {
-    title: 'Waktu Bersama', // Shown in: Main Menu Card #2 & Waktu Bersama header
-    shortLabel: 'Waktu', // Shown in: Bottom Navigation back button
-    subtitle: 'Menghitung setiap detik yang sudah kita lewati.', // Shown in: Waktu Bersama header
+    title: 'time together', // Shown in: Main Menu Card #2 & time together header
+    shortLabel: 'time', // Shown in: Bottom Navigation back button
+    subtitle: 'counting every second we have shared.', // Shown in: time together header
   },
   rewind: {
-    title: 'Kilas Balik', // Shown in: Main Menu Card #3 & Kilas Balik header
-    shortLabel: 'Rewind', // Shown in: Bottom Navigation back button
-    subtitle: 'Rangkuman momen paling seru versi kita berdua.', // Shown in: Kilas Balik header
+    title: 'our rewind', // Shown in: Main Menu Card #3 & our rewind header
+    shortLabel: 'rewind', // Shown in: Bottom Navigation back button
+    subtitle: 'a little recap of our favorite memories together.', // Shown in: our rewind header
   },
   photocards: {
-    title: 'Kartu Foto', // Shown in: Main Menu Card #4 & Kartu Foto header
-    shortLabel: 'Foto', // Shown in: Bottom Navigation back button
-    subtitle: 'Potret kenangan dan catatan kecil di baliknya.', // Shown in: Kartu Foto header
+    title: 'photo cards', // Shown in: Main Menu Card #4 & photo cards header
+    shortLabel: 'photos', // Shown in: Bottom Navigation back button
+    subtitle: 'snapshots of us with little notes on the back.', // Shown in: photo cards header
   },
   letter: {
-    title: 'Surat Untukmu', // Shown in: Main Menu Card #5 & Surat Untukmu header
-    shortLabel: 'Surat', // Shown in: Bottom Navigation back button
-    subtitle: 'Catatan penutup yang ditulis pelan-pelan buat kamu.', // Shown in: Surat Untukmu header
+    title: 'a letter for you', // Shown in: Main Menu Card #5 & a letter for you header
+    shortLabel: 'letter', // Shown in: Bottom Navigation back button
+    subtitle: 'a quiet closing note written slowly just for you.', // Shown in: a letter for you header
   },
 };
 
@@ -264,10 +264,10 @@ export const content: ContentConfig = {
   // 1. GENERAL NAMES, ANNIVERSARY DATE & SITE TITLE
   // Shown in: Browser tab, PIN Gate, Welcome Screen, Main Menu, Counter & Letter
   // ==========================================================================
-  partnerName: 'Sayang', // Your partner's nickname (used in PIN Gate, Welcome Screen, Main Menu)
-  myName: 'Wildan', // Your name (used in Welcome Screen description)
-  startDate: '2023-11-26T00:00:00+07:00', // Anniversary start date (ISO format with +07:00 WIB) -> drives Waktu Bersama & Kilas Balik day count
-  siteTitle: 'Tiga Tahun Kita', // Shown in: Browser tab title, Welcome Screen badge, Main Menu heading
+  partnerName: 'love', // Your partner's nickname (used in PIN Gate, Welcome Screen, Main Menu)
+  myName: 'wildan', // Your name (used in Welcome Screen description)
+  startDate: '2023-11-26T00:00:00+07:00', // Anniversary start date (ISO format with +07:00 WIB) -> drives time together & rewind day count
+  siteTitle: 'our three years', // Shown in: Browser tab title, Welcome Screen badge, Main Menu heading
 
   // ==========================================================================
   // 2. PIN LOCK SCREEN (Shown first before entering the site)
@@ -276,312 +276,313 @@ export const content: ContentConfig = {
     // Generate a new PIN hash with: npm run hash-pin YOUR_6_DIGIT_PIN
     hash: 'f809a4d73691e167f42514529fa6a0336c0c1bc256dc7d305858155efd214dc4',
     length: 6, // Number of PIN digits
-    hint: 'Tanggal jadian kita (format DDMMYY)', // Shown on PIN Gate when wrong or user taps "Lihat petunjuk"
+    hint: 'our anniversary date (ddmmyy format)', // Shown on PIN Gate when wrong or user taps "forgot the code? see hint"
   },
   pinGate: {
-    headingPrefix: 'Hai,', // Shown on PIN Gate above keypad -> "Hai, {partnerName}"
-    subtitle: 'Masukkan {length} angka rahasia kita dulu ya.', // Shown on PIN Gate under heading
-    mascotUnlocked: 'Yeay, kebuka!', // Shown in Mascot bubble when PIN is correct
-    mascotError: 'Ups, bukan itu kodenya', // Shown in Mascot bubble when PIN is wrong
-    mascotRetryHint: 'Coba lihat petunjuknya ya', // Shown in Mascot bubble after a wrong attempt
-    forgotPinButton: 'Lupa kodenya? Lihat petunjuk', // Button under PIN keypad
-    hintPrefix: 'Petunjuk:', // Prefix before pin.hint -> "Petunjuk: ..."
-    clearButton: 'Ulang', // Clear button on PIN keypad
+    headingPrefix: 'hi,', // Shown on PIN Gate above keypad -> "hi, {partnerName}"
+    subtitle: 'enter our {length}-digit secret code first.', // Shown on PIN Gate under heading
+    mascotUnlocked: 'yay, it opened!', // Shown in Mascot bubble when PIN is correct
+    mascotError: 'oops, not that code', // Shown in Mascot bubble when PIN is wrong
+    mascotRetryHint: 'try checking the hint below', // Shown in Mascot bubble after a wrong attempt
+    forgotPinButton: 'forgot the code? see hint', // Button under PIN keypad
+    hintPrefix: 'hint:', // Prefix before pin.hint -> "hint: ..."
+    clearButton: 'clear', // Clear button on PIN keypad
   },
 
   // ==========================================================================
   // 3. WELCOME / INTRO SCREEN (Shown right after unlocking the PIN)
   // ==========================================================================
   intro: {
-    mascotGreeting: 'Hai {partnerName}, akhirnya kebuka juga!', // Mascot bubble on Welcome Screen
-    heading: 'Ada tempat kecil yang kubuat buat kamu', // Main headline on Welcome Screen
+    mascotGreeting: 'hi {partnerName}, you made it in!', // Mascot bubble on Welcome Screen
+    heading: 'a little corner i made just for you', // Main headline on Welcome Screen
     description:
-      'Di dalamnya ada cerita kita, penghitung waktu, kilas balik, kartu foto, sampai surat kecil dari {myName}. Lagunya juga jalan terus di pojok kanan atas sambil kamu baca.', // Body paragraph on Welcome Screen
-    startButton: 'Mulai', // Main CTA button on Welcome Screen
+      'inside are our story, a live time counter, our rewind, photo cards, and a little letter from {myName}. our song keeps playing in the top right while you read.', // Body paragraph on Welcome Screen
+    startButton: 'start', // Main CTA button on Welcome Screen
   },
 
   // ==========================================================================
-  // 4. MAIN MENU / HUB SCREEN (Shown after clicking "Mulai")
+  // 4. MAIN MENU / HUB SCREEN (Shown after clicking "start")
   // ==========================================================================
   hub: {
-    subtitle: 'Perjalanan kita, dibuka satu per satu dari awal sampai akhir.', // Subtitle under Main Menu title
-    mascotStart: 'Mulai dari Jejak Kita dulu ya, {partnerName}!', // Mascot bubble before opening Menu 1
-    mascotProgress: '{opened} dari {total} bagian sudah kamu buka!', // Mascot bubble while progressing through menus
-    mascotAllDone: 'Semua {total} bagian sudah terbuka!', // Mascot bubble after all 5 menus are opened
+    subtitle: 'our journey, opened one chapter at a time from start to finish.', // Subtitle under Main Menu title
+    mascotStart: 'start with timeline first, {partnerName}!', // Mascot bubble before opening Menu 1
+    mascotProgress: '{opened} of {total} chapters opened so far!', // Mascot bubble while progressing through menus
+    mascotAllDone: 'all {total} chapters are open!', // Mascot bubble after all 5 menus are opened
     cardDescriptions: {
-      timeline: 'Dari hari pertama sampai sekarang.', // Shown on Main Menu Card 1 (Jejak Kita)
-      counter: 'Detik demi detik yang kita jalani.', // Shown on Main Menu Card 2 (Waktu Bersama)
-      rewind: 'Cerita kilas balik versi kita.', // Shown on Main Menu Card 3 (Kilas Balik)
-      photocards: 'Foto kenangan beserta catatan kecilnya.', // Shown on Main Menu Card 4 (Kartu Foto)
-      letter: 'Catatan hangat paling akhir buat kamu.', // Shown on Main Menu Card 5 (Surat Untukmu)
+      timeline: 'little moments from our timeline over time.', // Shown on Main Menu Card 1
+      counter: 'every second we have walked through together.', // Shown on Main Menu Card 2
+      rewind: 'our little highlight reel.', // Shown on Main Menu Card 3
+      photocards: 'polaroid memories with little notes tucked behind.', // Shown on Main Menu Card 4
+      letter: 'one warm final note just for you.', // Shown on Main Menu Card 5
     },
-    lockedTimelineNotice: 'Buka semua cerita di Jejak Kita dulu ya sebelum bagian ini.', // Shown on locked Card 2 (Waktu Bersama)
-    lockedPrevNotice: 'Buka {prevTitle} dulu ya sebelum bagian ini.', // Shown on locked Cards 3, 4, 5
-    badgeOpened: 'Sudah dibuka', // Green badge on completed Main Menu cards
-    badgeStartHere: 'Mulai di sini', // Highlight badge on Card 1 when starting
-    badgeOpenNow: 'Buka sekarang', // Highlight badge on the next unlocked card
-    badgePartPrefix: 'Bagian', // Badge prefix on locked cards -> "Bagian 2", etc.
-    replayIntroButton: 'Lihat sambutan lagi', // Footer link on Main Menu
-    lockSiteButton: 'Kunci halaman', // Footer link on Main Menu to return to PIN Gate
+    lockedTimelineNotice: 'open every moment in timeline first before unlocking this.', // Shown on locked Card 2
+    lockedPrevNotice: 'open {prevTitle} first before unlocking this.', // Shown on locked Cards 3, 4, 5
+    badgeOpened: 'opened', // Green badge on completed Main Menu cards
+    badgeStartHere: 'start here', // Highlight badge on Card 1 when starting
+    badgeOpenNow: 'open next', // Highlight badge on the next unlocked card
+    badgePartPrefix: 'part', // Badge prefix on locked cards -> "part 2", etc.
+    replayIntroButton: 'replay welcome', // Footer link on Main Menu
+    lockSiteButton: 'lock page', // Footer link on Main Menu to return to PIN Gate
   },
 
   // ==========================================================================
-  // 5. MENU 1: JEJAK KITA (Horizontal Timeline)
-  //    Each item becomes one horizontal card in Menu 1 ("Jejak Kita").
+  // 5. MENU 1: TIMELINE (Horizontal Timeline)
+  //    Each item becomes one horizontal card in Menu 1 ("timeline").
   //    Icons available: 'heart' | 'coffee' | 'map-pin' | 'sparkles' | 'sun' | 'gift'
   // ==========================================================================
   timeline: [
     {
-      date: 'November 2023',
-      title: 'Hari pertama kita resmi bareng',
-      description: 'Canggung di awal, tapi obrolannya langsung nyambung sampai lupa waktu.',
-      photo: 'photos/memory-1.svg', // Image shown on Jejak Kita Card #1
+      date: 'november 2023',
+      title: 'the day we officially began',
+      description: 'a little shy at first, yet we talked endlessly until we lost track of time.',
+      photo: 'photos/memory-1.svg', // Image shown on timeline Card #1
       icon: 'heart',
     },
     {
-      date: 'Januari 2024',
-      title: 'Kopi sore pertama yang paling lama',
-      description: 'Hujan turun deras, jadi kita nambah satu gelas lagi sambil bahas hal random.',
-      photo: 'photos/memory-2.svg', // Image shown on Jejak Kita Card #2
+      date: 'january 2024',
+      title: 'our longest afternoon coffee',
+      description: 'it poured outside, so we ordered another cup and talked about everything and nothing.',
+      photo: 'photos/memory-2.svg', // Image shown on timeline Card #2
       icon: 'coffee',
     },
     {
-      date: 'Mei 2024',
-      title: 'Jalan jauh tanpa rencana matang',
-      description: 'Sempat salah belok dua kali, tapi pulangnya malah ketawa terus di jalan.',
-      photo: 'photos/memory-3.svg', // Image shown on Jejak Kita Card #3
+      date: 'may 2024',
+      title: 'a long drive with no real plan',
+      description: 'we took two wrong turns, yet laughed all the way home.',
+      photo: 'photos/memory-3.svg', // Image shown on timeline Card #3
       icon: 'map-pin',
     },
     {
-      date: 'November 2024',
-      title: 'Satu tahun pertama bareng kamu',
-      description: 'Makan malam sederhana yang rasanya hangat sekali.',
-      photo: 'photos/memory-4.svg', // Image shown on Jejak Kita Card #4
+      date: 'november 2024',
+      title: 'our very first year together',
+      description: 'a simple dinner that felt like the warmest place in the world.',
+      photo: 'photos/memory-4.svg', // Image shown on timeline Card #4
       icon: 'sparkles',
     },
     {
-      date: 'Juni 2025',
-      title: 'Sore cerah di sudut kota favorit',
-      description: 'Kita duduk di bangku taman sambil foto-foto kecil buat kenangan.',
-      photo: 'photos/memory-5.svg', // Image shown on Jejak Kita Card #5
+      date: 'june 2025',
+      title: 'sunny afternoon at our favorite spot',
+      description: 'sitting together on a park bench taking little photos to keep.',
+      photo: 'photos/memory-5.svg', // Image shown on timeline Card #5
       icon: 'sun',
     },
     {
-      date: 'November 2026',
-      title: 'Tiga tahun dan masih terus berlanjut',
-      description: 'Terima kasih sudah selalu sabar, hangat, dan jadi rumah buat pulang.',
-      photo: 'photos/memory-6.svg', // Image shown on Jejak Kita Card #6
+      date: 'november 2026',
+      title: 'three years and still counting',
+      description: 'thank you for always being gentle, patient, and feeling like home.',
+      photo: 'photos/memory-6.svg', // Image shown on timeline Card #6
       icon: 'gift',
     },
   ],
   timelineUi: {
-    progressLabel: 'Cerita terbuka', // Label inside top progress box in Jejak Kita
-    nextCardTitle: 'Jejak berikutnya', // Title on the locked preview card on the right in Jejak Kita
-    nextCardSubtitle: 'Ada satu cerita lagi yang menunggu untuk dibuka.', // Text inside locked preview card in Jejak Kita
-    nextCardButton: 'Buka jejak', // Button inside locked preview card in Jejak Kita
-    hiddenRemainingText: 'Masih ada {remaining} jejak tersembunyi', // Pill below Previous/Next buttons in Jejak Kita
-    prevButton: 'Sebelum', // Previous button label in Jejak Kita
-    nextButton: 'Berikut', // Next button label in Jejak Kita
-    allOpenedMascot: 'Semua jejak sudah terbuka!', // Mascot message after opening all cards in Jejak Kita
-    restartButton: 'Ulangi jejak dari awal', // Replay button after finishing Jejak Kita
+    progressLabel: 'memories opened', // Label inside top progress box in timeline
+    nextCardTitle: 'next moment', // Title on the locked preview card on the right in timeline
+    nextCardSubtitle: 'another little memory is waiting to be opened.', // Text inside locked preview card in timeline
+    nextCardButton: 'open moment', // Button inside locked preview card in timeline
+    hiddenRemainingText: '{remaining} hidden moments left', // Pill below Previous/Next buttons in timeline
+    prevButton: 'previous', // Previous button label in timeline
+    nextButton: 'next', // Next button label in timeline
+    allOpenedMascot: 'all moments are open!', // Mascot message after opening all cards in timeline
+    restartButton: 'replay from the start', // Replay button after finishing timeline
   },
 
   // ==========================================================================
-  // 6. MENU 2: WAKTU BERSAMA (Live Counter & Milestones)
+  // 6. MENU 2: TIME TOGETHER (Live Counter)
   // ==========================================================================
   counterUi: {
     unitLabels: {
-      years: 'Tahun', // Shown in: Waktu Bersama flip clock & countdown
-      months: 'Bulan', // Shown in: Waktu Bersama flip clock
-      days: 'Hari', // Shown in: Waktu Bersama flip clock & countdown
-      hours: 'Jam', // Shown in: Waktu Bersama flip clock & countdown
-      minutes: 'Menit', // Shown in: Waktu Bersama flip clock & countdown
-      seconds: 'Detik', // Shown in: Waktu Bersama flip clock & countdown
+      years: 'years', // Shown in: time together flip clock
+      months: 'months', // Shown in: time together flip clock
+      days: 'days', // Shown in: time together flip clock & countdown
+      hours: 'hours', // Shown in: time together flip clock & countdown
+      minutes: 'minutes', // Shown in: time together flip clock & countdown
+      seconds: 'seconds', // Shown in: time together flip clock & countdown
     },
-    anniversaryBannerTitle: 'Selamat hari jadi kita!', // Banner shown in Waktu Bersama only on the exact anniversary day
-    anniversaryBannerBody: 'Hari ini tepat {years} tahun perjalanan kita bersama.', // Banner subtext on anniversary day
-    celebrateAgainButton: 'Rayakan lagi', // Confetti button on anniversary banner
-    totalDaysLabel: 'Total hari yang sudah kita lewati bersama', // Total days row label in Waktu Bersama
-    totalDaysUnit: 'hari', // Unit after total days number
-    nextAnnivHeading: 'Menuju anniversary ke-{year}', // Countdown box heading in Waktu Bersama
+    anniversaryBannerTitle: 'happy anniversary to us!', // Banner shown only on the exact anniversary day
+    anniversaryBannerBody: 'today marks {years} years of our journey together.', // Banner subtext on anniversary day
+    celebrateAgainButton: 'celebrate again', // Confetti button on anniversary banner
+    totalDaysLabel: 'total days we have shared together', // Total days row label in time together
+    totalDaysUnit: 'days', // Unit after total days number
+    nextAnnivHeading: 'counting down to anniversary #{year}', // Countdown box heading in time together
   },
 
   // ==========================================================================
-  // 7. MENU 3: KILAS BALIK (Story Slides)
-  //    Each object below is one slide (1/8 to 8/8) in Menu 3 ("Kilas Balik").
+  // 7. MENU 3: OUR REWIND (Story Slides)
+  //    Each object below is one slide (1/8 to 8/8) in Menu 3 ("our rewind").
   // ==========================================================================
   rewind: [
     {
-      type: 'intro', // Slide 1: Opening title card in Kilas Balik
-      eyebrow: 'Kilas Balik Kita',
-      title: 'Tiga tahun penuh cerita',
-      subtitle: 'Kita lihat lagi momen-momen favorit bareng kamu.',
+      type: 'intro', // Slide 1: Opening title card in our rewind
+      eyebrow: 'our rewind',
+      title: 'three years full of stories',
+      subtitle: 'let us look back at our favorite little moments together.',
     },
     {
-      type: 'countup', // Slide 2: Animated total days counter in Kilas Balik (number is calculated from startDate)
-      eyebrow: 'Total hari bersama',
-      label: 'hari kita jalan bareng sejauh ini',
-      subtitle: 'Dari obrolan singkat sampai rencana masa depan.',
+      type: 'countup', // Slide 2: Animated total days counter in our rewind (number is calculated from startDate)
+      eyebrow: 'total days together',
+      label: 'days we have walked side by side',
+      subtitle: 'from late-night talks to plans for tomorrow.',
     },
     {
-      type: 'photo', // Slide 3: Featured single photo card in Kilas Balik
-      eyebrow: 'Foto pilihan pertama',
-      photo: 'photos/memory-1.svg', // Image shown on Kilas Balik Slide 3
-      caption: 'Senyum kamu di hari itu masih jadi favoritku.',
-      date: 'November 2023',
+      type: 'photo', // Slide 3: Featured single photo card in our rewind
+      eyebrow: 'first favorite photo',
+      photo: 'photos/memory-1.svg', // Image shown on our rewind Slide 3
+      caption: 'your smile that day is still my favorite.',
+      date: 'november 2023',
     },
     {
-      type: 'stat', // Slide 4: Photo count highlight card in Kilas Balik
-      eyebrow: 'Koleksi foto kita',
+      type: 'stat', // Slide 4: Photo count highlight card in our rewind
+      eyebrow: 'our photo stash',
       statSource: 'photocards', // Uses total number of items in `photoCards` below (or change to 'custom' with customValue)
-      unit: 'kartu kenangan',
-      title: 'Foto yang sudah kita simpan',
-      subtitle: 'Setiap potret punya ceritanya sendiri kalau dilihat lagi bareng kamu.',
+      unit: 'memory cards',
+      title: 'snapshots we have kept',
+      subtitle: 'every frame holds a little story whenever we look back together.',
     },
     {
-      type: 'carousel', // Slide 5: 3D spinning photo gallery in Kilas Balik
-      eyebrow: 'Galeri putar',
-      title: 'Potongan hari-hari baik kita',
+      type: 'carousel', // Slide 5: 3D spinning photo gallery in our rewind
+      eyebrow: 'spinning gallery',
+      title: 'pieces of our good days',
       photos: [
-        'photos/memory-2.svg', // Carousel photo 1 in Kilas Balik Slide 5
-        'photos/memory-3.svg', // Carousel photo 2 in Kilas Balik Slide 5
-        'photos/memory-4.svg', // Carousel photo 3 in Kilas Balik Slide 5
-        'photos/memory-5.svg', // Carousel photo 4 in Kilas Balik Slide 5
-        'photos/memory-6.svg', // Carousel photo 5 in Kilas Balik Slide 5
+        'photos/memory-2.svg', // Carousel photo 1 in Slide 5
+        'photos/memory-3.svg', // Carousel photo 2 in Slide 5
+        'photos/memory-4.svg', // Carousel photo 3 in Slide 5
+        'photos/memory-5.svg', // Carousel photo 4 in Slide 5
+        'photos/memory-6.svg', // Carousel photo 5 in Slide 5
       ],
     },
     {
-      type: 'ranking', // Slide 6: Top 5 list in Kilas Balik
-      eyebrow: 'Momen favorit',
-      title: 'Lima hal yang paling sering bikin kangen',
+      type: 'ranking', // Slide 6: Top 5 list in our rewind
+      eyebrow: 'favorite moments',
+      title: 'five little things i miss the most',
       items: [
-        'Jajan sore tanpa tujuan jelas',
-        'Ketawa gara-gara salah baca peta',
-        'Dengerin lagu bareng pas jalan pulang',
-        'Foto buru-buru tapi hasilnya lucu',
-        'Obrolan tenang sebelum tidur',
+        'spontaneous evening snack runs',
+        'laughing after missing a turn on the map',
+        'listening to songs together on the ride home',
+        'rushed photos that turned out adorable',
+        'quiet talks right before falling asleep',
       ],
     },
     {
-      type: 'song', // Slide 7: Spinning vinyl record in Kilas Balik (uses song.title & song.artist)
-      eyebrow: 'Lagu kita',
-      subtitle: 'Lagu ini selalu mengingatkan aku sama hari-hari baik bareng kamu.',
+      type: 'song', // Slide 7: Spinning vinyl record in our rewind (uses song.title & song.artist)
+      eyebrow: 'our song',
+      subtitle: 'this song always brings me right back to our sweetest days.',
     },
     {
-      type: 'outro', // Slide 8: Final Kilas Balik slide linking to Kartu Foto
-      eyebrow: 'Bagian berikutnya',
-      title: 'Masih ada kartu foto kita',
-      subtitle: 'Ada catatan kecil di balik setiap fotonya sebelum surat terakhir.',
-      ctaLabel: 'Lanjut ke Kartu Foto',
+      type: 'outro', // Slide 8: Final rewind slide linking to photo cards
+      eyebrow: 'up next',
+      title: 'our photo cards are waiting',
+      subtitle: 'there are little notes tucked behind each picture before the final letter.',
+      ctaLabel: 'continue to photo cards',
     },
   ],
 
   // ==========================================================================
-  // 8. MENU 4: KARTU FOTO (Interactive Polaroid Stack & Grid)
-  //    Each item is one flippable polaroid card in Menu 4 ("Kartu Foto").
+  // 8. MENU 4: PHOTO CARDS (Interactive Polaroid Stack & Grid)
+  //    Each item is one flippable polaroid card in Menu 4 ("photo cards").
   // ==========================================================================
   photoCards: [
     {
-      photo: 'photos/memory-1.svg', // Image on Kartu Foto Card #1
-      caption: 'Awal mula cerita kita', // Front caption under photo
-      date: '26 Nov 2023', // Date on front & back
-      backNote: 'Waktu itu aku deg-degan banget sebelum ketemu kamu.', // Handwritten note on back of card
+      photo: 'photos/memory-1.svg', // Image on photo cards #1
+      caption: 'where our story began', // Front caption under photo
+      date: '26 nov 2023', // Date on front & back
+      backNote: 'my heart was racing so fast before i saw you.', // Handwritten note on back of card
     },
     {
-      photo: 'photos/memory-2.svg', // Image on Kartu Foto Card #2
-      caption: 'Kopi sore waktu hujan',
-      date: '14 Jan 2024',
-      backNote: 'Kita pesan minuman yang sama tapi rasanya beda jauh.',
+      photo: 'photos/memory-2.svg', // Image on photo cards #2
+      caption: 'rainy afternoon coffee',
+      date: '14 jan 2024',
+      backNote: 'we ordered the exact same drink yet yours somehow tasted sweeter.',
     },
     {
-      photo: 'photos/memory-3.svg', // Image on Kartu Foto Card #3
-      caption: 'Jalan sore keliling kota',
-      date: '19 Mei 2024',
-      backNote: 'Anginnya adem banget dan kamu cerita panjang lebar.',
+      photo: 'photos/memory-3.svg', // Image on photo cards #3
+      caption: 'wandering around town',
+      date: '19 may 2024',
+      backNote: 'the breeze was cool and you talked non-stop the whole way.',
     },
     {
-      photo: 'photos/memory-4.svg', // Image on Kartu Foto Card #4
-      caption: 'Makan malam tahun pertama',
-      date: '26 Nov 2024',
-      backNote: 'Lilin kecil di meja dan doa baik buat kita berdua.',
+      photo: 'photos/memory-4.svg', // Image on photo cards #4
+      caption: 'first anniversary dinner',
+      date: '26 nov 2024',
+      backNote: 'a tiny candle on the table and quiet wishes for both of us.',
     },
     {
-      photo: 'photos/memory-5.svg', // Image on Kartu Foto Card #5
-      caption: 'Foto candid favoritku',
-      date: '08 Mar 2025',
-      backNote: 'Kamu lagi sibuk milih makanan tapi tetap kelihatan manis.',
+      photo: 'photos/memory-5.svg', // Image on photo cards #5
+      caption: 'my favorite candid shot',
+      date: '08 mar 2025',
+      backNote: 'you were busy picking food and still looked so cute.',
     },
     {
-      photo: 'photos/memory-6.svg', // Image on Kartu Foto Card #6
-      caption: 'Minggu pagi yang santai',
-      date: '22 Jun 2025',
-      backNote: 'Bangun pagi cuma buat sarapan bareng di tempat langganan.',
+      photo: 'photos/memory-6.svg', // Image on photo cards #6
+      caption: 'slow sunday morning',
+      date: '22 jun 2025',
+      backNote: 'waking up early just to have breakfast together at our usual place.',
     },
     {
-      photo: 'photos/memory-7.svg', // Image on Kartu Foto Card #7
-      caption: 'Tahun kedua kita',
-      date: '26 Nov 2025',
-      backNote: 'Makin banyak hal kecil yang kita syukuri bareng.',
+      photo: 'photos/memory-7.svg', // Image on photo cards #7
+      caption: 'our second year',
+      date: '26 nov 2025',
+      backNote: 'more tiny everyday things to be grateful for together.',
     },
     {
-      photo: 'photos/memory-8.svg', // Image on Kartu Foto Card #8
-      caption: 'Menuju tiga tahun dan seterusnya',
-      date: '26 Nov 2026',
-      backNote: 'Semoga foto-foto di sini makin penuh sama senyum kamu.',
+      photo: 'photos/memory-8.svg', // Image on photo cards #8
+      caption: 'to three years and beyond',
+      date: '26 nov 2026',
+      backNote: 'may these pages keep filling up with your smile.',
     },
   ],
   photoCardsUi: {
-    stackTabLabel: 'Tumpukan', // View toggle tab 1 in Kartu Foto
-    gridTabLabel: 'Grid', // View toggle tab 2 in Kartu Foto
-    prevButton: 'Sebelum', // Previous button under card stack in Kartu Foto
-    nextButton: 'Berikut', // Next button under card stack in Kartu Foto
+    stackTabLabel: 'stack', // View toggle tab 1 in photo cards
+    gridTabLabel: 'grid', // View toggle tab 2 in photo cards
+    prevButton: 'previous', // Previous button under card stack in photo cards
+    nextButton: 'next', // Next button under card stack in photo cards
   },
 
   // ==========================================================================
-  // 9. MENU 5: SURAT UNTUKMU (Envelope & Typed Love Letter Finale)
+  // 9. MENU 5: A LETTER FOR YOU (Envelope & Typed Love Letter Finale)
   // ==========================================================================
   letter: {
-    title: 'Happy Anniversary', // Letter heading (shown on envelope paper & typed at top of letter)
+    title: 'happy anniversary', // Letter heading (shown on envelope paper & typed at top of letter)
     body: [
-      'Terima kasih ya sudah menemani aku melewati tiga tahun yang seru ini.',
-      'Di antara hari-hari sibuk dan rencana yang kadang meleset, punya kamu di sampingku selalu bikin semuanya terasa lebih ringan.',
-      'Aku bersyukur untuk setiap tawa kecil, setiap cerita malam, dan setiap sabar yang kamu bagi selama kita berjalan bersama.',
-      'Semoga di tahun-tahun berikutnya, kita tetap jadi tim yang saling menguatkan dan selalu punya alasan buat merayakan hal sederhana.',
-    ], // Each string in this array is one paragraph in Surat Untukmu
-    signature: 'Dari Wildan', // Handwritten signature at the bottom of the letter
+      'thank you for walking beside me through these wonderful three years.',
+      'in the middle of busy days and plans that go sideways, having you next to me always makes everything feel lighter.',
+      'i am grateful for every little laugh, every late-night talk, and all the patience you have shared along the way.',
+      'here is to the years ahead—may we keep being each other’s safest place and always find reasons to celebrate the simple things.',
+    ], // Each string in this array is one paragraph in a letter for you
+    signature: 'from wildan', // Handwritten signature at the bottom of the letter
   },
   letterUi: {
-    mascotDefault: 'Selamat hari jadi kita berdua!', // Mascot message after letter finishes typing
-    mascotHugCount: 'Peluk hangat terkirim ({count}x)!', // Mascot message after clicking "Kirim peluk"
-    sendHugButton: 'Kirim peluk', // Blush button at end of letter
-    restartButton: 'Ulangi dari awal', // Replay envelope button at end of letter
+    mascotDefault: 'happy anniversary to us!', // Mascot message after letter finishes typing
+    mascotHugCount: 'warm hug sent ({count}x)!', // Mascot message after clicking "send a hug"
+    sendHugButton: 'send a hug', // Blush button at end of letter
+    restartButton: 'replay from start', // Replay envelope button at end of letter
   },
 
   // ==========================================================================
   // 10. TOP MUSIC BAR & SHARED NAVIGATION (Shown across all menu pages)
+  //     NOTE: Keep `sorak-sorai.lrc` lyrics untranslated as requested.
   // ==========================================================================
   song: {
-    title: 'Sorak Sorai', // Song title shown in top-right Music Bar & Kilas Balik Slide 7
-    artist: 'Nadin Amizah & Syarikat Idola Remaja', // Artist name shown in top-right Music Bar & Kilas Balik Slide 7
+    title: 'sorak sorai', // Song title shown in top-right Music Bar & rewind Slide 7
+    artist: 'nadin amizah & syarikat idola remaja', // Artist name shown in top-right Music Bar & rewind Slide 7
     audioSrc: 'audio/sorak-sorai.mp3', // Audio file path inside `public/`
     lrcSrc: 'lyrics/sorak-sorai.lrc', // Synced LRC lyrics file path inside `public/`
     lyricsOffsetMs: 0, // Shift lyrics timing in milliseconds (+ or -) if out of sync
     loop: true,
   },
   musicPlayer: {
-    playSongLabel: 'Putar lagu', // Button in top Music Bar when browser blocks autoplay
-    replaySongLabel: 'Putar lagi', // Button in top Music Bar when song ends (if loop is false)
-    playLabel: 'Putar', // Play button inside expanded top Music Bar
-    pauseLabel: 'Jeda', // Pause button inside expanded top Music Bar
+    playSongLabel: 'play song', // Button in top Music Bar when browser blocks autoplay
+    replaySongLabel: 'play again', // Button in top Music Bar when song ends (if loop is false)
+    playLabel: 'play', // Play button inside expanded top Music Bar
+    pauseLabel: 'pause', // Pause button inside expanded top Music Bar
   },
   navigation: {
-    backToMenuButton: 'Kembali ke menu', // Left button in floating Bottom Navigation bar
-    nextButton: 'Lanjut', // Right button in floating Bottom Navigation bar
-    lockedNextButton: 'Selesaikan dulu', // Disabled right button in Bottom Navigation while Jejak Kita isn't finished
-    mainMenuButton: 'Menu utama', // Right button in Bottom Navigation on the final page (Surat Untukmu)
-    continueToPrefix: 'Lanjut ke', // Bottom CTA button prefix -> "Lanjut ke Waktu Bersama"
-    backToMainMenuButton: 'Kembali ke menu utama', // Bottom CTA button on final page
-    sectionStepLabel: 'Bagian {current} dari {total}', // Small top pill in every menu header
-    loadingPageText: 'Memuat halaman...', // Shown briefly while a menu chunk loads
+    backToMenuButton: 'back to menu', // Left button in floating Bottom Navigation bar
+    nextButton: 'next', // Right button in floating Bottom Navigation bar
+    lockedNextButton: 'finish first', // Disabled right button in Bottom Navigation while timeline isn't finished
+    mainMenuButton: 'main menu', // Right button in Bottom Navigation on the final page
+    continueToPrefix: 'continue to', // Bottom CTA button prefix -> "continue to time together"
+    backToMainMenuButton: 'back to main menu', // Bottom CTA button on final page
+    sectionStepLabel: 'part {current} of {total}', // Small top pill in every menu header
+    loadingPageText: 'loading page...', // Shown briefly while a menu chunk loads
   },
 };

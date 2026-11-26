@@ -425,7 +425,7 @@ export default function TimelineSection({
             variant="secondary"
             onClick={handlePrev}
             disabled={!canGoPrev}
-            aria-label="Jejak sebelumnya"
+            aria-label="previous moment"
             className="px-4 py-2 text-xs"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
@@ -443,7 +443,7 @@ export default function TimelineSection({
             variant={nextWillReveal ? 'primary' : 'secondary'}
             onClick={handleNext}
             disabled={!canGoNext}
-            aria-label={nextWillReveal ? 'Buka jejak berikutnya' : 'Jejak berikutnya'}
+            aria-label={nextWillReveal ? 'open next moment' : 'next moment'}
             className="px-4 py-2 text-xs"
           >
             {nextWillReveal && <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />}
@@ -586,7 +586,7 @@ function TimelineCard({
               >
                 {item.icon ? ICON_MAP[item.icon] : <Heart className="h-4 w-4" aria-hidden="true" />}
               </span>
-              <time className="text-xs font-bold uppercase tracking-wide text-sage-600">
+              <time className="text-xs font-bold lowercase tracking-wide text-sage-600">
                 {item.date}
               </time>
             </div>

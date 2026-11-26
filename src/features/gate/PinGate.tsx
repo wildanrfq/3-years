@@ -183,7 +183,7 @@ export function PinGate({
       </AnimatePresence>
 
       <motion.section
-        aria-label="Gerbang PIN"
+        aria-label="pin gate"
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: reducedMotion ? 0.25 : 0.72, ease: GENTLE_EASE }}
@@ -239,7 +239,7 @@ export function PinGate({
           className="mt-5 flex items-center justify-center gap-3"
           role="status"
           aria-live="polite"
-          aria-label={`Sudah terisi ${digits.length} dari ${pinLength} angka`}
+          aria-label={`entered ${digits.length} of ${pinLength} digits`}
         >
           {Array.from({ length: pinLength }).map((_, idx) => {
             const filled = idx < digits.length;
@@ -306,7 +306,7 @@ export function PinGate({
                   type="button"
                   onClick={handleBackspace}
                   disabled={digits.length === 0 || status === 'unlocked'}
-                  aria-label="Hapus satu angka"
+                  aria-label="delete one digit"
                   className="focus-ring flex min-h-[54px] items-center justify-center rounded-2xl bg-sage-100/80 text-sage-700 transition hover:bg-sage-200/70 active:scale-95 disabled:opacity-40"
                 >
                   <Delete className="h-5 w-5" aria-hidden="true" />

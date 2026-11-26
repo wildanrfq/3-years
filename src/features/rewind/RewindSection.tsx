@@ -225,7 +225,7 @@ export default function RewindSection({
             <button
               type="button"
               onClick={onBackToHub}
-              aria-label="Tutup Rewind"
+              aria-label="close rewind"
               className="focus-ring flex h-10 w-10 items-center justify-center rounded-full bg-cream/85 text-sage-800 shadow-sage-sm transition hover:bg-cream"
             >
               <X className="h-4 w-4" aria-hidden="true" />
@@ -308,7 +308,7 @@ function SlideBody({
   if (slide.type === 'countup') {
     return (
       <div className="space-y-3">
-        <span className="text-xs font-bold uppercase tracking-wider text-sage-700">
+        <span className="text-xs font-bold lowercase tracking-wider text-sage-700">
           {slide.eyebrow}
         </span>
         <div className="font-display text-6xl font-bold tabular-nums text-sage-900">
@@ -323,7 +323,7 @@ function SlideBody({
   if (slide.type === 'photo') {
     return (
       <div className="flex w-full flex-col items-center space-y-3">
-        <span className="text-xs font-bold uppercase tracking-wider text-sage-700">
+        <span className="text-xs font-bold lowercase tracking-wider text-sage-700">
           {slide.eyebrow}
         </span>
         <div className="inline-flex max-h-[min(240px,36dvh)] max-w-full items-center justify-center overflow-hidden rounded-3xl border-4 border-cream bg-sage-100 shadow-sage-md">
@@ -351,13 +351,13 @@ function SlideBody({
 
     return (
       <div className="space-y-3">
-        <span className="text-xs font-bold uppercase tracking-wider text-sage-700">
+        <span className="text-xs font-bold lowercase tracking-wider text-sage-700">
           {slide.eyebrow}
         </span>
         <div className="font-display text-6xl font-bold tabular-nums text-sage-900">
           <CountUpNumber target={val} reducedMotion={reducedMotion} />
         </div>
-        <div className="text-sm font-bold uppercase tracking-wider text-sage-700">
+        <div className="text-sm font-bold lowercase tracking-wider text-sage-700">
           {slide.unit}
         </div>
         <h2 className="pt-1 font-display text-2xl font-semibold text-sage-900">{slide.title}</h2>
@@ -370,7 +370,7 @@ function SlideBody({
     return (
       <div className="flex w-full flex-col items-center space-y-4">
         <div>
-          <span className="text-xs font-bold uppercase tracking-wider text-sage-700">
+          <span className="text-xs font-bold lowercase tracking-wider text-sage-700">
             {slide.eyebrow}
           </span>
           <h2 className="mt-1 font-display text-2xl font-semibold text-sage-900">
@@ -387,7 +387,7 @@ function SlideBody({
     return (
       <div className="w-full space-y-3 text-left">
         <div className="text-center">
-          <span className="text-xs font-bold uppercase tracking-wider text-sage-700">
+          <span className="text-xs font-bold lowercase tracking-wider text-sage-700">
             {slide.eyebrow}
           </span>
           <h2 className="mt-0.5 font-display text-xl font-semibold leading-snug text-sage-900 sm:text-2xl">
@@ -422,7 +422,7 @@ function SlideBody({
   if (slide.type === 'song') {
     return (
       <div className="flex flex-col items-center space-y-3.5">
-        <span className="text-xs font-bold uppercase tracking-wider text-sage-700">
+        <span className="text-xs font-bold lowercase tracking-wider text-sage-700">
           {slide.eyebrow}
         </span>
 
@@ -450,7 +450,7 @@ function SlideBody({
 
   return (
     <div className="flex flex-col items-center space-y-4">
-      <span className="text-xs font-bold uppercase tracking-wider text-sage-700">
+      <span className="text-xs font-bold lowercase tracking-wider text-sage-700">
         {slide.eyebrow}
       </span>
       <h2 className="font-display text-3xl font-semibold text-sage-900">{slide.title}</h2>
@@ -495,7 +495,7 @@ function CountUpNumber({
     return () => cancelAnimationFrame(rafId);
   }, [reducedMotion, target]);
 
-  return <span>{val.toLocaleString('id-ID')}</span>;
+  return <span>{val.toLocaleString('en-US')}</span>;
 }
 
 function Carousel3D({
@@ -531,7 +531,7 @@ function Carousel3D({
           >
             <img
               src={assetUrl(photo)}
-              alt={`Foto galeri ${idx + 1}`}
+              alt={`gallery photo ${idx + 1}`}
               loading="lazy"
               className="h-full w-full object-contain"
             />

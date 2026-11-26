@@ -94,7 +94,7 @@ export function HubScreen({
       </header>
 
       <section
-        aria-label="Menu utama"
+        aria-label="main menu"
         className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2"
       >
         {SECTION_ORDER.map((sectionId, idx) => {

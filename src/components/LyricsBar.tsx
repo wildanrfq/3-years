@@ -99,7 +99,7 @@ export function LyricsBar({
               <button
                 type="button"
                 onClick={() => audio.togglePlay()}
-                aria-label={audio.isPlaying ? 'Jeda lagu' : 'Putar lagu'}
+                aria-label={audio.isPlaying ? 'pause song' : 'play song'}
                 className="focus-ring relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-sage-600 text-[#FBF8EF] shadow-sage-sm transition hover:bg-sage-500 active:scale-95"
               >
                 {audio.isPlaying ? (
@@ -113,7 +113,7 @@ export function LyricsBar({
             <button
               type="button"
               onClick={() => setCollapsed(false)}
-              aria-label="Buka pemutar lagu dan lirik lengkap"
+              aria-label="open music player and full lyrics"
               className="focus-ring flex min-h-[44px] min-w-0 flex-1 items-center gap-2 rounded-pill px-1.5 text-left"
             >
               <EqualizerBars
@@ -141,7 +141,7 @@ export function LyricsBar({
       ) : (
         <motion.aside
           layout
-          aria-label="Pemutar lagu dan lirik"
+          aria-label="music player and lyrics"
           initial={{ opacity: 0, y: -10, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.52, ease: GENTLE_EASE }}
@@ -175,7 +175,7 @@ export function LyricsBar({
             <button
               type="button"
               onClick={() => setCollapsed(true)}
-              aria-label="Kecilkan pemutar lagu"
+              aria-label="minimize music player"
               className="focus-ring flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-cream/90 text-sage-700 transition hover:bg-sage-100 active:scale-95"
             >
               <ChevronUp className="h-4 w-4" aria-hidden="true" />
@@ -260,7 +260,7 @@ export function LyricsBar({
             <button
               type="button"
               onClick={() => audio.toggleMute()}
-              aria-label={audio.isMuted ? 'Nyalakan suara lagu' : 'Bisukan lagu'}
+              aria-label={audio.isMuted ? 'unmute song' : 'mute song'}
               className="focus-ring flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-cream/90 text-sage-700 transition hover:bg-sage-100 active:scale-95"
             >
               {audio.isMuted ? (

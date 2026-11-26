@@ -34,7 +34,7 @@ export function SectionShell({
       <header className="mb-6 text-center">
         <div className="inline-flex items-center gap-2">
           <GreenFlower variant="rosette" className="h-4 w-4 opacity-75" />
-          <span className="inline-block rounded-pill bg-sage-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-sage-700">
+          <span className="inline-block rounded-pill bg-sage-100 px-3 py-1 text-xs font-bold lowercase tracking-wider text-sage-700">
             {content.navigation.sectionStepLabel
               .replace('{current}', String(idx + 1))
               .replace('{total}', String(SECTION_ORDER.length))}

@@ -201,7 +201,7 @@ export default function LetterSection({
               <motion.button
                 type="button"
                 onClick={handleOpenEnvelope}
-                aria-label="Buka amplop surat"
+                aria-label="open letter envelope"
                 animate={
                   stage === 'envelope' && !reducedMotion
                     ? { y: [0, -6, 0] }

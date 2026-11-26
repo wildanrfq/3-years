@@ -20,7 +20,7 @@ export function BottomNav({
 
   return (
     <nav
-      aria-label="Navigasi bagian"
+      aria-label="section navigation"
       className="pb-safe fixed inset-x-0 bottom-0 z-30 px-2 pb-2 sm:px-4"
     >
       <div className="glass-sage mx-auto flex max-w-xl items-center justify-between gap-2 rounded-[26px] border border-sage-200/90 px-2.5 py-2 shadow-sage-md">
@@ -59,7 +59,7 @@ export function BottomNav({
               <button
                 type="button"
                 disabled
-                aria-label={`Selesaikan ${SECTION_META[currentSection].title} terlebih dulu sebelum lanjut`}
+                aria-label={`finish ${SECTION_META[currentSection].title} first before continuing`}
                 className="inline-flex min-h-[44px] cursor-not-allowed items-center gap-1.5 rounded-pill bg-sage-200/80 px-3.5 py-2 text-xs font-bold text-sage-600 transition-colors duration-300"
               >
                 <Lock className="h-3.5 w-3.5" aria-hidden="true" />

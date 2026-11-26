@@ -146,7 +146,7 @@ export default function PhotoCardsSection({
         {/* Toggle mode Tumpukan vs Grid */}
         <div
           role="tablist"
-          aria-label="Mode tampilan kartu foto"
+          aria-label="photo card view mode"
           className="inline-flex rounded-pill border border-sage-200 bg-cream p-1 shadow-sage-sm"
         >
           <button
@@ -222,7 +222,7 @@ export default function PhotoCardsSection({
                 <SquishyButton
                   variant="secondary"
                   onClick={cyclePrev}
-                  aria-label="Kartu sebelumnya"
+                  aria-label="previous card"
                   className="px-4 py-2 text-xs"
                 >
                   <ArrowLeft className="h-4 w-4" aria-hidden="true" />
@@ -236,7 +236,7 @@ export default function PhotoCardsSection({
                 <SquishyButton
                   variant="secondary"
                   onClick={() => cycleNext(-1)}
-                  aria-label="Kartu berikutnya"
+                  aria-label="next card"
                   className="px-4 py-2 text-xs"
                 >
                   <span>{content.photoCardsUi.nextButton}</span>
@@ -483,7 +483,7 @@ function PolaroidCard3D({
       <motion.button
         type="button"
         onClick={onTap}
-        aria-label={`${card.caption}. Tap kartu untuk membalik`}
+        aria-label={`${card.caption}. tap card to flip`}
         animate={
           reducedMotion
             ? { opacity: 1 }

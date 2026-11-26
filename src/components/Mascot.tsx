@@ -85,7 +85,7 @@ export function Mascot({ mood = 'happy', size = 'md', message, className = '' }:
       <motion.button
         type="button"
         onClick={handleTap}
-        aria-label="Maskot daun dan bunga, ketuk untuk menyapa"
+        aria-label="leaf and flower mascot, tap to say hi"
         className="focus-ring relative flex min-h-[44px] min-w-[44px] cursor-pointer items-center justify-center rounded-3xl p-1"
         animate={
           reducedMotion

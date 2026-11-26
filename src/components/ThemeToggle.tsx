@@ -25,8 +25,8 @@ export function ThemeToggle({
       type="button"
       onClick={onToggle}
       whileTap={reducedMotion ? undefined : { scale: 0.95 }}
-      aria-label={isDark ? 'Ganti ke mode terang' : 'Ganti ke mode gelap'}
-      title={isDark ? 'Mode terang' : 'Mode gelap'}
+      aria-label={isDark ? 'switch to light mode' : 'switch to dark mode'}
+      title={isDark ? 'light mode' : 'dark mode'}
       className={`focus-ring inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 rounded-full border border-sage-200/90 bg-cream/90 text-sage-700 shadow-sage-sm transition duration-300 hover:bg-sage-100 ${
         showLabel ? 'px-3.5' : 'w-11'
       } ${className}`}
@@ -49,8 +49,8 @@ export function ThemeToggle({
       </AnimatePresence>
 
       {showLabel && (
-        <span className="text-xs font-bold text-sage-800">
-          {isDark ? 'Terang' : 'Gelap'}
+        <span className="text-xs font-bold lowercase text-sage-800">
+          {isDark ? 'light' : 'dark'}
         </span>
       )}
     </motion.button>

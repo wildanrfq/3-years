@@ -103,7 +103,7 @@ export default function CounterSection({
 
         {/* Kartu utama penghitung waktu 3D */}
         <section
-          aria-label="Penghitung waktu bersama"
+          aria-label="time together counter"
           className="rounded-[28px] border border-sage-200/90 bg-cream p-5 shadow-sage-md sm:p-6"
         >
           <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-6 sm:gap-3">
@@ -122,17 +122,17 @@ export default function CounterSection({
               {content.counterUi.totalDaysLabel}
             </span>
             <span className="font-display text-2xl font-bold tabular-nums text-sage-900">
-              {elapsed.totalDays.toLocaleString('id-ID')} {content.counterUi.totalDaysUnit}
+              {elapsed.totalDays.toLocaleString('en-US')} {content.counterUi.totalDaysUnit}
             </span>
           </div>
         </section>
 
         {/* Hitung mundur menuju anniversary berikutnya */}
         <section
-          aria-label="Hitung mundur hari jadi berikutnya"
+          aria-label="next anniversary countdown"
           className="rounded-[28px] border border-sage-200/90 bg-cream p-5 shadow-sage-sm"
         >
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-sage-600">
+          <div className="flex items-center gap-2 text-xs font-bold lowercase tracking-wide text-sage-600">
             <CalendarClock className="h-4 w-4" aria-hidden="true" />
             <span>
               {content.counterUi.nextAnnivHeading.replace(
@@ -214,7 +214,7 @@ function FlipDigitTile({
           </motion.span>
         </AnimatePresence>
       </div>
-      <span className="mt-1.5 text-[11px] font-bold uppercase tracking-wide text-sage-600">
+      <span className="mt-1.5 text-[11px] font-bold lowercase tracking-wide text-sage-600">
         {label}
       </span>
     </div>

@@ -1,5 +1,10 @@
-import { ArrowLeft, ArrowRight, LayoutGrid, Lock } from 'lucide-react';
-import { content, SECTION_META, SECTION_ORDER, SectionId } from '../config/content';
+import { ArrowLeft, ArrowRight, LayoutGrid, Lock } from "lucide-react";
+import {
+  content,
+  SECTION_META,
+  SECTION_ORDER,
+  SectionId,
+} from "../config/content";
 
 interface BottomNavProps {
   currentSection: SectionId;
@@ -16,7 +21,8 @@ export function BottomNav({
 }: BottomNavProps) {
   const idx = SECTION_ORDER.indexOf(currentSection);
   const prevSection = idx > 0 ? SECTION_ORDER[idx - 1] : null;
-  const nextSection = idx >= 0 && idx < SECTION_ORDER.length - 1 ? SECTION_ORDER[idx + 1] : null;
+  const nextSection =
+    idx >= 0 && idx < SECTION_ORDER.length - 1 ? SECTION_ORDER[idx + 1] : null;
 
   return (
     <nav

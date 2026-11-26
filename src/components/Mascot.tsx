@@ -1,13 +1,19 @@
-import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useReducedMotion } from '../hooks/useReducedMotion';
-import { GENTLE_EASE } from '../lib/motion';
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useReducedMotion } from "../hooks/useReducedMotion";
+import { GENTLE_EASE } from "../lib/motion";
 
-export type MascotMood = 'sleepy' | 'sad' | 'happy' | 'excited' | 'curious' | 'cheering';
+export type MascotMood =
+  | "sleepy"
+  | "sad"
+  | "happy"
+  | "excited"
+  | "curious"
+  | "cheering";
 
 interface MascotProps {
   mood?: MascotMood;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   message?: string;
   className?: string;
 }
@@ -18,7 +24,12 @@ const SIZE_MAP = {
   lg: 118,
 };
 
-export function Mascot({ mood = 'happy', size = 'md', message, className = '' }: MascotProps) {
+export function Mascot({
+  mood = "happy",
+  size = "md",
+  message,
+  className = "",
+}: MascotProps) {
   const reducedMotion = useReducedMotion();
   const [blinking, setBlinking] = useState(false);
   const [hopCount, setHopCount] = useState(0);
@@ -35,7 +46,11 @@ export function Mascot({ mood = 'happy', size = 'md', message, className = '' }:
 
   useEffect(() => {
     if (reducedMotion) return;
-    if (typeof window === 'undefined' || !window.matchMedia('(pointer: fine)').matches) return;
+    if (
+      typeof window === "undefined" ||
+      !window.matchMedia("(pointer: fine)").matches
+    )
+      return;
 
     const handleMove = (e: PointerEvent) => {
       const nx = (e.clientX / window.innerWidth - 0.5) * 2;
@@ -46,8 +61,8 @@ export function Mascot({ mood = 'happy', size = 'md', message, className = '' }:
       });
     };
 
-    window.addEventListener('pointermove', handleMove, { passive: true });
-    return () => window.removeEventListener('pointermove', handleMove);
+    window.addEventListener("pointermove", handleMove, { passive: true });
+    return () => window.removeEventListener("pointermove", handleMove);
   }, [reducedMotion]);
 
   const handleTap = () => {
@@ -58,12 +73,14 @@ export function Mascot({ mood = 'happy', size = 'md', message, className = '' }:
 
   const width = SIZE_MAP[size];
   const height = Math.round(width * 0.72);
-  const isSleepy = mood === 'sleepy';
-  const isSad = mood === 'sad';
-  const isCheering = mood === 'cheering' || mood === 'excited';
+  const isSleepy = mood === "sleepy";
+  const isSad = mood === "sad";
+  const isCheering = mood === "cheering" || mood === "excited";
 
   return (
-    <div className={`relative inline-flex flex-col items-center select-none ${className}`}>
+    <div
+      className={`relative inline-flex flex-col items-center select-none ${className}`}
+    >
       {message && (
         <motion.div
           initial={{ opacity: 0, y: 6 }}
@@ -96,8 +113,8 @@ export function Mascot({ mood = 'happy', size = 'md', message, className = '' }:
         }
         transition={
           hopCount > 0
-            ? { duration: 0.6, ease: 'easeInOut' }
-            : { duration: 4.0, repeat: Infinity, ease: 'easeInOut' }
+            ? { duration: 0.6, ease: "easeInOut" }
+            : { duration: 4.0, repeat: Infinity, ease: "easeInOut" }
         }
         whileTap={reducedMotion ? undefined : { scale: 0.95 }}
       >
@@ -129,8 +146,22 @@ export function Mascot({ mood = 'happy', size = 'md', message, className = '' }:
           fill="none"
           aria-hidden="true"
         >
-          <ellipse cx="44" cy="86" rx="26" ry="5.5" fill="var(--sage-200)" opacity="0.65" />
-          <ellipse cx="98" cy="86" rx="24" ry="5.5" fill="var(--sage-200)" opacity="0.65" />
+          <ellipse
+            cx="44"
+            cy="86"
+            rx="26"
+            ry="5.5"
+            fill="var(--sage-200)"
+            opacity="0.65"
+          />
+          <ellipse
+            cx="98"
+            cy="86"
+            rx="24"
+            ry="5.5"
+            fill="var(--sage-200)"
+            opacity="0.65"
+          />
 
           {/* Karakter daun */}
           <g>
@@ -147,11 +178,15 @@ export function Mascot({ mood = 'happy', size = 'md', message, className = '' }:
                 reducedMotion
                   ? undefined
                   : isSad
-                  ? { rotate: [0, -3, 3, 0] }
-                  : { rotate: [0, 1.5, 0] }
+                    ? { rotate: [0, -3, 3, 0] }
+                    : { rotate: [0, 1.5, 0] }
               }
-              transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
-              style={{ transformOrigin: '44px 72px' }}
+              transition={{
+                duration: 2.8,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              style={{ transformOrigin: "44px 72px" }}
             />
             {/* Tangan melambai */}
             <motion.path
@@ -164,11 +199,15 @@ export function Mascot({ mood = 'happy', size = 'md', message, className = '' }:
                 reducedMotion
                   ? undefined
                   : isCheering
-                  ? { rotate: [-12, 18, -12] }
-                  : { rotate: [0, 10, 0] }
+                    ? { rotate: [-12, 18, -12] }
+                    : { rotate: [0, 10, 0] }
               }
-              transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
-              style={{ transformOrigin: '21px 56px' }}
+              transition={{
+                duration: 1.4,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              style={{ transformOrigin: "21px 56px" }}
             />
             <circle cx="33" cy="57" r="4" fill="#F2CFC4" opacity="0.9" />
             <circle cx="55" cy="57" r="4" fill="#F2CFC4" opacity="0.9" />
@@ -176,35 +215,105 @@ export function Mascot({ mood = 'happy', size = 'md', message, className = '' }:
             {/* Mata daun */}
             {isSleepy || blinking ? (
               <>
-                <path d="M32 49 Q36 52 40 49" stroke="#2B3827" strokeWidth="2.4" strokeLinecap="round" />
-                <path d="M48 49 Q52 52 56 49" stroke="#2B3827" strokeWidth="2.4" strokeLinecap="round" />
+                <path
+                  d="M32 49 Q36 52 40 49"
+                  stroke="#2B3827"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M48 49 Q52 52 56 49"
+                  stroke="#2B3827"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                />
               </>
             ) : (
               <>
-                <circle cx={36 + gaze.x} cy={49 + gaze.y} r="2.9" fill="#2B3827" />
-                <circle cx={52 + gaze.x} cy={49 + gaze.y} r="2.9" fill="#2B3827" />
-                <circle cx={35 + gaze.x * 0.7} cy={48 + gaze.y * 0.7} r="1" fill="#FBF8EF" />
-                <circle cx={51 + gaze.x * 0.7} cy={48 + gaze.y * 0.7} r="1" fill="#FBF8EF" />
+                <circle
+                  cx={36 + gaze.x}
+                  cy={49 + gaze.y}
+                  r="2.9"
+                  fill="#2B3827"
+                />
+                <circle
+                  cx={52 + gaze.x}
+                  cy={49 + gaze.y}
+                  r="2.9"
+                  fill="#2B3827"
+                />
+                <circle
+                  cx={35 + gaze.x * 0.7}
+                  cy={48 + gaze.y * 0.7}
+                  r="1"
+                  fill="#FBF8EF"
+                />
+                <circle
+                  cx={51 + gaze.x * 0.7}
+                  cy={48 + gaze.y * 0.7}
+                  r="1"
+                  fill="#FBF8EF"
+                />
               </>
             )}
 
             {/* Mulut daun */}
             {isSad ? (
-              <path d="M39 60 Q44 55 49 60" stroke="#2B3827" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+              <path
+                d="M39 60 Q44 55 49 60"
+                stroke="#2B3827"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                fill="none"
+              />
             ) : isSleepy ? (
               <circle cx="44" cy="58" r="2.1" fill="#2B3827" />
             ) : (
-              <path d="M39 56 Q44 62 49 56" stroke="#2B3827" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+              <path
+                d="M39 56 Q44 62 49 56"
+                stroke="#2B3827"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                fill="none"
+              />
             )}
           </g>
 
           {/* Karakter bunga */}
           <g>
             {/* Kelopak atas */}
-            <circle cx="98" cy="24" r="8" fill="#F2CFC4" stroke="#647F57" strokeWidth="2" />
-            <circle cx="88" cy="31" r="7.5" fill="#F2CFC4" stroke="#647F57" strokeWidth="2" />
-            <circle cx="108" cy="31" r="7.5" fill="#F2CFC4" stroke="#647F57" strokeWidth="2" />
-            <circle cx="98" cy="32" r="5" fill="#FBF8EF" stroke="#647F57" strokeWidth="1.8" />
+            <circle
+              cx="98"
+              cy="24"
+              r="8"
+              fill="#F2CFC4"
+              stroke="#647F57"
+              strokeWidth="2"
+            />
+            <circle
+              cx="88"
+              cy="31"
+              r="7.5"
+              fill="#F2CFC4"
+              stroke="#647F57"
+              strokeWidth="2"
+            />
+            <circle
+              cx="108"
+              cy="31"
+              r="7.5"
+              fill="#F2CFC4"
+              stroke="#647F57"
+              strokeWidth="2"
+            />
+            <circle
+              cx="98"
+              cy="32"
+              r="5"
+              fill="#FBF8EF"
+              stroke="#647F57"
+              strokeWidth="1.8"
+            />
 
             <motion.path
               d="M78 58 C78 41 87 34 98 34 C109 34 118 41 118 58 C118 74 109 82 98 82 C87 82 78 74 78 58 Z"
@@ -215,11 +324,15 @@ export function Mascot({ mood = 'happy', size = 'md', message, className = '' }:
                 reducedMotion
                   ? undefined
                   : isCheering
-                  ? { y: [0, -3, 0] }
-                  : { rotate: [0, -1.5, 0] }
+                    ? { y: [0, -3, 0] }
+                    : { rotate: [0, -1.5, 0] }
               }
-              transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
-              style={{ transformOrigin: '98px 72px' }}
+              transition={{
+                duration: 2.4,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              style={{ transformOrigin: "98px 72px" }}
             />
             <motion.path
               d="M118 56 Q128 47 125 38"
@@ -231,11 +344,15 @@ export function Mascot({ mood = 'happy', size = 'md', message, className = '' }:
                 reducedMotion
                   ? undefined
                   : isCheering
-                  ? { rotate: [12, -16, 12] }
-                  : { rotate: [0, -9, 0] }
+                    ? { rotate: [12, -16, 12] }
+                    : { rotate: [0, -9, 0] }
               }
-              transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-              style={{ transformOrigin: '118px 56px' }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              style={{ transformOrigin: "118px 56px" }}
             />
 
             <circle cx="87" cy="59" r="3.8" fill="#F2CFC4" opacity="0.95" />
@@ -243,24 +360,71 @@ export function Mascot({ mood = 'happy', size = 'md', message, className = '' }:
 
             {isSleepy || blinking ? (
               <>
-                <path d="M87 52 Q90.5 55 94 52" stroke="#2B3827" strokeWidth="2.4" strokeLinecap="round" />
-                <path d="M102 52 Q105.5 55 109 52" stroke="#2B3827" strokeWidth="2.4" strokeLinecap="round" />
+                <path
+                  d="M87 52 Q90.5 55 94 52"
+                  stroke="#2B3827"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M102 52 Q105.5 55 109 52"
+                  stroke="#2B3827"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                />
               </>
             ) : (
               <>
-                <circle cx={90.5 + gaze.x} cy={52 + gaze.y} r="2.7" fill="#2B3827" />
-                <circle cx={105.5 + gaze.x} cy={52 + gaze.y} r="2.7" fill="#2B3827" />
-                <circle cx={89.7 + gaze.x * 0.7} cy={51 + gaze.y * 0.7} r="0.95" fill="#FBF8EF" />
-                <circle cx={104.7 + gaze.x * 0.7} cy={51 + gaze.y * 0.7} r="0.95" fill="#FBF8EF" />
+                <circle
+                  cx={90.5 + gaze.x}
+                  cy={52 + gaze.y}
+                  r="2.7"
+                  fill="#2B3827"
+                />
+                <circle
+                  cx={105.5 + gaze.x}
+                  cy={52 + gaze.y}
+                  r="2.7"
+                  fill="#2B3827"
+                />
+                <circle
+                  cx={89.7 + gaze.x * 0.7}
+                  cy={51 + gaze.y * 0.7}
+                  r="0.95"
+                  fill="#FBF8EF"
+                />
+                <circle
+                  cx={104.7 + gaze.x * 0.7}
+                  cy={51 + gaze.y * 0.7}
+                  r="0.95"
+                  fill="#FBF8EF"
+                />
               </>
             )}
 
             {isSad ? (
-              <path d="M93 62 Q98 57 103 62" stroke="#2B3827" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+              <path
+                d="M93 62 Q98 57 103 62"
+                stroke="#2B3827"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                fill="none"
+              />
             ) : isSleepy ? (
-              <path d="M95 60 H101" stroke="#2B3827" strokeWidth="2.1" strokeLinecap="round" />
+              <path
+                d="M95 60 H101"
+                stroke="#2B3827"
+                strokeWidth="2.1"
+                strokeLinecap="round"
+              />
             ) : (
-              <path d="M93 59 Q98 64 103 59" stroke="#2B3827" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+              <path
+                d="M93 59 Q98 64 103 59"
+                stroke="#2B3827"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                fill="none"
+              />
             )}
           </g>
         </svg>

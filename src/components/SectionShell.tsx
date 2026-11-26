@@ -1,8 +1,13 @@
-import { ReactNode } from 'react';
-import { ArrowRight } from 'lucide-react';
-import { content, SECTION_META, SECTION_ORDER, SectionId } from '../config/content';
-import { SquishyButton } from './SquishyButton';
-import { GreenFlower } from './GreenFlower';
+import { ReactNode } from "react";
+import { ArrowRight } from "lucide-react";
+import {
+  content,
+  SECTION_META,
+  SECTION_ORDER,
+  SectionId,
+} from "../config/content";
+import { SquishyButton } from "./SquishyButton";
+import { GreenFlower } from "./GreenFlower";
 
 interface SectionShellProps {
   section: SectionId;
@@ -22,13 +27,14 @@ export function SectionShell({
   wide = false,
 }: SectionShellProps) {
   const idx = SECTION_ORDER.indexOf(section);
-  const nextSection = idx >= 0 && idx < SECTION_ORDER.length - 1 ? SECTION_ORDER[idx + 1] : null;
+  const nextSection =
+    idx >= 0 && idx < SECTION_ORDER.length - 1 ? SECTION_ORDER[idx + 1] : null;
   const meta = SECTION_META[section];
 
   return (
     <main
       className={`relative z-10 mx-auto flex min-h-dvh w-full ${
-        wide ? 'max-w-5xl' : 'max-w-3xl'
+        wide ? "max-w-5xl" : "max-w-3xl"
       } flex-col px-4 pb-28 pt-20 sm:px-6 sm:pt-14`}
     >
       <header className="mb-6 text-center">
@@ -36,15 +42,17 @@ export function SectionShell({
           <GreenFlower variant="rosette" className="h-4 w-4 opacity-75" />
           <span className="inline-block rounded-pill bg-sage-100 px-3 py-1 text-xs font-bold lowercase tracking-wider text-sage-700">
             {content.navigation.sectionStepLabel
-              .replace('{current}', String(idx + 1))
-              .replace('{total}', String(SECTION_ORDER.length))}
+              .replace("{current}", String(idx + 1))
+              .replace("{total}", String(SECTION_ORDER.length))}
           </span>
           <GreenFlower variant="rosette" className="h-4 w-4 opacity-75" />
         </div>
         <h1 className="mt-2 font-display text-3xl font-semibold text-sage-900 sm:text-4xl">
           {meta.title}
         </h1>
-        <p className="mx-auto mt-1.5 max-w-md text-sm text-sage-700">{meta.subtitle}</p>
+        <p className="mx-auto mt-1.5 max-w-md text-sm text-sage-700">
+          {meta.subtitle}
+        </p>
       </header>
 
       <div className="flex-1">{children}</div>
@@ -52,14 +60,22 @@ export function SectionShell({
       {!hideFooterCta && (
         <div className="mt-10 flex flex-col items-center gap-3 pb-4">
           {nextSection ? (
-            <SquishyButton onClick={() => onNextSection(nextSection)} className="w-full max-w-xs">
+            <SquishyButton
+              onClick={() => onNextSection(nextSection)}
+              className="w-full max-w-xs"
+            >
               <span>
-                {content.navigation.continueToPrefix} {SECTION_META[nextSection].title}
+                {content.navigation.continueToPrefix}{" "}
+                {SECTION_META[nextSection].title}
               </span>
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </SquishyButton>
           ) : (
-            <SquishyButton onClick={onBackToHub} variant="secondary" className="w-full max-w-xs">
+            <SquishyButton
+              onClick={onBackToHub}
+              variant="secondary"
+              className="w-full max-w-xs"
+            >
               <span>{content.navigation.backToMainMenuButton}</span>
             </SquishyButton>
           )}

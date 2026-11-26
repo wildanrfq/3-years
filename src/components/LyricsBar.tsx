@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronDown,
   ChevronUp,
@@ -9,14 +9,14 @@ import {
   RotateCcw,
   Volume2,
   VolumeX,
-} from 'lucide-react';
-import { content } from '../config/content';
-import { AudioControls } from '../hooks/useAudio';
-import { useLyrics } from '../hooks/useLyrics';
-import { useReducedMotion } from '../hooks/useReducedMotion';
-import { GENTLE_EASE } from '../lib/motion';
-import { ThemeMode } from '../hooks/useTheme';
-import { ThemeToggle } from './ThemeToggle';
+} from "lucide-react";
+import { content } from "../config/content";
+import { AudioControls } from "../hooks/useAudio";
+import { useLyrics } from "../hooks/useLyrics";
+import { useReducedMotion } from "../hooks/useReducedMotion";
+import { GENTLE_EASE } from "../lib/motion";
+import { ThemeMode } from "../hooks/useTheme";
+import { ThemeToggle } from "./ThemeToggle";
 
 interface LyricsBarProps {
   audio: AudioControls;
@@ -50,14 +50,14 @@ export function LyricsBar({
     progressElRef: progressRef,
   });
 
-  const prevLine = activeIndex > 0 ? lines[activeIndex - 1]?.text : '';
-  const activeLine = activeIndex >= 0 ? lines[activeIndex]?.text : '';
+  const prevLine = activeIndex > 0 ? lines[activeIndex - 1]?.text : "";
+  const activeLine = activeIndex >= 0 ? lines[activeIndex]?.text : "";
   const nextLine =
     activeIndex >= 0 && activeIndex + 1 < lines.length
       ? lines[activeIndex + 1]?.text
       : activeIndex === -1 && lines.length > 0
-      ? lines[0]?.text
-      : '';
+        ? lines[0]?.text
+        : "";
 
   return (
     <div
@@ -99,13 +99,16 @@ export function LyricsBar({
               <button
                 type="button"
                 onClick={() => audio.togglePlay()}
-                aria-label={audio.isPlaying ? 'pause song' : 'play song'}
+                aria-label={audio.isPlaying ? "pause song" : "play song"}
                 className="focus-ring relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-sage-600 text-[#FBF8EF] shadow-sage-sm transition hover:bg-sage-500 active:scale-95"
               >
                 {audio.isPlaying ? (
                   <Pause className="h-4 w-4" aria-hidden="true" />
                 ) : (
-                  <Play className="h-4 w-4 translate-x-0.5" aria-hidden="true" />
+                  <Play
+                    className="h-4 w-4 translate-x-0.5"
+                    aria-hidden="true"
+                  />
                 )}
               </button>
             )}
@@ -134,7 +137,10 @@ export function LyricsBar({
                   </div>
                 )}
               </div>
-              <ChevronDown className="h-4 w-4 shrink-0 text-sage-600" aria-hidden="true" />
+              <ChevronDown
+                className="h-4 w-4 shrink-0 text-sage-600"
+                aria-hidden="true"
+              />
             </button>
           </div>
         </motion.div>
@@ -151,7 +157,9 @@ export function LyricsBar({
             {/* Piringan vinyl kecil */}
             <div
               className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-sage-400 bg-[#2B3827] shadow-sage-sm ${
-                audio.isPlaying && !reducedMotion ? 'animate-[spin_7s_linear_infinite]' : ''
+                audio.isPlaying && !reducedMotion
+                  ? "animate-[spin_7s_linear_infinite]"
+                  : ""
               }`}
               aria-hidden="true"
             >
@@ -162,7 +170,10 @@ export function LyricsBar({
 
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1 text-[11px] font-bold text-sage-900">
-                <Music2 className="h-3 w-3 shrink-0 text-sage-600" aria-hidden="true" />
+                <Music2
+                  className="h-3 w-3 shrink-0 text-sage-600"
+                  aria-hidden="true"
+                />
                 <span className="truncate">{title}</span>
               </div>
               <div className="truncate text-[10px] font-semibold text-sage-600">
@@ -191,10 +202,18 @@ export function LyricsBar({
               <div className="relative min-h-[22px] overflow-hidden">
                 <AnimatePresence mode="popLayout" initial={false}>
                   <motion.div
-                    key={activeIndex >= 0 ? `${activeIndex}-${activeLine}` : 'waiting'}
-                    initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 6 }}
+                    key={
+                      activeIndex >= 0
+                        ? `${activeIndex}-${activeLine}`
+                        : "waiting"
+                    }
+                    initial={
+                      reducedMotion ? { opacity: 0 } : { opacity: 0, y: 6 }
+                    }
                     animate={{ opacity: 1, y: 0 }}
-                    exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+                    exit={
+                      reducedMotion ? { opacity: 0 } : { opacity: 0, y: -6 }
+                    }
                     transition={{ duration: 0.45, ease: GENTLE_EASE }}
                     className="truncate text-xs font-bold leading-snug"
                   >
@@ -260,7 +279,7 @@ export function LyricsBar({
             <button
               type="button"
               onClick={() => audio.toggleMute()}
-              aria-label={audio.isMuted ? 'unmute song' : 'mute song'}
+              aria-label={audio.isMuted ? "unmute song" : "mute song"}
               className="focus-ring flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-cream/90 text-sage-700 transition hover:bg-sage-100 active:scale-95"
             >
               {audio.isMuted ? (
@@ -276,7 +295,13 @@ export function LyricsBar({
   );
 }
 
-function EqualizerBars({ active, reducedMotion }: { active: boolean; reducedMotion: boolean }) {
+function EqualizerBars({
+  active,
+  reducedMotion,
+}: {
+  active: boolean;
+  reducedMotion: boolean;
+}) {
   const heights = [0.45, 0.9, 0.6];
   return (
     <span className="flex h-3.5 shrink-0 items-end gap-0.5" aria-hidden="true">
@@ -286,12 +311,16 @@ function EqualizerBars({ active, reducedMotion }: { active: boolean; reducedMoti
           className="w-1 rounded-full bg-sage-600"
           animate={
             active && !reducedMotion
-              ? { height: ['35%', '100%', '45%', '85%', '35%'] }
+              ? { height: ["35%", "100%", "45%", "85%", "35%"] }
               : { height: `${Math.round(base * 100)}%` }
           }
           transition={
             active && !reducedMotion
-              ? { duration: 0.9 + idx * 0.2, repeat: Infinity, ease: 'easeInOut' }
+              ? {
+                  duration: 0.9 + idx * 0.2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }
               : { duration: 0.2 }
           }
         />

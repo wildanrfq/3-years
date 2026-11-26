@@ -233,9 +233,9 @@ export const SECTION_META: Record<
   { title: string; shortLabel: string; subtitle: string }
 > = {
   timeline: {
-    title: 'timeline', // Shown in: Main Menu Card #1 & timeline header
+    title: 'early timeline', // Shown in: Main Menu Card #1 & timeline header
     shortLabel: 'timeline', // Shown in: Bottom Navigation back button
-    subtitle: 'a few little moments from our story, from then to now.', // Shown in: timeline header
+    subtitle: 'a few moments back in our early days.', // Shown in: timeline header
   },
   counter: {
     title: 'time together', // Shown in: Main Menu Card #2 & time together header
@@ -293,10 +293,10 @@ export const content: ContentConfig = {
   // 3. WELCOME / INTRO SCREEN (Shown right after unlocking the PIN)
   // ==========================================================================
   intro: {
-    mascotGreeting: 'hi {partnerName}, you made it in!', // Mascot bubble on Welcome Screen
-    heading: 'a little corner i made just for you', // Main headline on Welcome Screen
+    mascotGreeting: 'hi sayaang!', // Mascot bubble on Welcome Screen
+    heading: 'a little something i made just for you', // Main headline on Welcome Screen
     description:
-      'inside are our story, a live time counter, our rewind, photo cards, and a little letter from {myName}. our song keeps playing in the top right while you read.', // Body paragraph on Welcome Screen
+      'soo you will start some kinda journey here and i made 5 parts of them. sorak sorai will be playing in the background as u wander cuz i associate that song to u so much and i get happy everytime i listen to it ❤️', // Body paragraph on Welcome Screen
     startButton: 'start', // Main CTA button on Welcome Screen
   },
 
@@ -309,11 +309,11 @@ export const content: ContentConfig = {
     mascotProgress: '{opened} of {total} chapters opened so far!', // Mascot bubble while progressing through menus
     mascotAllDone: 'all {total} chapters are open!', // Mascot bubble after all 5 menus are opened
     cardDescriptions: {
-      timeline: 'little moments from our timeline over time.', // Shown on Main Menu Card 1
-      counter: 'every second we have walked through together.', // Shown on Main Menu Card 2
+      timeline: 'some rewind of what we did in the early days.', // Shown on Main Menu Card 1
+      counter: 'every little detail of time we have had.', // Shown on Main Menu Card 2
       rewind: 'our little highlight reel.', // Shown on Main Menu Card 3
-      photocards: 'polaroid memories with little notes tucked behind.', // Shown on Main Menu Card 4
-      letter: 'one warm final note just for you.', // Shown on Main Menu Card 5
+      photocards: 'some of our photos taken with notes written behind.', // Shown on Main Menu Card 4
+      letter: 'one warm final note just for you 💌', // Shown on Main Menu Card 5
     },
     lockedTimelineNotice: 'open every moment in timeline first before unlocking this.', // Shown on locked Card 2
     lockedPrevNotice: 'open {prevTitle} first before unlocking this.', // Shown on locked Cards 3, 4, 5
@@ -332,46 +332,39 @@ export const content: ContentConfig = {
   // ==========================================================================
   timeline: [
     {
-      date: 'november 2023',
-      title: 'the day we officially began',
-      description: 'a little shy at first, yet we talked endlessly until we lost track of time.',
-      photo: 'photos/memory-1.svg', // Image shown on timeline Card #1
-      icon: 'heart',
-    },
-    {
-      date: 'january 2024',
-      title: 'our longest afternoon coffee',
-      description: 'it poured outside, so we ordered another cup and talked about everything and nothing.',
+      date: 'november 6th, 2023',
+      title: 'your first direct message',
+      description: 'it was my birthday, you said happy birthday to me and i replied "makasii indah radioheadd". indah radiohead was (or still is) your nickname to me for a long time. aku salting and langsung ngabarin askal 😁',
       photo: 'photos/memory-2.svg', // Image shown on timeline Card #2
       icon: 'coffee',
     },
     {
-      date: 'may 2024',
-      title: 'a long drive with no real plan',
-      description: 'we took two wrong turns, yet laughed all the way home.',
-      photo: 'photos/memory-3.svg', // Image shown on timeline Card #3
-      icon: 'map-pin',
+      date: 'november 25th, 2023',
+      title: 'my first direct message',
+      description: 'you played jump then fall by taylor swift on guitar and u posted it on your story. i hit u up and said that song was like my favorite off fearless. and we continue chatted for days.',
+      photo: 'photos/memory-1.svg', // Image shown on timeline Card #1
+      icon: 'heart',
     },
     {
-      date: 'november 2024',
-      title: 'our very first year together',
-      description: 'a simple dinner that felt like the warmest place in the world.',
+      date: 'november 28th, 2023',
+      title: 'our first unofficial date',
+      description: 'it was a tuesday after school, you said you were going to give me something in return of the line theme i gave you. we met at rotbak lantai 2, chatted for some time, and we did our very first fotbar together. i put my arm around your shoulder spontaneously and the feeling is out of this world WKWKW',
       photo: 'photos/memory-4.svg', // Image shown on timeline Card #4
       icon: 'sparkles',
     },
     {
-      date: 'june 2025',
-      title: 'sunny afternoon at our favorite spot',
-      description: 'sitting together on a park bench taking little photos to keep.',
-      photo: 'photos/memory-5.svg', // Image shown on timeline Card #5
-      icon: 'sun',
+      date: 'december 2nd, 2023',
+      title: 'i came over to ur house',
+      description: 'one random morning, we chatted like usual and suddenly i asked if i could come over to ur house and mama approved me so i went and we spent our first day together just chilling at your terrace. though we never said it officially, that was the day we became us. 🫶',
+      photo: 'photos/memory-3.svg', // Image shown on timeline Card #3
+      icon: 'map-pin',
     },
     {
-      date: 'november 2026',
-      title: 'three years and still counting',
-      description: 'thank you for always being gentle, patient, and feeling like home.',
-      photo: 'photos/memory-6.svg', // Image shown on timeline Card #6
-      icon: 'gift',
+      date: 'december 10th, 2023',
+      title: 'our first proper date',
+      description: 'we went to the evermore anniversary event at tebet eco park. i cant believe our first date was that proper like it was an actual event that we both share the same interest on. we spent a wonderful time there 🧡',
+      photo: 'photos/memory-5.svg', // Image shown on timeline Card #5
+      icon: 'sun',
     },
   ],
   timelineUi: {
@@ -482,52 +475,40 @@ export const content: ContentConfig = {
   // ==========================================================================
   photoCards: [
     {
-      photo: 'photos/memory-1.svg', // Image on photo cards #1
-      caption: 'where our story began', // Front caption under photo
-      date: '26 nov 2023', // Date on front & back
-      backNote: 'my heart was racing so fast before i saw you.', // Handwritten note on back of card
+      photo: 'photos/photocard-1.jpg', // Image on photo cards #1
+      caption: 'our very first fotbar', // Front caption under photo
+      date: '28 nov 2023', // Date on front & back
+      backNote: 'outside roti bakar 88—the day i put my arm around your shoulder for the first time.', // Handwritten note on back of card
     },
     {
-      photo: 'photos/memory-2.svg', // Image on photo cards #2
-      caption: 'rainy afternoon coffee',
-      date: '14 jan 2024',
-      backNote: 'we ordered the exact same drink yet yours somehow tasted sweeter.',
+      photo: 'photos/photocard-2.jpg', // Image on photo cards #2
+      caption: 'evermore long pond picnic',
+      date: '10 dec 2023',
+      backNote: 'our first proper date together at tebet eco park.',
     },
     {
-      photo: 'photos/memory-3.svg', // Image on photo cards #3
-      caption: 'wandering around town',
-      date: '19 may 2024',
-      backNote: 'the breeze was cool and you talked non-stop the whole way.',
+      photo: 'photos/photocard-3.jpg', // Image on photo cards #3
+      caption: 'matching school uniforms',
+      date: 'our school days',
+      backNote: 'making silly faces together between all the busy school days.',
     },
     {
-      photo: 'photos/memory-4.svg', // Image on photo cards #4
-      caption: 'first anniversary dinner',
-      date: '26 nov 2024',
-      backNote: 'a tiny candle on the table and quiet wishes for both of us.',
+      photo: 'photos/photocard-4.jpg', // Image on photo cards #4
+      caption: 'under a golden sky',
+      date: 'museum date',
+      backNote: 'dressed in matching maroon among all the glowing yellow fish.',
     },
     {
-      photo: 'photos/memory-5.svg', // Image on photo cards #5
-      caption: 'my favorite candid shot',
-      date: '08 mar 2025',
-      backNote: 'you were busy picking food and still looked so cute.',
+      photo: 'photos/photocard-5.jpg', // Image on photo cards #5
+      caption: 'two goofy faces',
+      date: 'black & white',
+      backNote: 'one of my favorite candid moments whenever you laugh this hard.',
     },
     {
-      photo: 'photos/memory-6.svg', // Image on photo cards #6
-      caption: 'slow sunday morning',
-      date: '22 jun 2025',
-      backNote: 'waking up early just to have breakfast together at our usual place.',
-    },
-    {
-      photo: 'photos/memory-7.svg', // Image on photo cards #7
-      caption: 'our second year',
-      date: '26 nov 2025',
-      backNote: 'more tiny everyday things to be grateful for together.',
-    },
-    {
-      photo: 'photos/memory-8.svg', // Image on photo cards #8
-      caption: 'to three years and beyond',
-      date: '26 nov 2026',
-      backNote: 'may these pages keep filling up with your smile.',
+      photo: 'photos/photocard-6.jpg', // Image on photo cards #6
+      caption: 'caught on a retro tv',
+      date: 'mirror snapshot',
+      backNote: 'even through an old blue television screen, you are still my favorite view.',
     },
   ],
   photoCardsUi: {

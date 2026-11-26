@@ -189,7 +189,7 @@ export default function PhotoCardsSection({
               transition={{ duration: reducedMotion ? 0.2 : 0.48, ease: GENTLE_EASE }}
               className="flex w-full flex-col items-center"
             >
-              <div className="relative h-[400px] w-full max-w-[310px] sm:h-[420px]">
+              <div className="relative my-2 h-[400px] w-full max-w-[310px] sm:h-[420px]">
                 <AnimatePresence initial={false} custom={deck}>
                   {visibleSlice
                     .slice()
@@ -218,7 +218,7 @@ export default function PhotoCardsSection({
                 </AnimatePresence>
               </div>
 
-              <div className="mt-4 flex items-center gap-3">
+              <div className="relative z-20 mt-8 flex items-center gap-3 sm:mt-9">
                 <SquishyButton
                   variant="secondary"
                   onClick={cyclePrev}
@@ -251,7 +251,7 @@ export default function PhotoCardsSection({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: reducedMotion ? 0.2 : 0.48, ease: GENTLE_EASE }}
-              className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2"
+              className="grid w-full grid-cols-1 gap-7 pt-2 sm:grid-cols-2"
             >
               {cards.map((card, idx) => (
                 <motion.div
@@ -341,7 +341,7 @@ function StackCardWrapper({
     ? { opacity: 0 }
     : isReturningToTop
     ? { x: -240, y: -10, rotate: -10, scale: 0.96, opacity: 0 }
-    : { x: 0, y: 30, rotate: 0, scale: 0.88, opacity: 0 };
+    : { x: 0, y: 18, rotate: 0, scale: 0.88, opacity: 0 };
 
   const exitVariant = (latestDeck: DeckState) => {
     if (reducedMotion) {
@@ -361,7 +361,7 @@ function StackCardWrapper({
     // Kartu paling belakang meredup pelan di posisinya.
     return {
       x: 0,
-      y: 30,
+      y: 18,
       scale: 0.88,
       opacity: 0,
       transition: { duration: 0.45, ease: GENTLE_EASE },
@@ -375,9 +375,9 @@ function StackCardWrapper({
       initial={initialState}
       animate={{
         x: 0,
-        y: depth * 12,
-        rotate: isTop ? 0 : restTilt * 0.6,
-        scale: 1 - depth * 0.045,
+        y: depth * 8,
+        rotate: isTop ? 0 : restTilt * 0.55,
+        scale: 1 - depth * 0.04,
         opacity: 1 - depth * 0.14,
       }}
       exit="exit"
@@ -398,6 +398,7 @@ function StackCardWrapper({
         card={card}
         cardIdx={cardIdx}
         isFlipped={isFlipped}
+        isInteractive={isTop}
         gyroEnabled={gyroEnabled}
         gyroTilt={gyroTilt}
         reducedMotion={reducedMotion}
@@ -415,6 +416,7 @@ interface PolaroidCard3DProps {
   card: PhotoCardItem;
   cardIdx: number;
   isFlipped: boolean;
+  isInteractive?: boolean;
   gyroEnabled: boolean;
   gyroTilt: { rx: number; ry: number; gx: number; gy: number };
   reducedMotion: boolean;
@@ -425,6 +427,7 @@ function PolaroidCard3D({
   card,
   cardIdx,
   isFlipped,
+  isInteractive = true,
   gyroEnabled,
   gyroTilt,
   reducedMotion,
@@ -470,105 +473,118 @@ function PolaroidCard3D({
 
   return (
     <div
-      ref={tiltRef}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
-      style={{
-        perspective: '1200px',
-        transition: 'transform 380ms cubic-bezier(0.22, 1, 0.36, 1)',
-        ...gyroStyle,
-      }}
-      className="h-full w-full"
+      className="relative h-full w-full"
     >
-      <motion.button
-        type="button"
-        onClick={onTap}
-        aria-label={`${card.caption}. tap card to flip`}
-        animate={
-          reducedMotion
-            ? { opacity: 1 }
-            : {
-                rotateY: isFlipped ? 180 : 0,
-                rotateZ: isFlipped ? 0 : restTilt,
-              }
-        }
-        transition={{ duration: reducedMotion ? 0.2 : 0.85, ease: GENTLE_EASE }}
-        style={{ transformStyle: 'preserve-3d' }}
-        className="focus-ring relative h-full w-full rounded-[26px] text-left"
-      >
-        {/* Sisi depan polaroid */}
+      {/* Keep perspective & preserve-3d off the native <button> so WebKit/iOS Safari preserves 3D bounds and backface culling */}
+      <div style={{ perspective: '1200px' }} className="h-full w-full">
         <div
+          ref={tiltRef}
           style={{
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden',
+            transformStyle: 'preserve-3d',
+            transition: 'transform 380ms cubic-bezier(0.22, 1, 0.36, 1)',
+            ...gyroStyle,
           }}
-          className="absolute inset-0 flex flex-col rounded-[26px] border border-sage-200 bg-cream p-3.5 pb-5 shadow-sage-lg"
+          className="h-full w-full"
         >
-          {/* Stiker selotip kertas di atas foto */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -top-3 left-1/2 z-20 h-6 w-20 -translate-x-1/2 -rotate-2 rounded-sm border border-sage-300/60 bg-sage-200/80 shadow-sm backdrop-blur-sm"
-          />
-
-          <div className="relative flex flex-1 items-center justify-center overflow-hidden rounded-2xl border border-sage-200/80 bg-sage-100/70">
-            <img
-              src={assetUrl(card.photo)}
-              alt={card.caption}
-              loading="lazy"
-              draggable={false}
-              className="h-full w-full select-none object-contain"
-            />
-            {/* Kilau cahaya tilt */}
+          <motion.div
+            animate={
+              reducedMotion
+                ? { opacity: 1 }
+                : {
+                    rotateY: isFlipped ? 180 : 0,
+                    rotateZ: isFlipped ? 0 : restTilt,
+                  }
+            }
+            transition={{ duration: reducedMotion ? 0.2 : 0.85, ease: GENTLE_EASE }}
+            style={{ transformStyle: 'preserve-3d' }}
+            className="relative h-full w-full rounded-[26px]"
+          >
+            {/* Sisi depan polaroid */}
             <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 transition-opacity duration-300"
               style={{
-                opacity: 'var(--card-glare-o, 0)',
-                background:
-                  'radial-gradient(circle at var(--card-glare-x, 50%) var(--card-glare-y, 50%), rgba(251,248,239,0.72), transparent 58%)',
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden',
               }}
-            />
-          </div>
+              className="absolute inset-0 flex flex-col rounded-[26px] border border-sage-200 bg-cream p-3.5 pb-5 shadow-sage-lg"
+            >
+              {/* Stiker selotip kertas di atas foto */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute -top-3 left-1/2 z-20 h-6 w-20 -translate-x-1/2 -rotate-2 rounded-sm border border-sage-300/60 bg-sage-200/90 shadow-sm"
+              />
 
-          <div className="mt-3 flex items-end justify-between gap-2 px-1">
-            <p className="font-hand text-2xl font-semibold leading-tight text-sage-900">
-              {card.caption}
-            </p>
-            <span className="shrink-0 text-[11px] font-bold text-sage-600">{card.date}</span>
-          </div>
-        </div>
+              <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-2xl border border-sage-200/80 bg-sage-100/70">
+                <img
+                  src={assetUrl(card.photo)}
+                  alt={card.caption}
+                  loading="lazy"
+                  draggable={false}
+                  className="h-full w-full select-none object-contain"
+                />
+                {/* Kilau cahaya tilt */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 transition-opacity duration-300"
+                  style={{
+                    opacity: 'var(--card-glare-o, 0)',
+                    background:
+                      'radial-gradient(circle at var(--card-glare-x, 50%) var(--card-glare-y, 50%), rgba(251,248,239,0.72), transparent 58%)',
+                  }}
+                />
+              </div>
 
-        {/* Sisi belakang catatan tulisan tangan */}
-        <div
-          style={{
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden',
-            transform: 'rotateY(180deg)',
-          }}
-          className="absolute inset-0 flex flex-col justify-between rounded-[26px] border border-sage-300 bg-cream p-6 shadow-sage-lg"
-        >
-          <div>
-            <div className="flex items-center justify-between">
-              <span className="rounded-pill bg-sage-100 px-3 py-1 text-xs font-bold text-sage-700">
-                {card.date}
-              </span>
-              <BackDoodle index={cardIdx} />
+              <div className="mt-3 flex shrink-0 items-end justify-between gap-2 px-1">
+                <p className="font-hand text-2xl font-semibold leading-tight text-sage-900">
+                  {card.caption}
+                </p>
+                <span className="shrink-0 text-[11px] font-bold text-sage-600">{card.date}</span>
+              </div>
             </div>
 
-            <h2 className="mt-4 font-hand text-3xl font-bold text-sage-900">
-              {card.caption}
-            </h2>
+            {/* Sisi belakang catatan tulisan tangan */}
+            <div
+              style={{
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden',
+                transform: 'rotateY(180deg)',
+              }}
+              className="absolute inset-0 flex flex-col justify-between overflow-hidden rounded-[26px] border border-sage-300 bg-cream p-6 shadow-sage-lg"
+            >
+              <div className="min-h-0 overflow-y-auto pr-1">
+                <div className="flex items-center justify-between">
+                  <span className="rounded-pill bg-sage-100 px-3 py-1 text-xs font-bold text-sage-700">
+                    {card.date}
+                  </span>
+                  <BackDoodle index={cardIdx} />
+                </div>
 
-            <p className="mt-3 font-hand text-2xl leading-relaxed text-sage-800">
-              {card.backNote}
-            </p>
-          </div>
+                <h2 className="mt-4 font-hand text-3xl font-bold text-sage-900">
+                  {card.caption}
+                </h2>
 
-          <div className="border-t border-dashed border-sage-200 pt-3 text-center text-xs font-semibold text-sage-600">
-            {card.date}
-          </div>
+                <p className="mt-3 font-hand text-2xl leading-relaxed text-sage-800">
+                  {card.backNote}
+                </p>
+              </div>
+
+              <div className="shrink-0 border-t border-dashed border-sage-200 pt-3 text-center text-xs font-semibold text-sage-600">
+                {card.date}
+              </div>
+            </div>
+          </motion.div>
         </div>
-      </motion.button>
+      </div>
+
+      <button
+        type="button"
+        onClick={onTap}
+        tabIndex={isInteractive ? 0 : -1}
+        aria-hidden={!isInteractive}
+        aria-label={`${card.caption}. tap card to flip`}
+        className="focus-ring absolute inset-0 z-20 block h-full w-full cursor-pointer rounded-[26px] bg-transparent"
+      />
     </div>
   );
 }

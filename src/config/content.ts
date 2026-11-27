@@ -142,6 +142,9 @@ export interface ContentConfig {
     hintPrefix: string;
     clearButton: string;
   };
+  welcomeSplash: {
+    dedicationText: string;
+  };
   intro: {
     mascotGreeting: string;
     heading: string;
@@ -302,6 +305,9 @@ export const content: ContentConfig = {
     forgotPinButton: 'forgot the code? see hint', // Button under PIN keypad
     hintPrefix: 'hint:', // Prefix before pin.hint -> "hint: ..."
     clearButton: 'clear', // Clear button on PIN keypad
+  },
+  welcomeSplash: {
+    dedicationText: 'this website is made specially for indah fitria sari.', // Shown on opening heart animation screen before PIN Gate
   },
 
   // ==========================================================================

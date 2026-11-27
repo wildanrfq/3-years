@@ -8,6 +8,7 @@ import { AmbientEffects } from './components/AmbientEffects';
 import { LyricsBar } from './components/LyricsBar';
 import { BottomNav } from './components/BottomNav';
 import { PageTransition } from './components/PageTransition';
+import { WelcomeSplash } from './features/welcome/WelcomeSplash';
 import { PinGate } from './features/gate/PinGate';
 import { IntroScreen } from './features/intro/IntroScreen';
 import { HubScreen } from './features/hub/HubScreen';
@@ -18,7 +19,7 @@ const RewindSection = lazy(() => import('./features/rewind/RewindSection'));
 const PhotoCardsSection = lazy(() => import('./features/photocards/PhotoCardsSection'));
 const LetterSection = lazy(() => import('./features/letter/LetterSection'));
 
-type Screen = 'gate' | 'intro' | 'hub' | SectionId;
+type Screen = 'welcome' | 'gate' | 'intro' | 'hub' | SectionId;
 
 const SESSION_UNLOCK_KEY = 'anniv3yrs_unlocked';
 const SESSION_VISITED_KEY = 'anniv3yrs_visited';
@@ -43,7 +44,7 @@ function readInitialVisited(): SectionId[] {
 }
 
 export default function App() {
-  const [screen, setScreen] = useState<Screen>(() => (readInitialUnlocked() ? 'hub' : 'gate'));
+  const [screen, setScreen] = useState<Screen>(() => (readInitialUnlocked() ? 'hub' : 'welcome'));
   const [visitedSections, setVisitedSections] = useState<SectionId[]>(() => readInitialVisited());
   const [timelineRevealedCount, setTimelineRevealedCount] = useState<number>(() =>
     readInitialVisited().includes('timeline') ? content.timeline.length : 1
@@ -78,6 +79,10 @@ export default function App() {
     void audio.playWithFadeIn(2000);
   }, [audio]);
 
+  const handleWelcomeComplete = useCallback(() => {
+    setScreen('gate');
+  }, []);
+
   const handleUnlock = useCallback(() => {
     setScreen('intro');
   }, []);
@@ -110,7 +115,10 @@ export default function App() {
   }, [audio.audioRef]);
 
   const isSection =
-    screen !== 'gate' && screen !== 'intro' && screen !== 'hub';
+    screen !== 'welcome' &&
+    screen !== 'gate' &&
+    screen !== 'intro' &&
+    screen !== 'hub';
   const currentSectionIdx = isSection ? SECTION_ORDER.indexOf(screen) : -1;
   const nextSection =
     currentSectionIdx >= 0 && currentSectionIdx < SECTION_ORDER.length - 1
@@ -130,7 +138,7 @@ export default function App() {
 
       <AmbientEffects />
 
-      {screen !== 'gate' && (
+      {screen !== 'welcome' && screen !== 'gate' && (
         <LyricsBar
           audio={audio}
           title={content.song.title}
@@ -144,6 +152,10 @@ export default function App() {
       )}
 
       <PageTransition screenKey={screen}>
+        {screen === 'welcome' && (
+          <WelcomeSplash onComplete={handleWelcomeComplete} />
+        )}
+
         {screen === 'gate' && (
           <PinGate
             partnerName={content.partnerName}

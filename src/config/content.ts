@@ -434,9 +434,9 @@ export const content: ContentConfig = {
     {
       type: 'photo', // Slide 3: Featured single photo card in our rewind
       eyebrow: 'first favorite photo',
-      photo: 'photos/memory-1.svg', // Image shown on our rewind Slide 3
-      caption: 'your smile that day is still my favorite.',
-      date: 'november 2023',
+      photo: 'photos/photocard-4.jpg', // Image shown on our rewind Slide 3
+      caption: 'this is my favorite photo of us',
+      date: 'galnas',
     },
     {
       type: 'songs', // Slide 4: Interactive song preview list in our rewind

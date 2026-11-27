@@ -423,25 +423,25 @@ export const content: ContentConfig = {
       type: 'intro', // Slide 1: Opening title card in our rewind
       eyebrow: 'our rewind',
       title: 'three years full of stories',
-      subtitle: 'let us look back at our favorite little moments together.',
+      subtitle: 'let us look back (kore-eda reference 👀) at my favorite things/moments of ours.',
     },
     {
       type: 'countup', // Slide 2: Animated total days counter in our rewind (number is calculated from startDate)
       eyebrow: 'total days together',
-      label: 'days we have walked side by side',
-      subtitle: 'from late-night talks to plans for tomorrow.',
+      label: 'days we have loved each other.',
+      subtitle: 'from random talks to plans for the future.',
     },
     {
       type: 'photo', // Slide 3: Featured single photo card in our rewind
-      eyebrow: 'first favorite photo',
+      eyebrow: 'favorite photo',
       photo: 'photos/photocard-4.jpg', // Image shown on our rewind Slide 3
-      caption: 'this is my favorite photo of us',
-      date: 'galnas',
+      caption: 'this is my favorite photo of us.',
+      date: 'galeri nasional, 2026',
     },
     {
       type: 'songs', // Slide 4: Interactive song preview list in our rewind
-      eyebrow: 'soundtrack of us',
-      title: 'some of the songs i love that i posted u to',
+      eyebrow: 'instastory soundtracks',
+      title: 'some of the songs i love that i posted u to :)',
       hint: 'tap a song to preview',
       items: [
         {
@@ -489,7 +489,7 @@ export const content: ContentConfig = {
     {
       type: 'carousel', // Slide 5: 3D spinning photo gallery in our rewind
       eyebrow: 'spinning gallery',
-      title: 'pieces of our good days',
+      title: 'some pieces of our time together.',
       photos: [
         'photos/photocard-1.jpg', // Carousel photo 1 in Slide 5
         'photos/photocard-2.jpg', // Carousel photo 2 in Slide 5
@@ -504,23 +504,23 @@ export const content: ContentConfig = {
       eyebrow: 'favorite moments',
       title: 'five little things i miss the most',
       items: [
-        'spontaneous evening snack runs',
-        'laughing after missing a turn on the map',
-        'listening to songs together on the ride home',
-        'rushed photos that turned out adorable',
-        'quiet talks right before falling asleep',
+        'listening to songs together',
+        'watching movies on ur terrace/cinemas',
+        'going to artsy places',
+        'laying down on ur thighs while u caress my hair',
+        'kfc at night',
       ],
     },
     {
       type: 'song', // Slide 7: Spinning vinyl record in our rewind (uses song.title & song.artist)
-      eyebrow: 'our song',
-      subtitle: 'this song always brings me right back to our sweetest days.',
+      eyebrow: 'ur song',
+      subtitle: 'theres no other song that makes me think of u more than this. i cant hear this song without thinking of u.',
     },
     {
       type: 'outro', // Slide 8: Final rewind slide linking to photo cards
       eyebrow: 'up next',
       title: 'our photo cards are waiting',
-      subtitle: 'there are little notes tucked behind each picture before the final letter.',
+      subtitle: 'there are little notes tucked behind each picture.',
       ctaLabel: 'continue to photo cards',
     },
   ],
@@ -534,37 +534,37 @@ export const content: ContentConfig = {
       photo: 'photos/photocard-1.jpg', // Image on photo cards #1
       caption: 'our very first fotbar', // Front caption under photo
       date: '28 nov 2023', // Date on front & back
-      backNote: 'outside roti bakar 88—the day i put my arm around your shoulder for the first time.', // Handwritten note on back of card
+      backNote: 'outside rotbak, the day i put my arm around your shoulder for the first time.', // Handwritten note on back of card
     },
     {
       photo: 'photos/photocard-2.jpg', // Image on photo cards #2
-      caption: 'evermore long pond picnic',
+      caption: 'evermore 2nd anniversary picnic',
       date: '10 dec 2023',
       backNote: 'our first proper date together at tebet eco park.',
     },
     {
       photo: 'photos/photocard-3.jpg', // Image on photo cards #3
-      caption: 'matching school uniforms',
+      caption: 'unpad study tour',
       date: 'our school days',
-      backNote: 'making silly faces together between all the busy school days.',
+      backNote: 'we went to unpad with rsbi and we took a picture in the middle of it.',
     },
     {
       photo: 'photos/photocard-4.jpg', // Image on photo cards #4
-      caption: 'under a golden sky',
-      date: 'museum date',
-      backNote: 'dressed in matching maroon among all the glowing yellow fish.',
+      caption: 'under a beautiful exhibition',
+      date: 'gallery date',
+      backNote: 'dressed in matching maroon, with all those decorations making everything even more beautiful.',
     },
     {
       photo: 'photos/photocard-5.jpg', // Image on photo cards #5
       caption: 'two goofy faces',
-      date: 'black & white',
-      backNote: 'one of my favorite candid moments whenever you laugh this hard.',
+      date: 'library date',
+      backNote: 'cute faces of ours taken with my laptop in the library',
     },
     {
       photo: 'photos/photocard-6.jpg', // Image on photo cards #6
-      caption: 'caught on a retro tv',
-      date: 'mirror snapshot',
-      backNote: 'even through an old blue television screen, you are still my favorite view.',
+      caption: 'cool retro tv-camera',
+      date: 'festival film jelek',
+      backNote: 'your first time attending a film festival, im blessed to be the one inviting u there.',
     },
   ],
   photoCardsUi: {
@@ -578,7 +578,7 @@ export const content: ContentConfig = {
   // 9. MENU 5: A LETTER FOR YOU (Envelope & Typed Love Letter Finale)
   // ==========================================================================
   letter: {
-    title: 'happy anniversary', // Letter heading (shown on envelope paper & typed at top of letter)
+    title: 'happy 3rd anniversary, sayang', // Letter heading (shown on envelope paper & typed at top of letter)
     body: [
       'thank you for walking beside me through these wonderful three years.',
       'in the middle of busy days and plans that go sideways, having you next to me always makes everything feel lighter.',

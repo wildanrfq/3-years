@@ -197,6 +197,7 @@ export default function App() {
             )}
             {screen === 'rewind' && (
               <RewindSection
+                bgAudioRef={audio.audioRef}
                 onBackToHub={() => setScreen('hub')}
                 onNavigateSection={handleSelectSection}
               />

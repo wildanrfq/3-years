@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Disc3, Pause, Sparkles, X } from 'lucide-react';
+import { ArrowRight, Disc3, Music2, Pause, Play, Sparkles, X } from 'lucide-react';
 import { content, RewindSlide, SECTION_ORDER, SectionId } from '../../config/content';
 import { assetUrl } from '../../lib/assets';
 import { getElapsedSince } from '../../lib/date';
@@ -10,6 +10,7 @@ import { SquishyButton } from '../../components/SquishyButton';
 import { GreenFlower } from '../../components/GreenFlower';
 
 interface RewindSectionProps {
+  bgAudioRef?: MutableRefObject<HTMLAudioElement | null>;
   onBackToHub: () => void;
   onNavigateSection: (next: SectionId) => void;
 }
@@ -28,6 +29,7 @@ const SLIDE_BACKGROUNDS = [
 ];
 
 export default function RewindSection({
+  bgAudioRef,
   onBackToHub,
   onNavigateSection,
 }: RewindSectionProps) {
@@ -40,28 +42,164 @@ export default function RewindSection({
   const [isHeldPaused, setIsHeldPaused] = useState(false);
   const [manualPaused, setManualPaused] = useState(false);
 
+  const [activeSongIdx, setActiveSongIdx] = useState<number | null>(null);
+  const [previewPlaying, setPreviewPlaying] = useState(false);
+  const [previewProgress, setPreviewProgress] = useState(0);
+  const [previewErrorIdx, setPreviewErrorIdx] = useState<number | null>(null);
+
   const progressRef = useRef(0);
   const holdTimerRef = useRef<number | null>(null);
   const didHoldRef = useRef(false);
   const pointerStartRef = useRef<{ x: number; y: number; time: number } | null>(null);
+  const previewAudioRef = useRef<HTMLAudioElement | null>(null);
+  const wasBgPausedForPreviewRef = useRef(false);
 
-  const isPaused = isHeldPaused || manualPaused || reducedMotion;
+  const isPreviewActive = activeSongIdx !== null;
+  const isPaused = isHeldPaused || manualPaused || isPreviewActive || reducedMotion;
   const currentSlide = slides[index];
   const totalDays = useMemo(() => getElapsedSince(content.startDate, new Date()).totalDays, []);
 
+  const resumeBgIfNeeded = useCallback(() => {
+    if (!wasBgPausedForPreviewRef.current) return;
+    wasBgPausedForPreviewRef.current = false;
+    const bgEl = bgAudioRef?.current;
+    if (bgEl && bgEl.paused) {
+      void bgEl.play().catch(() => {});
+    }
+  }, [bgAudioRef]);
+
+  const stopPreview = useCallback(
+    (resumeBg = true) => {
+      const el = previewAudioRef.current;
+      if (el) {
+        el.pause();
+        el.currentTime = 0;
+      }
+      setActiveSongIdx(null);
+      setPreviewPlaying(false);
+      setPreviewProgress(0);
+      if (resumeBg) {
+        resumeBgIfNeeded();
+      }
+    },
+    [resumeBgIfNeeded]
+  );
+
+  const handleToggleSongPreview = useCallback(
+    (songIdx: number, previewUrl: string) => {
+      const el = previewAudioRef.current;
+      if (!el) return;
+
+      if (activeSongIdx === songIdx) {
+        stopPreview(true);
+        return;
+      }
+
+      const bgEl = bgAudioRef?.current;
+      if (bgEl && !bgEl.paused) {
+        wasBgPausedForPreviewRef.current = true;
+        bgEl.pause();
+      }
+
+      setPreviewErrorIdx(null);
+      setActiveSongIdx(songIdx);
+      setPreviewPlaying(false);
+      setPreviewProgress(0);
+
+      el.src = previewUrl;
+      el.currentTime = 0;
+      void el.play().catch(() => {
+        setPreviewPlaying(false);
+        setPreviewErrorIdx(songIdx);
+        setActiveSongIdx(null);
+        resumeBgIfNeeded();
+      });
+    },
+    [activeSongIdx, bgAudioRef, resumeBgIfNeeded, stopPreview]
+  );
+
+  useEffect(() => {
+    const el = previewAudioRef.current;
+    if (!el) return;
+
+    const onPlay = () => setPreviewPlaying(true);
+    const onPause = () => setPreviewPlaying(false);
+    const onTimeUpdate = () => {
+      if (el.duration > 0) {
+        setPreviewProgress(Math.min(1, el.currentTime / el.duration));
+      }
+    };
+    const onEnded = () => {
+      setActiveSongIdx(null);
+      setPreviewPlaying(false);
+      setPreviewProgress(0);
+      resumeBgIfNeeded();
+    };
+    const onError = () => {
+      setPreviewPlaying(false);
+      setActiveSongIdx((curr) => {
+        if (curr !== null) setPreviewErrorIdx(curr);
+        return null;
+      });
+      resumeBgIfNeeded();
+    };
+
+    el.addEventListener('play', onPlay);
+    el.addEventListener('pause', onPause);
+    el.addEventListener('timeupdate', onTimeUpdate);
+    el.addEventListener('ended', onEnded);
+    el.addEventListener('error', onError);
+
+    return () => {
+      el.removeEventListener('play', onPlay);
+      el.removeEventListener('pause', onPause);
+      el.removeEventListener('timeupdate', onTimeUpdate);
+      el.removeEventListener('ended', onEnded);
+      el.removeEventListener('error', onError);
+    };
+  }, [resumeBgIfNeeded]);
+
+  useEffect(() => {
+    const bgEl = bgAudioRef?.current;
+    if (!bgEl) return;
+
+    const onBgPlay = () => {
+      if (previewAudioRef.current && !previewAudioRef.current.paused) {
+        wasBgPausedForPreviewRef.current = false;
+        stopPreview(false);
+      }
+    };
+
+    bgEl.addEventListener('play', onBgPlay);
+    return () => bgEl.removeEventListener('play', onBgPlay);
+  }, [bgAudioRef, stopPreview]);
+
+  useEffect(() => {
+    return () => {
+      const el = previewAudioRef.current;
+      if (el) {
+        el.pause();
+        el.src = '';
+      }
+      resumeBgIfNeeded();
+    };
+  }, [resumeBgIfNeeded]);
+
   const goNext = useCallback(() => {
+    stopPreview(true);
     setDirection(1);
     setIndex((prev) => (prev < slides.length - 1 ? prev + 1 : prev));
     progressRef.current = 0;
     setProgress(0);
-  }, [slides.length]);
+  }, [slides.length, stopPreview]);
 
   const goPrev = useCallback(() => {
+    stopPreview(true);
     setDirection(-1);
     setIndex((prev) => (prev > 0 ? prev - 1 : 0));
     progressRef.current = 0;
     setProgress(0);
-  }, []);
+  }, [stopPreview]);
 
   useEffect(() => {
     progressRef.current = 0;
@@ -110,7 +248,7 @@ export default function RewindSection({
   }, [goNext, goPrev, onBackToHub]);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    if ((e.target as HTMLElement).closest('button')) return;
+    if ((e.target as HTMLElement).closest('button, [data-no-story-nav]')) return;
     didHoldRef.current = false;
     pointerStartRef.current = { x: e.clientX, y: e.clientY, time: performance.now() };
     holdTimerRef.current = window.setTimeout(() => {
@@ -132,7 +270,7 @@ export default function RewindSection({
       setIsHeldPaused(false);
     }
 
-    if (!start || (e.target as HTMLElement).closest('button')) return;
+    if (!start || (e.target as HTMLElement).closest('button, [data-no-story-nav]')) return;
 
     const dy = e.clientY - start.y;
     const dx = Math.abs(e.clientX - start.x);
@@ -166,6 +304,7 @@ export default function RewindSection({
 
   return (
     <main className="relative z-10 flex min-h-dvh w-full flex-col items-center justify-center px-3 pb-24 pt-20 sm:px-6 sm:pt-14">
+      <audio ref={previewAudioRef} preload="none" />
       <div
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
@@ -216,7 +355,9 @@ export default function RewindSection({
 
           <div className="mt-2 flex items-center justify-between">
             <span className="inline-flex items-center gap-1.5 rounded-pill bg-cream/85 px-2.5 py-1 text-[11px] font-bold text-sage-800 shadow-sage-sm">
-              {(isHeldPaused || manualPaused) && <Pause className="h-3 w-3" aria-hidden="true" />}
+              {(isHeldPaused || manualPaused || isPreviewActive) && (
+                <Pause className="h-3 w-3" aria-hidden="true" />
+              )}
               <span>
                 {index + 1} / {slides.length}
               </span>
@@ -263,6 +404,11 @@ export default function RewindSection({
                 totalDays={totalDays}
                 paused={isPaused}
                 reducedMotion={reducedMotion}
+                activeSongIdx={activeSongIdx}
+                previewPlaying={previewPlaying}
+                previewProgress={previewProgress}
+                previewErrorIdx={previewErrorIdx}
+                onToggleSongPreview={handleToggleSongPreview}
                 onGoToNext={() => {
                   const nextIdx = SECTION_ORDER.indexOf('rewind') + 1;
                   const next = SECTION_ORDER[nextIdx] ?? 'photocards';
@@ -282,12 +428,22 @@ function SlideBody({
   totalDays,
   paused,
   reducedMotion,
+  activeSongIdx,
+  previewPlaying,
+  previewProgress,
+  previewErrorIdx,
+  onToggleSongPreview,
   onGoToNext,
 }: {
   slide: RewindSlide;
   totalDays: number;
   paused: boolean;
   reducedMotion: boolean;
+  activeSongIdx: number | null;
+  previewPlaying: boolean;
+  previewProgress: number;
+  previewErrorIdx: number | null;
+  onToggleSongPreview: (idx: number, previewUrl: string) => void;
   onGoToNext: () => void;
 }) {
   if (slide.type === 'intro') {
@@ -362,6 +518,112 @@ function SlideBody({
         </div>
         <h2 className="pt-1 font-display text-2xl font-semibold text-sage-900">{slide.title}</h2>
         <p className="text-xs leading-relaxed text-sage-700">{slide.subtitle}</p>
+      </div>
+    );
+  }
+
+  if (slide.type === 'songs') {
+    return (
+      <div className="w-full space-y-2.5 text-left" data-no-story-nav>
+        <div className="text-center">
+          <span className="text-xs font-bold lowercase tracking-wider text-sage-700">
+            {slide.eyebrow}
+          </span>
+          <h2 className="mt-0.5 font-display text-lg font-semibold leading-snug text-sage-900 sm:text-xl">
+            {slide.title}
+          </h2>
+          {slide.hint && (
+            <p className="mt-0.5 text-[11px] font-medium text-sage-600">{slide.hint}</p>
+          )}
+        </div>
+
+        <ul className="space-y-1.5">
+          {slide.items.map((item, i) => {
+            const isSelected = activeSongIdx === i;
+            const isPlayingThis = isSelected && previewPlaying;
+            const hasError = previewErrorIdx === i;
+            return (
+              <motion.li
+                key={`${item.artist}-${item.title}`}
+                initial={reducedMotion ? { opacity: 0 } : { opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{
+                  delay: reducedMotion ? 0 : 0.08 * i,
+                  duration: reducedMotion ? 0.25 : 0.52,
+                  ease: GENTLE_EASE,
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => onToggleSongPreview(i, assetUrl(item.previewUrl))}
+                  aria-label={
+                    isSelected
+                      ? `stop preview for ${item.title} by ${item.artist}`
+                      : `preview ${item.title} by ${item.artist}`
+                  }
+                  className={`focus-ring relative flex w-full items-center gap-2.5 overflow-hidden rounded-2xl border px-2.5 py-2 text-left transition ${
+                    isSelected
+                      ? 'border-sage-500 bg-cream shadow-sage-md'
+                      : 'border-sage-200 bg-cream/90 shadow-sage-sm hover:border-sage-300 hover:bg-cream'
+                  }`}
+                >
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-sage-200/80 bg-sage-100">
+                    {item.coverUrl ? (
+                      <img
+                        src={assetUrl(item.coverUrl)}
+                        alt=""
+                        loading="lazy"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <Music2 className="h-4 w-4 text-sage-600" aria-hidden="true" />
+                    )}
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-xs font-bold leading-tight text-sage-900">
+                      {item.title}
+                    </div>
+                    <div className="mt-0.5 truncate text-[11px] font-semibold text-sage-700">
+                      {hasError
+                        ? `${item.artist} · preview unavailable`
+                        : isSelected && !previewPlaying
+                          ? `${item.artist} · loading...`
+                          : item.artist}
+                    </div>
+                  </div>
+
+                  <span
+                    aria-hidden="true"
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition ${
+                      isSelected
+                        ? 'bg-sage-600 text-[#FBF8EF]'
+                        : 'bg-sage-100 text-sage-700'
+                    }`}
+                  >
+                    {isPlayingThis ? (
+                      <Pause className="h-3.5 w-3.5" />
+                    ) : (
+                      <Play className="h-3.5 w-3.5 translate-x-[1px]" />
+                    )}
+                  </span>
+
+                  {isSelected && (
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-x-0 bottom-0 h-[2.5px] bg-sage-200/70"
+                    >
+                      <span
+                        className="block h-full bg-sage-600 transition-[width] duration-150"
+                        style={{ width: `${Math.round(previewProgress * 100)}%` }}
+                      />
+                    </span>
+                  )}
+                </button>
+              </motion.li>
+            );
+          })}
+        </ul>
       </div>
     );
   }

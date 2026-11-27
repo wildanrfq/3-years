@@ -1,6 +1,6 @@
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Disc3, Music2, Pause, Play, Sparkles, X } from 'lucide-react';
+import { ArrowRight, Disc3, Music2, Pause, Play, Sparkles, X, ZoomIn } from 'lucide-react';
 import { content, RewindSlide, SECTION_ORDER, SectionId } from '../../config/content';
 import { assetUrl } from '../../lib/assets';
 import { getElapsedSince } from '../../lib/date';
@@ -46,6 +46,11 @@ export default function RewindSection({
   const [previewPlaying, setPreviewPlaying] = useState(false);
   const [previewProgress, setPreviewProgress] = useState(0);
   const [previewErrorIdx, setPreviewErrorIdx] = useState<number | null>(null);
+  const [expandedPhoto, setExpandedPhoto] = useState<{
+    src: string;
+    caption: string;
+    date?: string;
+  } | null>(null);
 
   const progressRef = useRef(0);
   const holdTimerRef = useRef<number | null>(null);
@@ -55,7 +60,8 @@ export default function RewindSection({
   const wasBgPausedForPreviewRef = useRef(false);
 
   const isPreviewActive = activeSongIdx !== null;
-  const isPaused = isHeldPaused || manualPaused || isPreviewActive || reducedMotion;
+  const isPaused =
+    isHeldPaused || manualPaused || isPreviewActive || expandedPhoto !== null || reducedMotion;
   const currentSlide = slides[index];
   const totalDays = useMemo(() => getElapsedSince(content.startDate, new Date()).totalDays, []);
 
@@ -187,6 +193,7 @@ export default function RewindSection({
 
   const goNext = useCallback(() => {
     stopPreview(true);
+    setExpandedPhoto(null);
     setDirection(1);
     setIndex((prev) => (prev < slides.length - 1 ? prev + 1 : prev));
     progressRef.current = 0;
@@ -195,6 +202,7 @@ export default function RewindSection({
 
   const goPrev = useCallback(() => {
     stopPreview(true);
+    setExpandedPhoto(null);
     setDirection(-1);
     setIndex((prev) => (prev > 0 ? prev - 1 : 0));
     progressRef.current = 0;
@@ -232,6 +240,12 @@ export default function RewindSection({
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
+      if (expandedPhoto) {
+        if (e.key === 'Escape') {
+          setExpandedPhoto(null);
+        }
+        return;
+      }
       if (e.key === 'ArrowRight') {
         goNext();
       } else if (e.key === 'ArrowLeft') {
@@ -245,7 +259,7 @@ export default function RewindSection({
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [goNext, goPrev, onBackToHub]);
+  }, [expandedPhoto, goNext, goPrev, onBackToHub]);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if ((e.target as HTMLElement).closest('button, [data-no-story-nav]')) return;
@@ -355,7 +369,7 @@ export default function RewindSection({
 
           <div className="mt-2 flex items-center justify-between">
             <span className="inline-flex items-center gap-1.5 rounded-pill bg-cream/85 px-2.5 py-1 text-[11px] font-bold text-sage-800 shadow-sage-sm">
-              {(isHeldPaused || manualPaused || isPreviewActive) && (
+              {(isHeldPaused || manualPaused || isPreviewActive || expandedPhoto !== null) && (
                 <Pause className="h-3 w-3" aria-hidden="true" />
               )}
               <span>
@@ -409,6 +423,7 @@ export default function RewindSection({
                 previewProgress={previewProgress}
                 previewErrorIdx={previewErrorIdx}
                 onToggleSongPreview={handleToggleSongPreview}
+                onOpenPhoto={setExpandedPhoto}
                 onGoToNext={() => {
                   const nextIdx = SECTION_ORDER.indexOf('rewind') + 1;
                   const next = SECTION_ORDER[nextIdx] ?? 'photocards';
@@ -419,6 +434,58 @@ export default function RewindSection({
           </AnimatePresence>
         </div>
       </div>
+
+      <AnimatePresence>
+        {expandedPhoto && (
+          <motion.div
+            key="photo-lightbox"
+            role="dialog"
+            aria-modal="true"
+            aria-label={expandedPhoto.caption}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: reducedMotion ? 0.15 : 0.24 }}
+            onClick={() => setExpandedPhoto(null)}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[#151c14]/75 p-4 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.92, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.94, y: 8 }}
+              transition={{ duration: reducedMotion ? 0.15 : 0.3, ease: GENTLE_EASE }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative flex max-h-[88dvh] w-auto max-w-[min(92vw,460px)] flex-col overflow-hidden rounded-[28px] border border-sage-200/80 bg-cream p-3 shadow-sage-lg sm:p-4"
+            >
+              <button
+                type="button"
+                onClick={() => setExpandedPhoto(null)}
+                aria-label="close photo preview"
+                className="focus-ring absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-sage-200 bg-cream/90 text-sage-800 shadow-sage-sm transition hover:bg-sage-100"
+              >
+                <X className="h-4 w-4" aria-hidden="true" />
+              </button>
+
+              <div className="flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-2xl bg-sage-100/70">
+                <img
+                  src={expandedPhoto.src}
+                  alt={expandedPhoto.caption}
+                  className="max-h-[70dvh] w-auto max-w-full rounded-2xl object-contain"
+                />
+              </div>
+
+              <div className="mt-3 px-2 pb-1 text-center">
+                <p className="font-display text-base font-semibold leading-snug text-sage-900">
+                  {expandedPhoto.caption}
+                </p>
+                {expandedPhoto.date && (
+                  <p className="mt-0.5 text-xs font-semibold text-sage-600">{expandedPhoto.date}</p>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }
@@ -433,6 +500,7 @@ function SlideBody({
   previewProgress,
   previewErrorIdx,
   onToggleSongPreview,
+  onOpenPhoto,
   onGoToNext,
 }: {
   slide: RewindSlide;
@@ -444,6 +512,7 @@ function SlideBody({
   previewProgress: number;
   previewErrorIdx: number | null;
   onToggleSongPreview: (idx: number, previewUrl: string) => void;
+  onOpenPhoto: (photo: { src: string; caption: string; date?: string }) => void;
   onGoToNext: () => void;
 }) {
   if (slide.type === 'intro') {
@@ -477,18 +546,30 @@ function SlideBody({
   }
 
   if (slide.type === 'photo') {
+    const src = assetUrl(slide.photo);
     return (
       <div className="flex w-full flex-col items-center space-y-3">
         <span className="text-xs font-bold lowercase tracking-wider text-sage-700">
           {slide.eyebrow}
         </span>
-        <div className="inline-flex max-h-[min(240px,36dvh)] max-w-full items-center justify-center overflow-hidden rounded-3xl border-4 border-cream bg-sage-100 shadow-sage-md">
+        <button
+          type="button"
+          onClick={() => onOpenPhoto({ src, caption: slide.caption, date: slide.date })}
+          aria-label={`open ${slide.caption} photo`}
+          className="focus-ring group relative inline-flex max-h-[min(240px,36dvh)] max-w-full cursor-zoom-in items-center justify-center overflow-hidden rounded-3xl border-4 border-cream bg-sage-100 shadow-sage-md transition hover:scale-[1.02] active:scale-[0.98]"
+        >
           <img
-            src={assetUrl(slide.photo)}
+            src={src}
             alt={slide.caption}
             className="block max-h-[min(232px,34dvh)] w-auto max-w-full object-contain"
           />
-        </div>
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute bottom-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-cream/85 text-sage-800 shadow-sage-sm transition group-hover:scale-105"
+          >
+            <ZoomIn className="h-3.5 w-3.5" />
+          </span>
+        </button>
         <div className="px-1">
           <p className="font-display text-base font-semibold leading-snug text-sage-900 sm:text-lg">
             {slide.caption}

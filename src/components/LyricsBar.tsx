@@ -11,6 +11,7 @@ import {
   VolumeX,
 } from "lucide-react";
 import { content } from "../config/content";
+import { assetUrl } from "../lib/assets";
 import { AudioControls } from "../hooks/useAudio";
 import { useLyrics } from "../hooks/useLyrics";
 import { useReducedMotion } from "../hooks/useReducedMotion";
@@ -22,6 +23,7 @@ interface LyricsBarProps {
   audio: AudioControls;
   title: string;
   artist: string;
+  coverSrc?: string;
   lrcSrc: string;
   lyricsOffsetMs: number;
   theme: ThemeMode;
@@ -32,6 +34,7 @@ export function LyricsBar({
   audio,
   title,
   artist,
+  coverSrc,
   lrcSrc,
   lyricsOffsetMs,
   theme,
@@ -156,16 +159,29 @@ export function LyricsBar({
           <div className="flex items-center gap-2">
             {/* Piringan vinyl kecil */}
             <div
-              className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-sage-400 bg-[#2B3827] shadow-sage-sm ${
+              className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-sage-400 bg-[#1B2219] p-[3px] shadow-sage-sm ${
                 audio.isPlaying && !reducedMotion
                   ? "animate-[spin_7s_linear_infinite]"
                   : ""
               }`}
               aria-hidden="true"
             >
-              <div className="h-5 w-5 rounded-full border border-sage-500/60" />
-              <div className="absolute h-3 w-3 rounded-full bg-blush ring-2 ring-[#E6EDE1]" />
-              <div className="absolute h-1 w-1 rounded-full bg-[#2B3827]" />
+              {coverSrc ? (
+                <>
+                  <img
+                    src={assetUrl(coverSrc)}
+                    alt=""
+                    className="h-full w-full rounded-full object-cover"
+                  />
+                  <div className="absolute h-1.5 w-1.5 rounded-full bg-cream/90 ring-1 ring-[#1B2219]/80" />
+                </>
+              ) : (
+                <>
+                  <div className="h-5 w-5 rounded-full border border-sage-500/60" />
+                  <div className="absolute h-3 w-3 rounded-full bg-blush ring-2 ring-[#E6EDE1]" />
+                  <div className="absolute h-1 w-1 rounded-full bg-[#2B3827]" />
+                </>
+              )}
             </div>
 
             <div className="min-w-0 flex-1">

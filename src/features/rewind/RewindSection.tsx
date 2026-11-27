@@ -420,6 +420,7 @@ function SlideBody({
   }
 
   if (slide.type === 'song') {
+    const coverSrc = content.song.coverSrc;
     return (
       <div className="flex flex-col items-center space-y-3.5">
         <span className="text-xs font-bold lowercase tracking-wider text-sage-700">
@@ -429,12 +430,36 @@ function SlideBody({
         <motion.div
           animate={reducedMotion || paused ? undefined : { rotate: 360 }}
           transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-          className="relative flex h-32 w-32 items-center justify-center rounded-full border-4 border-sage-300 bg-[#2B3827] shadow-sage-lg sm:h-36 sm:w-36"
+          className="relative flex h-36 w-36 items-center justify-center rounded-full border-[3px] border-sage-300/80 bg-[#1B2219] p-2.5 shadow-sage-lg sm:h-40 sm:w-40 sm:p-3"
         >
-          <div className="h-24 w-24 rounded-full border border-sage-500/50" />
-          <div className="absolute flex h-12 w-12 items-center justify-center rounded-full bg-blush ring-4 ring-[#E6EDE1] sm:h-14 sm:w-14">
-            <Disc3 className="h-5 w-5 text-[#2B3827]" aria-hidden="true" />
-          </div>
+          {coverSrc ? (
+            <>
+              <div className="pointer-events-none absolute inset-1 rounded-full border border-white/10" />
+              <div className="relative h-full w-full overflow-hidden rounded-full ring-2 ring-[#2B3827]">
+                <img
+                  src={assetUrl(coverSrc)}
+                  alt={`${content.song.title} album cover`}
+                  className="h-full w-full object-cover"
+                />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 rounded-full"
+                  style={{
+                    background:
+                      'linear-gradient(135deg, rgba(255,255,255,0.16) 0%, transparent 45%, rgba(0,0,0,0.12) 100%)',
+                  }}
+                />
+              </div>
+              <div className="absolute h-3 w-3 rounded-full bg-cream/95 ring-2 ring-[#1B2219]/80" />
+            </>
+          ) : (
+            <>
+              <div className="h-24 w-24 rounded-full border border-sage-500/50" />
+              <div className="absolute flex h-12 w-12 items-center justify-center rounded-full bg-blush ring-4 ring-[#E6EDE1] sm:h-14 sm:w-14">
+                <Disc3 className="h-5 w-5 text-[#2B3827]" aria-hidden="true" />
+              </div>
+            </>
+          )}
         </motion.div>
 
         <div>

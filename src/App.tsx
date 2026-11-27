@@ -135,6 +135,7 @@ export default function App() {
           audio={audio}
           title={content.song.title}
           artist={content.song.artist}
+          coverSrc={content.song.coverSrc}
           lrcSrc={content.song.lrcSrc}
           lyricsOffsetMs={content.song.lyricsOffsetMs}
           theme={theme}

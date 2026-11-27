@@ -112,6 +112,7 @@ export interface ContentConfig {
   song: {
     title: string;
     artist: string;
+    coverSrc?: string;
     audioSrc: string;
     lrcSrc: string;
     lyricsOffsetMs: number;
@@ -544,8 +545,9 @@ export const content: ContentConfig = {
   //     NOTE: Keep `sorak-sorai.lrc` lyrics untranslated as requested.
   // ==========================================================================
   song: {
-    title: 'sorak sorai', // Song title shown in top-right Music Bar & rewind Slide 7
-    artist: 'nadin amizah & syarikat idola remaja', // Artist name shown in top-right Music Bar & rewind Slide 7
+    title: 'Sorak Sorai', // Song title shown in top-right Music Bar & rewind Slide 7
+    artist: 'Nadin Amizah & Syarikat Idola Remaja', // Artist name shown in top-right Music Bar & rewind Slide 7
+    coverSrc: 'photos/sorak-sorai-cover.png', // Album cover shown on spinning vinyl
     audioSrc: 'audio/sorak-sorai.mp3', // Audio file path inside `public/`
     lrcSrc: 'lyrics/sorak-sorai.lrc', // Synced LRC lyrics file path inside `public/`
     lyricsOffsetMs: 0, // Shift lyrics timing in milliseconds (+ or -) if out of sync

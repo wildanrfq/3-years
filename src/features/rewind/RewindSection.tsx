@@ -14,7 +14,7 @@ interface RewindSectionProps {
   onNavigateSection: (next: SectionId) => void;
 }
 
-const SLIDE_DURATION_MS = 6000;
+const SLIDE_DURATION_MS = 15000;
 
 const SLIDE_BACKGROUNDS = [
   'from-sage-100 via-sage-50 to-sage-200',

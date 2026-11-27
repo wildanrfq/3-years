@@ -445,40 +445,40 @@ export const content: ContentConfig = {
       hint: 'tap a song to preview',
       items: [
         {
-          title: 'when ur smiling and astride me',
-          artist: 'father john misty',
+          title: "When You're Smiling and Astride Me",
+          artist: 'Father John Misty',
           previewUrl:
             'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/3d/84/c4/3d84c402-3ffd-a5ab-4358-d5d2e82cffab/mzaf_1977249997945857460.plus.aac.p.m4a',
           coverUrl:
             'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/06/d3/5b/06d35b24-2744-eae0-7160-b5e453f9fd57/FJM_ILoveYouHoneybear.jpg/100x100bb.jpg',
         },
         {
-          title: 'birds',
-          artist: 'death grips',
+          title: 'Birds',
+          artist: 'Death Grips',
           previewUrl:
             'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/95/fa/17/95fa17f8-9d7d-8f9d-e938-4c8c0f019103/mzaf_10312983834814840985.plus.aac.p.m4a',
           coverUrl:
             'https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/bf/11/15/bf111508-592d-feda-eb1c-b7d348973127/602537705689_cover.jpg/100x100bb.jpg',
         },
         {
-          title: 'please call me, baby',
-          artist: 'tom waits',
+          title: 'Please Call Me, Baby',
+          artist: 'Tom Waits',
           previewUrl:
             'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/ac/46/cd/ac46cd41-60e8-7f75-f769-ca7566e73735/mzaf_5387959216624573413.plus.aac.p.m4a',
           coverUrl:
             'https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/30/13/eb/3013ebcc-8627-f413-c0a5-4044670f541a/0045778756605.png/100x100bb.jpg',
         },
         {
-          title: 'deep inside of you',
-          artist: 'third eye blind',
+          title: 'Deep Inside of You',
+          artist: 'Third Eye Blind',
           previewUrl:
             'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d5/db/9d/d5db9db6-f860-97fa-3f10-c1a53887ee67/mzaf_17862660625965542480.plus.aac.p.m4a',
           coverUrl:
             'https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/85/70/5c/85705c3a-b847-ecac-5f47-58d4f3c7ce0a/075596241526.jpg/100x100bb.jpg',
         },
         {
-          title: "la femme d'argent (vegyn version)",
-          artist: 'air',
+          title: "La Femme d'Argent (Vegyn Version)",
+          artist: 'Air',
           previewUrl:
             'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/88/98/56/88985629-3e3d-f672-b769-e3d713945baa/mzaf_17014271928968407157.plus.aac.p.m4a',
           coverUrl:

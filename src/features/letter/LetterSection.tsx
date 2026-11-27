@@ -217,14 +217,14 @@ export default function LetterSection({
 
                 {/* Kertas surat di dalam yang meluncur keluar */}
                 <motion.div
-                  initial={{ y: 12, scale: 0.92 }}
+                  initial={{ y: 12, scale: 0.92, opacity: 0 }}
                   animate={
                     stage === 'opening'
-                      ? { y: -68, scale: 1.04 }
-                      : { y: 12, scale: 0.92 }
+                      ? { y: -68, scale: 1.04, opacity: 1 }
+                      : { y: 12, scale: 0.92, opacity: 0 }
                   }
-                  transition={{ delay: 0.35, duration: 0.85, ease: GENTLE_EASE }}
-                  className="absolute inset-x-4 bottom-4 top-5 z-[5] flex flex-col items-center justify-center rounded-2xl border border-sage-200 bg-cream p-4 shadow-sage-sm"
+                  transition={{ delay: stage === 'opening' ? 0.3 : 0, duration: 0.85, ease: GENTLE_EASE }}
+                  className="pointer-events-none absolute inset-x-4 bottom-4 top-5 z-[5] flex flex-col items-center justify-center rounded-2xl border border-sage-200 bg-cream p-4 shadow-sage-sm"
                 >
                   <span className="h-1.5 w-28 rounded-full bg-sage-200" />
                   <span className="mt-2 h-1.5 w-20 rounded-full bg-sage-100" />
@@ -233,9 +233,9 @@ export default function LetterSection({
 
                 {/* Kantong depan amplop */}
                 <div
-                  className="absolute inset-x-0 bottom-0 z-10 h-32 rounded-b-3xl bg-cream"
+                  className="absolute inset-x-0 bottom-0 z-10 h-32 rounded-b-3xl bg-cream sm:h-36"
                   style={{
-                    clipPath: 'polygon(0 0, 50% 44%, 100% 0, 100% 100%, 0 100%)',
+                    clipPath: 'polygon(0 0, 50% 42%, 100% 0, 100% 100%, 0 100%)',
                   }}
                 />
 
@@ -249,19 +249,21 @@ export default function LetterSection({
                     transformStyle: 'preserve-3d',
                     clipPath: 'polygon(0 0, 100% 0, 50% 62%)',
                   }}
-                  className={`absolute inset-x-0 top-0 h-40 rounded-t-3xl bg-sage-100 shadow-sm ${
+                  className={`absolute inset-x-0 top-0 h-44 rounded-t-3xl bg-sage-100 shadow-sm sm:h-48 ${
                     stage === 'opening' ? 'z-[1]' : 'z-20'
                   }`}
                 />
 
                 {/* Segel hati blush */}
-                <motion.div
-                  animate={stage === 'opening' ? { scale: 0.6, opacity: 0 } : { scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.38, ease: GENTLE_EASE }}
-                  className="absolute left-1/2 top-[48%] z-30 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-cream bg-blush shadow-sage-sm"
-                >
-                  <Heart className="h-5 w-5 fill-[#647F57] text-[#4E6445]" aria-hidden="true" />
-                </motion.div>
+                <div className="pointer-events-none absolute left-1/2 top-1/2 z-30 -translate-x-1/2 -translate-y-1/2">
+                  <motion.div
+                    animate={stage === 'opening' ? { scale: 0.6, opacity: 0 } : { scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.38, ease: GENTLE_EASE }}
+                    className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-cream bg-blush shadow-sage-sm"
+                  >
+                    <Heart className="h-5 w-5 fill-[#647F57] text-[#4E6445]" aria-hidden="true" />
+                  </motion.div>
+                </div>
               </motion.button>
             </motion.div>
           )}

@@ -396,7 +396,7 @@ export const content: ContentConfig = {
     celebrateAgainButton: 'celebrate again', // Confetti button on anniversary banner
     totalDaysLabel: 'total days we have shared together', // Total days row label in time together
     totalDaysUnit: 'days', // Unit after total days number
-    nextAnnivHeading: 'counting down to anniversary #{year}', // Countdown box heading in time together
+    nextAnnivHeading: 'counting down to {year}th anniversary', // Countdown box heading in time together
   },
 
   // ==========================================================================
@@ -436,11 +436,12 @@ export const content: ContentConfig = {
       eyebrow: 'spinning gallery',
       title: 'pieces of our good days',
       photos: [
-        'photos/memory-2.svg', // Carousel photo 1 in Slide 5
-        'photos/memory-3.svg', // Carousel photo 2 in Slide 5
-        'photos/memory-4.svg', // Carousel photo 3 in Slide 5
-        'photos/memory-5.svg', // Carousel photo 4 in Slide 5
-        'photos/memory-6.svg', // Carousel photo 5 in Slide 5
+        'photos/photocard-1.jpg', // Carousel photo 1 in Slide 5
+        'photos/photocard-2.jpg', // Carousel photo 2 in Slide 5
+        'photos/photocard-3.jpg', // Carousel photo 3 in Slide 5
+        'photos/photocard-4.jpg', // Carousel photo 4 in Slide 5
+        'photos/photocard-5.jpg', // Carousel photo 5 in Slide 5
+        'photos/photocard-6.jpg', // Carousel photo 6 in Slide 5
       ],
     },
     {

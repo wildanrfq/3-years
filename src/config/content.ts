@@ -578,14 +578,15 @@ export const content: ContentConfig = {
   // 9. MENU 5: A LETTER FOR YOU (Envelope & Typed Love Letter Finale)
   // ==========================================================================
   letter: {
-    title: 'happy 3rd anniversary, sayang', // Letter heading (shown on envelope paper & typed at top of letter)
+    title: 'happy 3rd anniversary, love ❤️', // Letter heading (shown on envelope paper & typed at top of letter)
     body: [
-      'thank you for walking beside me through these wonderful three years.',
-      'in the middle of busy days and plans that go sideways, having you next to me always makes everything feel lighter.',
-      'i am grateful for every little laugh, every late-night talk, and all the patience you have shared along the way.',
-      'here is to the years ahead—may we keep being each other’s safest place and always find reasons to celebrate the simple things.',
+      'thank you so much for staying with me through all this time.',
+      'i am very grateful that we have made it this far together.',
+      'thank you for being patient with me, understanding me, supporting me and many more kind things u do.',
+      'and through the ups and downs of our times, we still have each other\'s backs.',
+      'here is to the future of us, may we live and still be together forever and ever 💕'
     ], // Each string in this array is one paragraph in a letter for you
-    signature: 'from wildan', // Handwritten signature at the bottom of the letter
+    signature: ', wildan', // Handwritten signature at the bottom of the letter
   },
   letterUi: {
     mascotDefault: 'happy anniversary to us!', // Mascot message after letter finishes typing

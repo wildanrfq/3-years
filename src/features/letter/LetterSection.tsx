@@ -107,10 +107,10 @@ export default function LetterSection({
     let cancelled = false;
 
     const getDelay = (ch: string) => {
-      if (ch === '.' || ch === '!' || ch === '?') return 320;
-      if (ch === ',') return 165;
-      if (ch === ' ') return 24;
-      return 28 + Math.round(Math.random() * 18);
+      if (ch === '.' || ch === '!' || ch === '?') return 420;
+      if (ch === ',') return 220;
+      if (ch === ' ') return 36;
+      return 42 + Math.round(Math.random() * 24);
     };
 
     const step = () => {
@@ -125,7 +125,7 @@ export default function LetterSection({
           return;
         }
         phase = 'body';
-        typingTimerRef.current = window.setTimeout(step, 340);
+        typingTimerRef.current = window.setTimeout(step, 440);
         return;
       }
 
@@ -146,7 +146,7 @@ export default function LetterSection({
         }
         paraIdx += 1;
         charPos = 0;
-        typingTimerRef.current = window.setTimeout(step, 260);
+        typingTimerRef.current = window.setTimeout(step, 360);
         return;
       }
 
@@ -154,7 +154,7 @@ export default function LetterSection({
       fireHugHearts(28);
     };
 
-    typingTimerRef.current = window.setTimeout(step, 240);
+    typingTimerRef.current = window.setTimeout(step, 300);
     return () => {
       cancelled = true;
       if (typingTimerRef.current !== null) {
